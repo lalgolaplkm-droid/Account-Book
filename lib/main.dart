@@ -47,7 +47,7 @@ class ShoppingItem {
   String name;
   double amount;
   bool isChecked;
-  ShoppingItem({required this.name, required this.amount = 0.0, this.isChecked = false});
+  ShoppingItem({required this.name, this.amount = 0.0, this.isChecked = false});
 }
 
 class BudgetModel {
