@@ -29,26 +29,6 @@ class TransactionItem {
     required this.description,
     required this.date,
   });
-
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'type': type,
-    'account': account,
-    'category': category,
-    'amount': amount,
-    'description': description,
-    'date': date.toIso8601String(),
-  };
-
-  factory TransactionItem.fromJson(Map<String, dynamic> json) => TransactionItem(
-    id: json['id'],
-    type: json['type'],
-    account: json['account'],
-    category: json['category'],
-    amount: json['amount'],
-    description: json['description'],
-    date: DateTime.parse(json['date']),
-  );
 }
 
 class LoanItem {
@@ -67,24 +47,6 @@ class LoanItem {
     required this.date,
     this.isPaid = false,
   });
-
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'personName': personName,
-    'amount': amount,
-    'type': type,
-    'date': date.toIso8601String(),
-    'isPaid': isPaid,
-  };
-
-  factory LoanItem.fromJson(Map<String, dynamic> json) => LoanItem(
-    id: json['id'],
-    personName: json['personName'],
-    amount: json['amount'],
-    type: json['type'],
-    date: DateTime.parse(json['date']),
-    isPaid: json['isPaid'],
-  );
 }
 
 class ShoppingItem {
@@ -92,18 +54,12 @@ class ShoppingItem {
   double amount;
   bool isChecked;
   ShoppingItem({required this.name, this.amount = 0.0, this.isChecked = false});
-
-  Map<String, dynamic> toJson() => {'name': name, 'amount': amount, 'isChecked': isChecked};
-  factory ShoppingItem.fromJson(Map<String, dynamic> json) => ShoppingItem(name: json['name'], amount: json['amount'], isChecked: json['isChecked']);
 }
 
 class BudgetModel {
   String category;
   double amount;
   BudgetModel({required this.category, required this.amount});
-
-  Map<String, dynamic> toJson() => {'category': category, 'amount': amount};
-  factory BudgetModel.fromJson(Map<String, dynamic> json) => BudgetModel(category: json['category'], amount: json['amount']);
 }
 
 class SavingsModel {
@@ -112,9 +68,6 @@ class SavingsModel {
   double currentAmount;
   bool isCompleted;
   SavingsModel({required this.title, required this.targetAmount, required this.currentAmount, this.isCompleted = false});
-
-  Map<String, dynamic> toJson() => {'title': title, 'targetAmount': targetAmount, 'currentAmount': currentAmount, 'isCompleted': isCompleted};
-  factory SavingsModel.fromJson(Map<String, dynamic> json) => SavingsModel(title: json['title'], targetAmount: json['targetAmount'], currentAmount: json['currentAmount'], isCompleted: json['isCompleted']);
 }
 
 class AccountModel {
@@ -129,9 +82,6 @@ class AccountModel {
     required this.details,
     this.isDefault = false,
   });
-
-  Map<String, dynamic> toJson() => {'name': name, 'type': type, 'details': details, 'isDefault': isDefault};
-  factory AccountModel.fromJson(Map<String, dynamic> json) => AccountModel(name: json['name'], type: json['type'], details: json['details'], isDefault: json['isDefault']);
 }
 
 class RepeatedTransactionModel {
@@ -139,9 +89,6 @@ class RepeatedTransactionModel {
   double amount;
   String frequency;
   RepeatedTransactionModel({required this.title, required this.amount, required this.frequency});
-
-  Map<String, dynamic> toJson() => {'title': title, 'amount': amount, 'frequency': frequency};
-  factory RepeatedTransactionModel.fromJson(Map<String, dynamic> json) => RepeatedTransactionModel(title: json['title'], amount: json['amount'], frequency: json['frequency']);
 }
 
 class ReminderModel {
@@ -149,12 +96,9 @@ class ReminderModel {
   double amount;
   String dueDate;
   ReminderModel({required this.title, required this.amount, required this.dueDate});
-
-  Map<String, dynamic> toJson() => {'title': title, 'amount': amount, 'dueDate': dueDate};
-  factory ReminderModel.fromJson(Map<String, dynamic> json) => ReminderModel(title: json['title'], amount: json['amount'], dueDate: json['dueDate']);
 }
 
-// ----------------- State Management with Persistent Storage -----------------
+// ----------------- State Management -----------------
 class AppSettingsNotifier extends ChangeNotifier {
   late SharedPreferences _prefs;
 
@@ -183,7 +127,6 @@ class AppSettingsNotifier extends ChangeNotifier {
   bool loanAlert = true;
   String notificationSound = 'Default';
 
-  // Selected Month & Year for Home and Reports
   int selectedMonthIndex = DateTime.now().month;
   int selectedYear = DateTime.now().year;
 
@@ -199,13 +142,36 @@ class AppSettingsNotifier extends ChangeNotifier {
 
   double monthlyBudget = 15000.0;
 
-  List<TransactionItem> transactions = [];
-  List<LoanItem> loans = [];
-  List<ShoppingItem> shoppingList = [];
-  List<BudgetModel> budgets = [];
-  List<SavingsModel> savingsList = [];
-  List<RepeatedTransactionModel> repeatedTransactions = [];
-  List<ReminderModel> reminders = [];
+  List<TransactionItem> transactions = [
+    TransactionItem(id: '1', type: 'Income', account: 'Cash in Hand', category: 'Salary', amount: 45000.0, description: 'Monthly Salary', date: DateTime.now()),
+    TransactionItem(id: '2', type: 'Expense', account: 'Cash in Hand', category: 'Tea & Snacks', amount: 350.0, description: 'Evening snacks', date: DateTime.now()),
+  ];
+
+  List<LoanItem> loans = [
+    LoanItem(id: '101', personName: 'Rafiqul Islam', amount: 2000.0, type: 'Given', date: DateTime.now(), isPaid: false),
+  ];
+
+  List<ShoppingItem> shoppingList = [
+    ShoppingItem(name: 'Cooking Oil', amount: 150.0, isChecked: true),
+    ShoppingItem(name: 'Rice (5 kg)', amount: 450.0, isChecked: false),
+  ];
+
+  List<BudgetModel> budgets = [
+    BudgetModel(category: 'Food & Hotel', amount: 5000.0),
+    BudgetModel(category: 'Transport', amount: 3000.0),
+  ];
+
+  List<SavingsModel> savingsList = [
+    SavingsModel(title: 'Arufa Savings', targetAmount: 500000, currentAmount: 25000)
+  ];
+
+  List<RepeatedTransactionModel> repeatedTransactions = [
+    RepeatedTransactionModel(title: 'House Rent', amount: 8000, frequency: '1st of every month'),
+  ];
+
+  List<ReminderModel> reminders = [
+    ReminderModel(title: 'Electricity Bill', amount: 1200, dueDate: '15'),
+  ];
 
   Future<void> initPrefs() async {
     _prefs = await SharedPreferences.getInstance();
@@ -330,11 +296,6 @@ class AppSettingsNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setNotificationSound(String sound) {
-    notificationSound = sound;
-    notifyListeners();
-  }
-
   void addTransaction(TransactionItem txn) {
     transactions.insert(0, txn);
     notifyListeners();
@@ -375,6 +336,21 @@ class AppSettingsNotifier extends ChangeNotifier {
         break;
       }
     }
+  }
+
+  void sortLoans(String criteria) {
+    if (criteria.contains('New-Old')) loans.sort((a, b) => b.date.compareTo(a.date));
+    else if (criteria.contains('Old-New')) loans.sort((a, b) => a.date.compareTo(b.date));
+    else if (criteria.contains('A-Z')) loans.sort((a, b) => b.personName.compareTo(a.personName));
+    else if (criteria.contains('Large-Small')) loans.sort((a, b) => b.amount.compareTo(a.amount));
+    notifyListeners();
+  }
+
+  void sortTransactions(String criteria) {
+    if (criteria.contains('New-Old')) transactions.sort((a, b) => b.date.compareTo(a.date));
+    else if (criteria.contains('A-Z')) transactions.sort((a, b) => b.category.compareTo(a.category));
+    else if (criteria.contains('Large-Small')) transactions.sort((a, b) => b.amount.compareTo(a.amount));
+    notifyListeners();
   }
 
   List<TransactionItem> getFilteredTransactions() {
@@ -631,7 +607,7 @@ void showLocalizedDeleteDialog({
     context: context,
     builder: (ctx) => AlertDialog(
       title: Text(isBangla ? 'নিশ্চিতকরণ' : 'Confirmation'),
-      content: Text(isBangla ? 'আপনি কি আসলেই ডিলিট করতে চান?' : 'Are you sure you want to delete?'),
+      content: Text(isBangla ? 'আপনি কি আসলেই "$itemName" ডিলিট করতে চান?' : 'Are you sure you want to delete "$itemName"?'),
       actions: [
         TextButton(onPressed: () => Navigator.pop(ctx), child: Text(isBangla ? 'না' : 'No')),
         ElevatedButton(
@@ -647,7 +623,7 @@ void showLocalizedDeleteDialog({
   );
 }
 
-// ----------------- Pin & Main Container -----------------
+// ----------------- Pin & Main Container (Original Design Restored) -----------------
 class PinLockScreen extends StatefulWidget {
   const PinLockScreen({super.key});
 
@@ -666,6 +642,48 @@ class _PinLockScreenState extends State<PinLockScreen> {
     }
   }
 
+  void _showForgotPinDialog(BuildContext context) {
+    final identifierController = TextEditingController();
+    final newPinController = TextEditingController();
+    final confirmPinController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Forgot PIN'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Enter registered Email, Birth Date, or Mobile:', style: TextStyle(fontSize: 12, color: Colors.grey)),
+            const SizedBox(height: 10),
+            TextField(controller: identifierController, decoration: const InputDecoration(labelText: 'Identifier', border: OutlineInputBorder())),
+            const SizedBox(height: 10),
+            TextField(controller: newPinController, keyboardType: TextInputType.number, maxLength: 4, obscureText: true, decoration: const InputDecoration(labelText: 'New 4-Digit PIN', border: OutlineInputBorder(), counterText: '')),
+            const SizedBox(height: 10),
+            TextField(controller: confirmPinController, keyboardType: TextInputType.number, maxLength: 4, obscureText: true, decoration: const InputDecoration(labelText: 'Confirm PIN', border: OutlineInputBorder(), counterText: '')),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
+            onPressed: () {
+              bool match = identifierController.text.trim() == appSettings.profileEmail || identifierController.text.trim() == appSettings.profileBirthDate || identifierController.text.trim() == appSettings.profileMobile;
+              if (match && newPinController.text.length == 4 && newPinController.text == confirmPinController.text) {
+                appSettings.updatePin(newPinController.text);
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('PIN updated successfully!')));
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Invalid information or mismatched PIN!'), backgroundColor: Colors.red));
+              }
+            },
+            child: const Text('Reset', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -680,23 +698,48 @@ class _PinLockScreenState extends State<PinLockScreen> {
               const SizedBox(height: 24),
               const Text('Enter Your PIN', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
               const SizedBox(height: 40),
-              TextField(
-                controller: _pinController,
-                keyboardType: TextInputType.number,
-                maxLength: 4,
-                obscureText: true,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(counterText: '', border: OutlineInputBorder(), labelText: 'PIN'),
-                onChanged: (val) {
-                  if (val.length == 4) _verifyPin(context);
-                },
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(4, (index) {
+                      return Container(
+                        width: 55, height: 55,
+                        margin: const EdgeInsets.symmetric(horizontal: 6),
+                        decoration: BoxDecoration(color: const Color(0xFF1E293B), borderRadius: BorderRadius.circular(12), border: Border.all(color: const Color(0xFF10B981), width: 1.5)),
+                        child: Center(child: Text(_pinController.text.length > index ? '•' : '', style: const TextStyle(color: Colors.white, fontSize: 28))),
+                      );
+                    }),
+                  ),
+                  SizedBox(
+                    width: 250, height: 60,
+                    child: TextField(
+                      controller: _pinController,
+                      keyboardType: TextInputType.number,
+                      maxLength: 4,
+                      style: const TextStyle(color: Colors.transparent),
+                      cursorColor: Colors.transparent,
+                      decoration: const InputDecoration(counterText: '', border: InputBorder.none),
+                      onChanged: (value) {
+                        setState(() {});
+                        if (value.length == 4) _verifyPin(context);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 30),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), padding: const EdgeInsets.symmetric(vertical: 16)),
+                  onPressed: () => _verifyPin(context),
+                  child: const Text('Unlock', style: TextStyle(fontSize: 16, color: Colors.white)),
+                ),
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
-                onPressed: () => _verifyPin(context),
-                child: const Text('Unlock', style: TextStyle(color: Colors.white)),
-              ),
+              TextButton(onPressed: () => _showForgotPinDialog(context), child: const Text('Forgot PIN?', style: TextStyle(color: Color(0xFF38BDF8)))),
             ],
           ),
         ),
@@ -705,7 +748,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
   }
 }
 
-// ----------------- App Drawer -----------------
+// ----------------- App Drawer Widget -----------------
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
@@ -741,13 +784,21 @@ class AppDrawer extends StatelessWidget {
               Navigator.push(context, MaterialPageRoute(builder: (context) => const CategoriesScreen()));
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.account_balance),
+            title: Text(appSettings.translate('Accounts')),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountsScreen()));
+            },
+          ),
         ],
       ),
     );
   }
 }
 
-// ----------------- Screens -----------------
+// ----------------- Screens (Full Design Restored) -----------------
 class DashboardAnalyticsScreen extends StatelessWidget {
   const DashboardAnalyticsScreen({super.key});
   @override
@@ -818,7 +869,6 @@ class FundShoppingScreen extends StatelessWidget {
   }
 }
 
-// Home Screen with Month/Year Dropdowns
 class HomeScreenContent extends StatelessWidget {
   const HomeScreenContent({super.key});
 
@@ -829,31 +879,47 @@ class HomeScreenContent extends StatelessWidget {
     List<int> years = List.generate(110, (index) => 1990 + index);
 
     return Scaffold(
-      appBar: AppBar(title: Text(appSettings.getAppTitle())),
+      appBar: AppBar(title: Text(appSettings.getAppTitle(), style: const TextStyle(fontWeight: FontWeight.bold))),
       drawer: const AppDrawer(),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                DropdownButton<int>(
-                  value: appSettings.selectedMonthIndex,
-                  dropdownColor: Theme.of(context).cardColor,
-                  items: List.generate(12, (index) => DropdownMenuItem(value: index + 1, child: Text(months[index]))),
-                  onChanged: (val) { if (val != null) appSettings.setMonthYear(val, appSettings.selectedYear); },
-                ),
-                DropdownButton<int>(
-                  value: appSettings.selectedYear,
-                  dropdownColor: Theme.of(context).cardColor,
-                  items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString()))).toList(),
-                  onChanged: (val) { if (val != null) appSettings.setMonthYear(appSettings.selectedMonthIndex, val); },
-                ),
-              ],
+            Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(16)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Current Balance', style: TextStyle(color: Colors.grey)),
+                      Row(
+                        children: [
+                          DropdownButton<int>(
+                            value: appSettings.selectedMonthIndex,
+                            dropdownColor: Theme.of(context).cardColor,
+                            items: List.generate(12, (index) => DropdownMenuItem(value: index + 1, child: Text(months[index]))),
+                            onChanged: (val) { if (val != null) appSettings.setMonthYear(val, appSettings.selectedYear); },
+                          ),
+                          const SizedBox(width: 8),
+                          DropdownButton<int>(
+                            value: appSettings.selectedYear,
+                            dropdownColor: Theme.of(context).cardColor,
+                            items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString()))).toList(),
+                            onChanged: (val) { if (val != null) appSettings.setMonthYear(appSettings.selectedMonthIndex, val); },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text('${appSettings.getTotalBalance()} $curr', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                ],
+              ),
             ),
-            const SizedBox(height: 20),
-            Text('Current Balance: ${appSettings.getTotalBalance()} $curr', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
@@ -927,32 +993,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Center(
-            child: Stack(
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(color: const Color(0xFF10B981), borderRadius: BorderRadius.circular(16)),
+            child: Column(
               children: [
-                CircleAvatar(
-                  radius: 35,
-                  backgroundColor: Colors.white,
-                  backgroundImage: appSettings.profileImagePath.isNotEmpty ? FileImage(File(appSettings.profileImagePath)) : null,
-                  child: appSettings.profileImagePath.isEmpty ? const Icon(Icons.person, size: 45, color: Color(0xFF10B981)) : null,
-                ),
-                Positioned(
-                  bottom: 0, right: 0,
-                  child: InkWell(
-                    onTap: () async {
-                      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-                      if (image != null) {
-                        appSettings.updateProfile(name: appSettings.profileName, email: appSettings.profileEmail, gender: appSettings.profileGender, birthDate: appSettings.profileBirthDate, mobile: appSettings.profileMobile, imagePath: image.path);
-                        setState(() {});
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black),
-                      child: const Icon(Icons.edit, size: 14, color: Colors.white),
+                Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 35,
+                      backgroundColor: Colors.white,
+                      backgroundImage: appSettings.profileImagePath.isNotEmpty ? FileImage(File(appSettings.profileImagePath)) : null,
+                      child: appSettings.profileImagePath.isEmpty ? const Icon(Icons.person, size: 45, color: Color(0xFF10B981)) : null,
                     ),
-                  ),
+                    Positioned(
+                      bottom: 0, right: 0,
+                      child: InkWell(
+                        onTap: () async {
+                          final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+                          if (image != null) {
+                            appSettings.updateProfile(name: appSettings.profileName, email: appSettings.profileEmail, gender: appSettings.profileGender, birthDate: appSettings.profileBirthDate, mobile: appSettings.profileMobile, imagePath: image.path);
+                            setState(() {});
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black),
+                          child: const Icon(Icons.edit, size: 14, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 12),
+                Text(appSettings.profileName, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(appSettings.profileEmail, style: const TextStyle(color: Colors.white70, fontSize: 13)),
               ],
             ),
           ),
