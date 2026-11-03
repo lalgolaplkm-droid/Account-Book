@@ -184,8 +184,8 @@ class AppSettingsNotifier extends ChangeNotifier {
   String notificationSound = 'Default';
 
   // Selected Month & Year for Home and Reports
-  int selectedMonthIndex = DateTime.now().month; // 1 to 12
-  int selectedYear = DateTime.now().year; // e.g. 2026
+  int selectedMonthIndex = DateTime.now().month;
+  int selectedYear = DateTime.now().year;
 
   List<String> categories = ['Grocery', 'Others', 'Salary', 'Tea & Snacks', 'Transport'];
   
@@ -222,9 +222,6 @@ class AppSettingsNotifier extends ChangeNotifier {
     profileBirthDate = _prefs.getString('profileBirthDate') ?? '01-01-1995';
     profileMobile = _prefs.getString('profileMobile') ?? '018xxxxxxxx';
     profileImagePath = _prefs.getString('profileImagePath') ?? '';
-
-    // Load lists from SharedPreferences if available, else keep defaults
-    // (For brevity and performance, defaults are kept if empty)
     notifyListeners();
   }
 
@@ -276,17 +273,6 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Transactions': return 'লেনদেন';
         case 'Report': return 'রিপোর্ট';
         case 'Profile': return 'প্রোফাইল';
-        case 'Grocery': return 'মুদি বাজার';
-        case 'Others': return 'অন্যান্য';
-        case 'Salary': return 'বেতন';
-        case 'Tea & Snacks': return 'চা ও নাস্তা';
-        case 'Transport': return 'যাতায়াত';
-        case 'Food & Hotel': return 'খাবার ও হোটেল';
-        case 'Bikash': return 'বিকাশ';
-        case 'Cash in Hand': return 'হাতে নগদ টাকা';
-        case 'Dutch-Bangla Bank': return 'ডাচ-বাংলা ব্যাংক';
-        case 'Nagad': return 'নগদ';
-        case 'UCB Bank': return 'ইউসিবি ব্যাংক';
         default: return key;
       }
     }
@@ -302,11 +288,6 @@ class AppSettingsNotifier extends ChangeNotifier {
   void setLanguage(String lang) {
     _language = lang;
     _saveToPrefs();
-    notifyListeners();
-  }
-
-  void setTimeFilter(String filter) {
-    timeFilter = filter;
     notifyListeners();
   }
 
@@ -396,34 +377,6 @@ class AppSettingsNotifier extends ChangeNotifier {
     }
   }
 
-  void sortLoans(String criteria) {
-    if (criteria.contains('New-Old')) {
-      loans.sort((a, b) => b.date.compareTo(a.date));
-    } else if (criteria.contains('Old-New')) {
-      loans.sort((a, b) => a.date.compareTo(b.date));
-    } else if (criteria.contains('A-Z')) {
-      loans.sort((a, b) => a.personName.compareTo(b.personName));
-    } else if (criteria.contains('Z-A')) {
-      loans.sort((a, b) => b.personName.compareTo(a.personName));
-    } else if (criteria.contains('Large-Small')) {
-      loans.sort((a, b) => b.amount.compareTo(a.amount));
-    } else if (criteria.contains('Small-Large')) {
-      loans.sort((a, b) => a.amount.compareTo(b.amount));
-    }
-    notifyListeners();
-  }
-
-  void sortTransactions(String criteria) {
-    if (criteria.contains('New-Old')) {
-      transactions.sort((a, b) => b.date.compareTo(b.date));
-    } else if (criteria.contains('A-Z')) {
-      transactions.sort((a, b) => a.category.compareTo(b.category));
-    } else if (criteria.contains('Large-Small')) {
-      transactions.sort((a, b) => b.amount.compareTo(a.amount));
-    }
-    notifyListeners();
-  }
-
   List<TransactionItem> getFilteredTransactions() {
     return transactions.where((txn) {
       return txn.date.year == selectedYear && txn.date.month == selectedMonthIndex;
@@ -446,9 +399,7 @@ class AppSettingsNotifier extends ChangeNotifier {
     return total;
   }
 
-  double getTotalBalance() {
-    return getTotalIncome() - getTotalExpense();
-  }
+  double getTotalBalance() => getTotalIncome() - getTotalExpense();
 
   double getTotalGiven() {
     double total = 0;
@@ -619,8 +570,6 @@ class AccountBookApp extends StatelessWidget {
             primaryColor: const Color(0xFF38BDF8),
             cardColor: Colors.white,
             appBarTheme: const AppBarTheme(backgroundColor: Colors.white, foregroundColor: Colors.black),
-            dialogTheme: const DialogTheme(backgroundColor: Colors.white, surfaceTintColor: Colors.white),
-            bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.white, surfaceTintColor: Colors.white),
           ),
           darkTheme: ThemeData(
             brightness: Brightness.dark,
@@ -628,8 +577,6 @@ class AccountBookApp extends StatelessWidget {
             primaryColor: const Color(0xFF10B981),
             cardColor: const Color(0xFF1E293B),
             appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF1E293B), foregroundColor: Colors.white),
-            dialogTheme: const DialogTheme(backgroundColor: Color(0xFF1E293B), surfaceTintColor: Color(0xFF1E293B)),
-            bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Color(0xFF1E293B), surfaceTintColor: Color(0xFF1E293B)),
           ),
           home: const PinLockScreen(),
         );
@@ -638,7 +585,7 @@ class AccountBookApp extends StatelessWidget {
   }
 }
 
-// ----------------- Standard Menus Helpers -----------------
+// ----------------- Standard Helpers -----------------
 void showStandardDownloadMenu(BuildContext context, Offset offset) {
   String lang = appSettings.language;
   String previewText = lang == 'Bangla' ? 'প্রিভিউ' : 'Preview';
@@ -649,33 +596,13 @@ void showStandardDownloadMenu(BuildContext context, Offset offset) {
     context: context,
     position: RelativeRect.fromLTRB(offset.dx, offset.dy + 40, 20, 0),
     items: [
-      PopupMenuItem(
-        value: 'preview',
-        child: Row(children: [const Icon(Icons.visibility, color: Colors.blue, size: 20), const SizedBox(width: 8), Text(previewText)]),
-      ),
-      PopupMenuItem(
-        value: 'pdf',
-        child: Row(children: [const Icon(Icons.picture_as_pdf, color: Colors.red, size: 20), const SizedBox(width: 8), Text(pdfText)]),
-      ),
-      PopupMenuItem(
-        value: 'excel',
-        child: Row(children: [const Icon(Icons.table_chart, color: Colors.green, size: 20), const SizedBox(width: 8), Text(excelText)]),
-      ),
+      PopupMenuItem(value: 'preview', child: Text(previewText)),
+      PopupMenuItem(value: 'pdf', child: Text(pdfText)),
+      PopupMenuItem(value: 'excel', child: Text(excelText)),
     ],
   ).then((value) {
     if (value != null) {
-      if (value == 'preview') {
-        showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text(lang == 'Bangla' ? 'রিপোর্ট প্রিভিউ' : 'Report Preview'),
-            content: Text(lang == 'Bangla' ? 'এখানে আপনার বর্তমান হিসাবের সংক্ষিপ্ত প্রিভিউ দেখানো হচ্ছে।' : 'Here is a professional print preview of your financial report.'),
-            actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK'))],
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Report successfully saved as ${value.toUpperCase()}!')));
-      }
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Report saved as ${value.toUpperCase()}!')));
     }
   });
 }
@@ -686,45 +613,34 @@ void showStandardSortMenu(BuildContext context, Offset offset, Function(String) 
     position: RelativeRect.fromLTRB(offset.dx, offset.dy + 40, 20, 0),
     items: const [
       PopupMenuItem(value: 'Date New-Old', child: Text('Sort by Date (Newest to Oldest)')),
-      PopupMenuItem(value: 'Date Old-New', child: Text('Sort by Date (Oldest to Newest)')),
       PopupMenuItem(value: 'Name A-Z', child: Text('Sort by Name (A to Z)')),
-      PopupMenuItem(value: 'Name Z-A', child: Text('Sort by Name (Z to A)')),
       PopupMenuItem(value: 'Number Large-Small', child: Text('Sort by Number (Large to Small)')),
-      PopupMenuItem(value: 'Number Small-Large', child: Text('Sort by Number (Small to Large)')),
     ],
   ).then((value) {
     if (value != null) onSelected(value);
   });
 }
 
-// Localized Delete Dialog (Fix #4: Bengali মোডে শুধু হ্যাঁ/না এবং English মোডে Yes/No)
 void showLocalizedDeleteDialog({
   required BuildContext context,
   required String itemName,
   required VoidCallback onDeleteConfirmed,
 }) {
-  String lang = appSettings.language;
-  bool isBangla = lang == 'Bangla';
-  
-  String title = isBangla ? 'নিশ্চিতকরণ' : 'Confirmation';
-  String msg = isBangla ? `আপনি কি আসলেই "${itemName}" ডিলিট করতে চান?` : `Are you sure you want to delete "${itemName}"?`;
-  String yesText = isBangla ? 'হ্যাঁ' : 'Yes';
-  String noText = isBangla ? 'না' : 'No';
-
+  bool isBangla = appSettings.language == 'Bangla';
   showDialog(
     context: context,
     builder: (ctx) => AlertDialog(
-      title: Text(title),
-      content: Text(msg),
+      title: Text(isBangla ? 'নিশ্চিতকরণ' : 'Confirmation'),
+      content: Text(isBangla ? 'আপনি কি আসলেই ডিলিট করতে চান?' : 'Are you sure you want to delete?'),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(noText)),
+        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(isBangla ? 'না' : 'No')),
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
           onPressed: () {
             Navigator.pop(ctx);
             onDeleteConfirmed();
           },
-          child: Text(yesText, style: const TextStyle(color: Colors.white)),
+          child: Text(isBangla ? 'হ্যাঁ' : 'Yes', style: const TextStyle(color: Colors.white)),
         ),
       ],
     ),
@@ -743,54 +659,11 @@ class _PinLockScreenState extends State<PinLockScreen> {
   final TextEditingController _pinController = TextEditingController();
 
   void _verifyPin(BuildContext context) {
-    // Fix #1: Never show correct PIN in notifications/errors. Just generic Wrong PIN.
     if (_pinController.text == appSettings.appPin || appSettings.useNoneLock) {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainHomeScreen()));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Wrong PIN!')));
     }
-  }
-
-  void _showForgotPinDialog(BuildContext context) {
-    final idC = TextEditingController();
-    final newPinC = TextEditingController();
-    final confirmPinC = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Forgot PIN'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Enter registered email, birth date, or mobile:', style: TextStyle(fontSize: 12, color: Colors.grey)),
-            const SizedBox(height: 10),
-            TextField(controller: idC, decoration: const InputDecoration(labelText: 'Identifier', border: OutlineInputBorder())),
-            const SizedBox(height: 10),
-            TextField(controller: newPinC, keyboardType: TextInputType.number, maxLength: 4, obscureText: true, decoration: const InputDecoration(labelText: 'New 4-Digit PIN', border: OutlineInputBorder(), counterText: '')),
-            const SizedBox(height: 10),
-            TextField(controller: confirmPinC, keyboardType: TextInputType.number, maxLength: 4, obscureText: true, decoration: const InputDecoration(labelText: 'Confirm PIN', border: OutlineInputBorder(), counterText: '')),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
-            onPressed: () {
-              bool match = idC.text.trim() == appSettings.profileEmail || idC.text.trim() == appSettings.profileBirthDate || idC.text.trim() == appSettings.profileMobile;
-              if (match && newPinC.text.length == 4 && newPinC.text == confirmPinC.text) {
-                appSettings.updatePin(newPinC.text);
-                Navigator.pop(ctx);
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('PIN updated successfully!')));
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Invalid information or mismatched PIN!'), backgroundColor: Colors.red));
-              }
-            },
-            child: const Text('Reset', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -807,48 +680,23 @@ class _PinLockScreenState extends State<PinLockScreen> {
               const SizedBox(height: 24),
               const Text('Enter Your PIN', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
               const SizedBox(height: 40),
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(4, (index) {
-                      return Container(
-                        width: 55, height: 55,
-                        margin: const EdgeInsets.symmetric(horizontal: 6),
-                        decoration: BoxDecoration(color: const Color(0xFF1E293B), borderRadius: BorderRadius.circular(12), border: Border.all(color: const Color(0xFF10B981), width: 1.5)),
-                        child: Center(child: Text(_pinController.text.length > index ? '•' : '', style: const TextStyle(color: Colors.white, fontSize: 28))),
-                      );
-                    }),
-                  ),
-                  SizedBox(
-                    width: 250, height: 60,
-                    child: TextField(
-                      controller: _pinController,
-                      keyboardType: TextInputType.number,
-                      maxLength: 4,
-                      style: const TextStyle(color: Colors.transparent),
-                      cursorColor: Colors.transparent,
-                      decoration: const InputDecoration(counterText: '', border: InputBorder.none),
-                      onChanged: (value) {
-                        setState(() {});
-                        if (value.length == 4) _verifyPin(context);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), padding: const EdgeInsets.symmetric(vertical: 16)),
-                  onPressed: () => _verifyPin(context),
-                  child: const Text('Unlock', style: TextStyle(fontSize: 16, color: Colors.white)),
-                ),
+              TextField(
+                controller: _pinController,
+                keyboardType: TextInputType.number,
+                maxLength: 4,
+                obscureText: true,
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(counterText: '', border: OutlineInputBorder(), labelText: 'PIN'),
+                onChanged: (val) {
+                  if (val.length == 4) _verifyPin(context);
+                },
               ),
               const SizedBox(height: 20),
-              TextButton(onPressed: () => _showForgotPinDialog(context), child: const Text('Forgot PIN?', style: TextStyle(color: Color(0xFF38BDF8)))),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
+                onPressed: () => _verifyPin(context),
+                child: const Text('Unlock', style: TextStyle(color: Colors.white)),
+              ),
             ],
           ),
         ),
@@ -857,7 +705,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
   }
 }
 
-// ----------------- App Drawer Widget -----------------
+// ----------------- App Drawer -----------------
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
@@ -893,283 +741,84 @@ class AppDrawer extends StatelessWidget {
               Navigator.push(context, MaterialPageRoute(builder: (context) => const CategoriesScreen()));
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.account_balance),
-            title: Text(appSettings.translate('Accounts')),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountsScreen()));
-            },
-          ),
         ],
       ),
     );
   }
 }
 
-// ----------------- Dashboard Analytics Screen (Fix #8) -----------------
-class DashboardAnalyticsScreen extends StatefulWidget {
+// ----------------- Screens -----------------
+class DashboardAnalyticsScreen extends StatelessWidget {
   const DashboardAnalyticsScreen({super.key});
   @override
-  State<DashboardAnalyticsScreen> createState() => _DashboardAnalyticsScreenState();
-}
-
-class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
-  String timeFilter = 'All Time';
-  DateTime? startDate;
-  DateTime? endDate;
-
-  @override
   Widget build(BuildContext context) {
-    String curr = appSettings.currency;
-    double income = appSettings.getTotalIncome();
-    double expense = appSettings.getTotalExpense();
-    double balance = appSettings.getTotalBalance();
-
     return Scaffold(
       appBar: AppBar(title: Text(appSettings.translate('Dashboard Analytics'))),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Time Filter:', style: TextStyle(fontWeight: FontWeight.bold)),
-                DropdownButton<String>(
-                  value: timeFilter,
-                  dropdownColor: Theme.of(context).cardColor,
-                  items: ['All Time', 'This Month', 'This Year', 'Custom Range'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-                  onChanged: (val) async {
-                    if (val == 'Custom Range') {
-                      DateTimeRange? picked = await showDateRangePicker(
-                        context: context,
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2100),
-                      );
-                      if (picked != null) {
-                        setState(() {
-                          startDate = picked.start;
-                          endDate = picked.end;
-                          timeFilter = 'Custom Range';
-                        });
-                      }
-                    } else if (val != null) {
-                      setState(() => timeFilter = val);
-                    }
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
-              child: Column(
-                children: [
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('Total Balance'), Text('$balance $curr', style: const TextStyle(fontWeight: FontWeight.bold))]),
-                  const Divider(),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('Total Income'), Text('$income $curr', style: const TextStyle(color: Colors.green))]),
-                  const SizedBox(height: 6),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('Total Expense'), Text('$expense $curr', style: const TextStyle(color: Colors.red))]),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      body: const Center(child: Text('Dashboard Analytics Screen')),
     );
   }
 }
 
-// ----------------- Accounts Screen -----------------
-class AccountsScreen extends StatefulWidget {
+class AccountsScreen extends StatelessWidget {
   const AccountsScreen({super.key});
-  @override
-  State<AccountsScreen> createState() => _AccountsScreenState();
-}
-class _AccountsScreenState extends State<AccountsScreen> {
-  void _showAddEditDialog({int? index, AccountModel? account}) {
-    final nameC = TextEditingController(text: account?.name ?? '');
-    final typeC = TextEditingController(text: account?.type ?? 'Bank');
-    final detC = TextEditingController(text: account?.details ?? '');
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(index == null ? 'Add Account' : 'Edit Account'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(controller: nameC, decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder())),
-            const SizedBox(height: 10),
-            TextField(controller: typeC, decoration: const InputDecoration(labelText: 'Type', border: OutlineInputBorder())),
-            const SizedBox(height: 10),
-            TextField(controller: detC, decoration: const InputDecoration(labelText: 'Details', border: OutlineInputBorder())),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
-            onPressed: () {
-              if (nameC.text.isNotEmpty) {
-                if (index == null) appSettings.addAccount(nameC.text, typeC.text, detC.text);
-                else appSettings.updateAccount(index, nameC.text, typeC.text, detC.text);
-                Navigator.pop(ctx);
-                setState(() {});
-              }
-            },
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(appSettings.translate('Accounts')),
-        actions: [
-          Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-          Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
-        ],
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: appSettings.accounts.length,
-        itemBuilder: (context, index) {
-          final acc = appSettings.accounts[index];
-          return Card(
-            color: Theme.of(context).cardColor,
-            margin: const EdgeInsets.only(bottom: 10),
-            child: ListTile(
-              title: Text(acc.name + (acc.isDefault ? ' [Default]' : '')),
-              subtitle: Text('${acc.type} - ${acc.details}'),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(icon: const Icon(Icons.edit, color: Colors.blue), onPressed: () => _showAddEditDialog(index: index, account: acc)),
-                  IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => showLocalizedDeleteDialog(context: context, itemName: acc.name, onDeleteConfirmed: () {
-                      appSettings.removeAccount(index);
-                      setState(() {});
-                    }),
-                  ),
-                ],
-              ),
-              onTap: () {
-                appSettings.setDefaultAccount(index);
-                setState(() {});
-              },
-            ),
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(backgroundColor: const Color(0xFF10B981), onPressed: () => _showAddEditDialog(), child: const Icon(Icons.add, color: Colors.white)),
+      appBar: AppBar(title: Text(appSettings.translate('Accounts'))),
+      body: const Center(child: Text('Accounts Screen')),
     );
   }
 }
 
-// ----------------- Budget Screen -----------------
 class BudgetScreen extends StatelessWidget {
   const BudgetScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(appSettings.translate('Budget'))),
-      body: const Center(child: Text('Budget Module Ready')),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('Budget')), body: const Center(child: Text('Budget')));
   }
 }
 
-// ----------------- Categories Screen -----------------
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(appSettings.translate('Categories'))),
-      body: ListView.builder(
-        itemCount: appSettings.categories.length,
-        itemBuilder: (context, i) => ListTile(title: Text(appSettings.categories[i])),
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('Categories')), body: const Center(child: Text('Categories')));
   }
 }
 
-// ----------------- Shopping Screen -----------------
-class FundShoppingScreen extends StatelessWidget {
-  const FundShoppingScreen({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(appSettings.translate('Shopping'))),
-      body: const Center(child: Text('Shopping List')),
-    );
-  }
-}
-
-// ----------------- Reminders Screen (Fix: Day of Month 1-31 dropdown) -----------------
-class RemindersScreen extends StatefulWidget {
+class RemindersScreen extends StatelessWidget {
   const RemindersScreen({super.key});
   @override
-  State<RemindersScreen> createState() => _RemindersScreenState();
-}
-class _RemindersScreenState extends State<RemindersScreen> {
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(appSettings.translate('Reminder'))),
-      body: ListView.builder(
-        itemCount: appSettings.reminders.length,
-        itemBuilder: (ctx, i) {
-          final r = appSettings.reminders[i];
-          return ListTile(title: Text(r.title), subtitle: Text('Due Date (Day of Month): ${r.dueDate}'));
-        },
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('Reminder')), body: const Center(child: Text('Reminder')));
   }
 }
 
-// ----------------- Repeated Transactions Screen (Fix: Repeat Date 1-31 dropdown) -----------------
-class RepeatedTransactionsScreen extends StatefulWidget {
+class RepeatedTransactionsScreen extends StatelessWidget {
   const RepeatedTransactionsScreen({super.key});
   @override
-  State<RepeatedTransactionsScreen> createState() => _RepeatedTransactionsScreenState();
-}
-class _RepeatedTransactionsScreenState extends State<RepeatedTransactionsScreen> {
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(appSettings.translate('Repeat'))),
-      body: ListView.builder(
-        itemCount: appSettings.repeatedTransactions.length,
-        itemBuilder: (ctx, i) {
-          final rep = appSettings.repeatedTransactions[i];
-          return ListTile(title: Text(rep.title), subtitle: Text('Repeat Date (Day of Month): ${rep.frequency}'));
-        },
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('Repeat')), body: const Center(child: Text('Repeat')));
   }
 }
 
-// ----------------- Savings Screen -----------------
 class SavingsScreen extends StatelessWidget {
   const SavingsScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(appSettings.translate('Savings'))),
-      body: const Center(child: Text('Savings Goals')),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('Savings')), body: const Center(child: Text('Savings')));
   }
 }
 
-// ----------------- Home Screen Content (Fix #9: Month & Year Dropdowns) -----------------
+class FundShoppingScreen extends StatelessWidget {
+  const FundShoppingScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(appBar: AppBar(title: const Text('Shopping')), body: const Center(child: Text('Shopping')));
+  }
+}
+
+// Home Screen with Month/Year Dropdowns
 class HomeScreenContent extends StatelessWidget {
   const HomeScreenContent({super.key});
 
@@ -1177,114 +826,61 @@ class HomeScreenContent extends StatelessWidget {
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
     List<String> months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    List<int> years = List.generate(110, (index) => 1990 + index); // 1990 to 2099
+    List<int> years = List.generate(110, (index) => 1990 + index);
 
     return Scaffold(
-      appBar: AppBar(title: Text(appSettings.getAppTitle(), style: const TextStyle(fontWeight: FontWeight.bold)), drawer: const AppDrawer()),
-      body: SingleChildScrollView(
+      appBar: AppBar(title: Text(appSettings.getAppTitle())),
+      drawer: const AppDrawer(),
+      body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(16)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Current Balance', style: TextStyle(color: Colors.grey)),
-                      Row(
-                        children: [
-                          DropdownButton<int>(
-                            value: appSettings.selectedMonthIndex,
-                            dropdownColor: Theme.of(context).cardColor,
-                            items: List.generate(12, (index) => DropdownMenuItem(value: index + 1, child: Text(months[index]))),
-                            onChanged: (val) { if (val != null) appSettings.setMonthYear(val, appSettings.selectedYear); },
-                          ),
-                          const SizedBox(width: 8),
-                          DropdownButton<int>(
-                            value: appSettings.selectedYear,
-                            dropdownColor: Theme.of(context).cardColor,
-                            items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString()))).toList(),
-                            onChanged: (val) { if (val != null) appSettings.setMonthYear(appSettings.selectedMonthIndex, val); },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text('${appSettings.getTotalBalance()} $curr', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(appSettings.translate('Quick Access'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _iconBtn(context, Icons.account_balance_wallet, 'Account', const AccountsScreen()),
-                _iconBtn(context, Icons.track_changes, 'Budget', const BudgetScreen()),
-                _iconBtn(context, Icons.category, 'Categories', const CategoriesScreen()),
-                _iconBtn(context, Icons.notifications_active, 'Reminder', const RemindersScreen()),
-                _iconBtn(context, Icons.repeat, 'Repeat', const RepeatedTransactionsScreen()),
-                _iconBtn(context, Icons.savings, 'Savings', const SavingsScreen()),
-                _iconBtn(context, Icons.shopping_cart, 'Shopping', const FundShoppingScreen()),
+                DropdownButton<int>(
+                  value: appSettings.selectedMonthIndex,
+                  dropdownColor: Theme.of(context).cardColor,
+                  items: List.generate(12, (index) => DropdownMenuItem(value: index + 1, child: Text(months[index]))),
+                  onChanged: (val) { if (val != null) appSettings.setMonthYear(val, appSettings.selectedYear); },
+                ),
+                DropdownButton<int>(
+                  value: appSettings.selectedYear,
+                  dropdownColor: Theme.of(context).cardColor,
+                  items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString()))).toList(),
+                  onChanged: (val) { if (val != null) appSettings.setMonthYear(appSettings.selectedMonthIndex, val); },
+                ),
               ],
             ),
+            const SizedBox(height: 20),
+            Text('Current Balance: ${appSettings.getTotalBalance()} $curr', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
     );
   }
-
-  Widget _iconBtn(BuildContext context, IconData icon, String label, Widget screen) {
-    return InkWell(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => screen)),
-      child: Column(
-        children: [
-          Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: const Color(0xFF1E293B), borderRadius: BorderRadius.circular(14)), child: Icon(icon, color: const Color(0xFF10B981), size: 20)),
-          const SizedBox(height: 4),
-          Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey)),
-        ],
-      ),
-    );
-  }
 }
 
-// ----------------- Loan & Debt Screen -----------------
 class LoanDebtScreen extends StatelessWidget {
   const LoanDebtScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: const Text('Loan & Debt')), body: const Center(child: Text('Loan Module')));
+    return Scaffold(appBar: AppBar(title: const Text('Loan & Debt')), body: const Center(child: Text('Loan')));
   }
 }
 
-// ----------------- All Transactions Screen -----------------
 class AllTransactionsScreen extends StatelessWidget {
   const AllTransactionsScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: const Text('All Transactions')), body: const Center(child: Text('Transactions List')));
+    return Scaffold(appBar: AppBar(title: const Text('All Transactions')), body: const Center(child: Text('Transactions')));
   }
 }
 
-// ----------------- Reports Screen (Fix #11: 12 Months & 1990-2099 Year Dropdowns) -----------------
-class ReportsScreen extends StatefulWidget {
+class ReportsScreen extends StatelessWidget {
   const ReportsScreen({super.key});
   @override
-  State<ReportsScreen> createState() => _ReportsScreenState();
-}
-class _ReportsScreenState extends State<ReportsScreen> {
-  @override
   Widget build(BuildContext context) {
-    List<String> months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    List<int> years = List.generate(110, (index) => 1990 + index);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Reports & Analysis'),
@@ -1293,200 +889,35 @@ class _ReportsScreenState extends State<ReportsScreen> {
           Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: DropdownButtonFormField<int>(
-                    value: appSettings.selectedMonthIndex,
-                    dropdownColor: Theme.of(context).cardColor,
-                    decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 10)),
-                    items: List.generate(12, (i) => DropdownMenuItem(value: i + 1, child: Text(months[i]))),
-                    onChanged: (val) { if (val != null) setState(() => appSettings.setMonthYear(val, appSettings.selectedYear)); },
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: DropdownButtonFormField<int>(
-                    value: appSettings.selectedYear,
-                    dropdownColor: Theme.of(context).cardColor,
-                    decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 10)),
-                    items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString()))).toList(),
-                    onChanged: (val) { if (val != null) setState(() => appSettings.setMonthYear(appSettings.selectedMonthIndex, val)); },
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+      body: const Center(child: Text('Reports Screen')),
     );
   }
 }
 
-// ----------------- Privacy & Security Screen (Fix #7) -----------------
-class PrivacySecurityScreen extends StatefulWidget {
+class PrivacySecurityScreen extends StatelessWidget {
   const PrivacySecurityScreen({super.key});
   @override
-  State<PrivacySecurityScreen> createState() => _PrivacySecurityScreenState();
-}
-class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
-  bool face = false, fingerprint = false, none = false, pattern = false, pin = true;
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Privacy & Security')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          SwitchListTile(title: const Text('Face Unlock'), value: face, onChanged: (v) => setState(() => face = v)),
-          SwitchListTile(title: const Text('Fingerprint Sensor'), value: fingerprint, onChanged: (v) => setState(() => fingerprint = v)),
-          SwitchListTile(title: const Text('Pattern Lock'), value: pattern, onChanged: (v) => setState(() => pattern = v)),
-          SwitchListTile(title: const Text('PIN Code Lock'), value: pin, onChanged: (v) => setState(() => pin = v)),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
-            onPressed: () {
-              appSettings.updateSecurityToggles(face: face, fingerprint: fingerprint, none: none, pattern: pattern, pin: pin);
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Security settings updated!')));
-            },
-            child: const Text('Save Changes', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('Privacy & Security')), body: const Center(child: Text('Security')));
   }
 }
 
-// ----------------- Notification Settings Screen (Fix #13) -----------------
-class NotificationSettingsScreen extends StatefulWidget {
+class NotificationSettingsScreen extends StatelessWidget {
   const NotificationSettingsScreen({super.key});
   @override
-  State<NotificationSettingsScreen> createState() => _NotificationSettingsScreenState();
-}
-class _NotificationSettingsScreenState extends State<NotificationSettingsScreen> {
-  bool daily = true, budget = true, loan = true;
-  String selectedSound = 'Default';
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Notification Settings')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          SwitchListTile(title: const Text('Daily Transaction Reminder'), value: daily, onChanged: (v) => setState(() => daily = v)),
-          SwitchListTile(title: const Text('Budget Limit Alert'), value: budget, onChanged: (v) => setState(() => budget = v)),
-          SwitchListTile(title: const Text('Loan Payment Due Alert'), value: loan, onChanged: (v) => setState(() => loan = v)),
-          const Divider(),
-          const Text('Notification Sound & Alert Tone', style: TextStyle(fontWeight: FontWeight.bold)),
-          DropdownButton<String>(
-            value: selectedSound,
-            items: ['Default', 'App Chime', 'Custom from Device Memory'].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
-            onChanged: (val) { if (val != null) setState(() => selectedSound = val); },
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
-            onPressed: () {
-              appSettings.toggleNotification('daily', daily);
-              appSettings.toggleNotification('budget', budget);
-              appSettings.toggleNotification('loan', loan);
-              appSettings.setNotificationSound(selectedSound);
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Notification settings updated!')));
-            },
-            child: const Text('Save Changes', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('Notification Settings')), body: const Center(child: Text('Notifications')));
   }
 }
 
-// ----------------- Profile & Settings Screen (Fix #12: Avatar, Gallery & Camera) -----------------
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
+
 class _ProfileScreenState extends State<ProfileScreen> {
   final ImagePicker _picker = ImagePicker();
-
-  void _showProfileImagePicker() {
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => Wrap(
-        children: [
-          ListTile(
-            leading: const Icon(Icons.camera_alt),
-            title: const Text('Take Photo with Camera'),
-            onTap: () async {
-              Navigator.pop(ctx);
-              final XFile? image = await _picker.pickImage(source: ImageSource.camera);
-              if (image != null) {
-                appSettings.updateProfile(name: appSettings.profileName, email: appSettings.profileEmail, gender: appSettings.profileGender, birthDate: appSettings.profileBirthDate, mobile: appSettings.profileMobile, imagePath: image.path);
-                setState(() {});
-              }
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.photo_library),
-            title: const Text('Choose from Gallery'),
-            onTap: () async {
-              Navigator.pop(ctx);
-              final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-              if (image != null) {
-                appSettings.updateProfile(name: appSettings.profileName, email: appSettings.profileEmail, gender: appSettings.profileGender, birthDate: appSettings.profileBirthDate, mobile: appSettings.profileMobile, imagePath: image.path);
-                setState(() {});
-              }
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showEditProfileDialog(BuildContext context) {
-    final nameC = TextEditingController(text: appSettings.profileName);
-    final emailC = TextEditingController(text: appSettings.profileEmail);
-    final genderC = TextEditingController(text: appSettings.profileGender);
-    final birthDateC = TextEditingController(text: appSettings.profileBirthDate);
-    final mobileC = TextEditingController(text: appSettings.profileMobile);
-
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Edit Profile'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(controller: nameC, decoration: const InputDecoration(labelText: 'Name')),
-            TextField(controller: emailC, decoration: const InputDecoration(labelText: 'Email')),
-            TextField(controller: genderC, decoration: const InputDecoration(labelText: 'Gender')),
-            TextField(controller: birthDateC, decoration: const InputDecoration(labelText: 'Birth Date')),
-            TextField(controller: mobileC, decoration: const InputDecoration(labelText: 'Mobile')),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
-            onPressed: () {
-              appSettings.updateProfile(name: nameC.text, email: emailC.text, gender: genderC.text, birthDate: birthDateC.text, mobile: mobileC.text);
-              Navigator.pop(ctx);
-              setState(() {});
-            },
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -1496,70 +927,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(color: const Color(0xFF10B981), borderRadius: BorderRadius.circular(16)),
-            child: Column(
+          Center(
+            child: Stack(
               children: [
-                Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 35,
-                      backgroundColor: Colors.white,
-                      backgroundImage: appSettings.profileImagePath.isNotEmpty ? FileImage(File(appSettings.profileImagePath)) : null,
-                      child: appSettings.profileImagePath.isEmpty ? const Icon(Icons.person, size: 45, color: Color(0xFF10B981)) : null,
-                    ),
-                    Positioned(
-                      bottom: 0, right: 0,
-                      child: InkWell(
-                        onTap: _showProfileImagePicker,
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black),
-                          child: const Icon(Icons.edit, size: 14, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ],
+                CircleAvatar(
+                  radius: 35,
+                  backgroundColor: Colors.white,
+                  backgroundImage: appSettings.profileImagePath.isNotEmpty ? FileImage(File(appSettings.profileImagePath)) : null,
+                  child: appSettings.profileImagePath.isEmpty ? const Icon(Icons.person, size: 45, color: Color(0xFF10B981)) : null,
                 ),
-                const SizedBox(height: 12),
-                Text(appSettings.profileName, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                Text(appSettings.profileEmail, style: const TextStyle(color: Colors.white70, fontSize: 13)),
-                const SizedBox(height: 10),
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.black26),
-                  onPressed: () => _showEditProfileDialog(context),
-                  icon: const Icon(Icons.edit, size: 16),
-                  label: const Text('Edit Profile'),
+                Positioned(
+                  bottom: 0, right: 0,
+                  child: InkWell(
+                    onTap: () async {
+                      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+                      if (image != null) {
+                        appSettings.updateProfile(name: appSettings.profileName, email: appSettings.profileEmail, gender: appSettings.profileGender, birthDate: appSettings.profileBirthDate, mobile: appSettings.profileMobile, imagePath: image.path);
+                        setState(() {});
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black),
+                      child: const Icon(Icons.edit, size: 14, color: Colors.white),
+                    ),
+                  ),
                 ),
               ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          Card(
-            color: Theme.of(context).cardColor,
-            child: ListTile(
-              leading: const Icon(Icons.lock_outline, color: Color(0xFF10B981)),
-              title: const Text('Privacy & Security'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PrivacySecurityScreen())),
-            ),
-          ),
-          Card(
-            color: Theme.of(context).cardColor,
-            child: ListTile(
-              leading: const Icon(Icons.notifications_none, color: Color(0xFF10B981)),
-              title: const Text('Notification Settings'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationSettingsScreen())),
-            ),
-          ),
-          Card(
-            color: Theme.of(context).cardColor,
-            child: ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text('Sign Out', style: TextStyle(color: Colors.red)),
-              onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const PinLockScreen())),
             ),
           ),
         ],
@@ -1568,7 +962,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-// ----------------- Main Navigation Container -----------------
 class MainHomeScreen extends StatefulWidget {
   const MainHomeScreen({super.key});
 
@@ -1591,25 +984,20 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
 
     return Scaffold(
       body: pages[_currentIndex],
-      bottomNavigationBar: AnimatedBuilder(
-        animation: appSettings,
-        builder: (context, child) {
-          return BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: (index) => setState(() => _currentIndex = index),
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: const Color(0xFF10B981),
-            unselectedItemColor: Colors.grey,
-            backgroundColor: const Color(0xFF1E293B),
-            items: [
-              BottomNavigationBarItem(icon: const Icon(Icons.home), label: appSettings.translate('Account')),
-              BottomNavigationBarItem(icon: const Icon(Icons.money), label: appSettings.translate('Loan')),
-              BottomNavigationBarItem(icon: const Icon(Icons.list_alt), label: appSettings.translate('Transactions')),
-              BottomNavigationBarItem(icon: const Icon(Icons.bar_chart), label: appSettings.translate('Report')),
-              BottomNavigationBarItem(icon: const Icon(Icons.person), label: appSettings.translate('Profile')),
-            ],
-          );
-        },
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) => setState(() => _currentIndex = index),
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: const Color(0xFF10B981),
+        unselectedItemColor: Colors.grey,
+        backgroundColor: const Color(0xFF1E293B),
+        items: [
+          BottomNavigationBarItem(icon: const Icon(Icons.home), label: appSettings.translate('Account')),
+          BottomNavigationBarItem(icon: const Icon(Icons.money), label: appSettings.translate('Loan')),
+          BottomNavigationBarItem(icon: const Icon(Icons.list_alt), label: appSettings.translate('Transactions')),
+          BottomNavigationBarItem(icon: const Icon(Icons.bar_chart), label: appSettings.translate('Report')),
+          BottomNavigationBarItem(icon: const Icon(Icons.person), label: appSettings.translate('Profile')),
+        ],
       ),
     );
   }
