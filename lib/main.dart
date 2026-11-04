@@ -362,7 +362,7 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  // Correctly typed list to prevent build errors
+  // Completely safe and correctly typed List to prevent compiler build errors
   final List> notifications = [
     {"title": "Balance Alert", "body": "Your default account 'Cash In Hand' balance is low.", "isRead": false},
     {"title": "Loan Payment Due", "body": "Tomorrow is the settlement date for Rafiqul Islam.", "isRead": true},
@@ -568,14 +568,64 @@ class _SipCalculatorScreenState extends State<SipCalculatorScreen> {
   }
 }
 
-// Placeholders
-class LoanScreen extends StatelessWidget { const LoanScreen({Key? key}) : super(key: key); @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text("Loan & Debt Screen"))); }
-class TransactionsScreen extends StatelessWidget { const TransactionsScreen({Key? key}) : super(key: key); @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text("Transactions Screen"))); }
-class ReportScreen extends StatelessWidget { const ReportScreen({Key? key}) : super(key: key); @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text("Reports & Analysis"))); }
-class GoalsScreen extends StatelessWidget { const GoalsScreen({Key? key}) : super(key: key); @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text("Financial Goals Screen"))); }
-class EmiCalculatorScreen extends StatelessWidget { const EmiCalculatorScreen({Key? key}) : super(key: key); @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text("EMI Calculator"))); }
-class InterestCalculatorScreen extends StatelessWidget { const InterestCalculatorScreen({Key? key}) : super(key: key); @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text("Interest Calculator"))); }
-class TaxCalculatorScreen extends StatelessWidget { const TaxCalculatorScreen({Key? key}) : super(key: key); @override Widget build(BuildContext context) => const Scaffold(body: Text("Tax Calculator"))); }
+// ---------------------------------------------------------------------------
+// PLACEHOLDER SCREENS (Fully corrected syntax)
+// ---------------------------------------------------------------------------
+class LoanScreen extends StatelessWidget { 
+  const LoanScreen({Key? key}) : super(key: key); 
+  @override 
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text("Loan & Debt Screen"))); 
+  }
+}
+
+class TransactionsScreen extends StatelessWidget { 
+  const TransactionsScreen({Key? key}) : super(key: key); 
+  @override 
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text("Transactions Screen"))); 
+  }
+}
+
+class ReportScreen extends StatelessWidget { 
+  const ReportScreen({Key? key}) : super(key: key); 
+  @override 
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text("Reports & Analysis"))); 
+  }
+}
+
+class GoalsScreen extends StatelessWidget { 
+  const GoalsScreen({Key? key}) : super(key: key); 
+  @override 
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text("Financial Goals Screen"))); 
+  }
+}
+
+class EmiCalculatorScreen extends StatelessWidget { 
+  const EmiCalculatorScreen({Key? key}) : super(key: key); 
+  @override 
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text("EMI Calculator"))); 
+  }
+}
+
+class InterestCalculatorScreen extends StatelessWidget { 
+  const InterestCalculatorScreen({Key? key}) : super(key: key); 
+  @override 
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text("Interest Calculator"))); 
+  }
+}
+
+class TaxCalculatorScreen extends StatelessWidget { 
+  const TaxCalculatorScreen({Key? key}) : super(key: key); 
+  @override 
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text("Tax Calculator"))); 
+  }
+}
 
 // ---------------------------------------------------------------------------
 // 7. PROFILE, SETTINGS & THEME CUSTOMIZATION
