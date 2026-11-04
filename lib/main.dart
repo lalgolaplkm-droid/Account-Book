@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 // ---------------------------------------------------------------------------
-// MAIN ENTRY POINT & APP LOCALIZATION/THEME STATE
+// MAIN ENTRY POINT & APP STATE
 // ---------------------------------------------------------------------------
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,9 +17,8 @@ class AdvancedFinanceApp extends StatefulWidget {
 }
 
 class _AdvancedFinanceAppState extends State<AdvancedFinanceApp> {
-  // Theme & Language State (Default Language is set to English)
   ThemeMode _themeMode = ThemeMode.dark;
-  String _currentLanguage = 'English'; // Options: English (Default), Bangla, Arabic, System Default
+  String _currentLanguage = 'English';
   Color _primaryAccentColor = Colors.teal;
 
   void updateTheme(ThemeMode mode) => setState(() => _themeMode = mode);
@@ -29,7 +28,7 @@ class _AdvancedFinanceAppState extends State<AdvancedFinanceApp> {
   void resetToDefaults() {
     setState(() {
       _themeMode = ThemeMode.dark;
-      _currentLanguage = 'English'; // Resets to English as default
+      _currentLanguage = 'English';
       _primaryAccentColor = Colors.teal;
     });
   }
@@ -58,7 +57,7 @@ class _AdvancedFinanceAppState extends State<AdvancedFinanceApp> {
 }
 
 // ---------------------------------------------------------------------------
-// 1. SECURITY & PIN LOCK SYSTEM (Proprietary Architecture)
+// 1. SECURITY & PIN LOCK SYSTEM
 // ---------------------------------------------------------------------------
 class LockScreenWrapper extends StatefulWidget {
   const LockScreenWrapper({Key? key}) : super(key: key);
@@ -69,7 +68,7 @@ class LockScreenWrapper extends StatefulWidget {
 
 class _LockScreenWrapperState extends State<LockScreenWrapper> {
   bool _isUnlocked = false;
-  final String _correctPin = "1234"; // Stored PIN Code
+  final String _correctPin = "1234";
   String _enteredPin = "";
 
   void _verifyPin(String digit) {
@@ -302,7 +301,7 @@ class HomeScreen extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// 4. SIDEBAR (DRAWER) WITH GOALS, FINANCIAL CALCULATORS & SETTINGS
+// 4. SIDEBAR (DRAWER)
 // ---------------------------------------------------------------------------
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -346,7 +345,7 @@ class AppDrawer extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// 5. ADVANCED NOTIFICATION CENTER (Gmail Style: Read/Unread, Delete All, Selective)
+// 5. GMAIL-STYLE ADVANCED NOTIFICATION CENTER
 // ---------------------------------------------------------------------------
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({Key? key}) : super(key: key);
@@ -393,16 +392,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
               itemBuilder: (context, index) {
                 final item = notifications[index];
                 return ListTile(
-                  leading: Icon(Icons.notifications, color: item['isRead'] ? Colors.grey : Colors.teal),
-                  title: Text(item['title'], style: TextStyle(fontWeight: item['isRead'] ? FontWeight.normal : FontWeight.bold)),
-                  subtitle: Text(item['body']),
+                  leading: Icon(Icons.notifications, color: (item['isRead'] as bool) ? Colors.grey : Colors.teal),
+                  title: Text(item['title'] as String, style: TextStyle(fontWeight: (item['isRead'] as bool) ? FontWeight.normal : FontWeight.bold)),
+                  subtitle: Text(item['body'] as String),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete, color: Colors.redAccent),
                     onPressed: () => setState(() => notifications.removeAt(index)),
                   ),
                   onTap: () {
                     setState(() {
-                      item['isRead'] = !item['isRead'];
+                      item['isRead'] = !(item['isRead'] as bool);
                     });
                   },
                 );
@@ -413,7 +412,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
 }
 
 // ---------------------------------------------------------------------------
-// 6. CALCULATORS HUB (General Calculator + Financial with +/- Buttons)
+// 6. CALCULATORS HUB (General + Financial with +/- Controls)
 // ---------------------------------------------------------------------------
 class FinancialCalculatorsHub extends StatelessWidget {
   const FinancialCalculatorsHub({Key? key}) : super(key: key);
@@ -447,7 +446,6 @@ class FinancialCalculatorsHub extends StatelessWidget {
   }
 }
 
-// General Calculator Screen
 class GeneralCalculatorScreen extends StatefulWidget {
   const GeneralCalculatorScreen({Key? key}) : super(key: key);
 
@@ -506,7 +504,6 @@ class _GeneralCalculatorScreenState extends State<GeneralCalculatorScreen> {
   }
 }
 
-// SIP Calculator with Plus/Minus Touch Controls
 class SipCalculatorScreen extends StatefulWidget {
   const SipCalculatorScreen({Key? key}) : super(key: key);
 
@@ -552,7 +549,7 @@ class _SipCalculatorScreenState extends State<SipCalculatorScreen> {
   }
 }
 
-// Screen Placeholders
+// Placeholders
 class LoanScreen extends StatelessWidget { const LoanScreen({Key? key}) : super(key: key); @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text("Loan & Debt Screen"))); }
 class TransactionsScreen extends StatelessWidget { const TransactionsScreen({Key? key}) : super(key: key); @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text("Transactions Screen"))); }
 class ReportScreen extends StatelessWidget { const ReportScreen({Key? key}) : super(key: key); @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text("Reports & Analysis"))); }
@@ -609,9 +606,7 @@ class SettingsScreen extends StatelessWidget {
             title: const Text("Language Selection"),
             subtitle: const Text("English (Default) / বাংলা / العربية / System Default"),
             leading: const Icon(Icons.language),
-            onTap: () {
-              // Popup dialog for selecting language
-            },
+            onTap: () {},
           ),
           const Divider(),
           const Text("App Theme", style: TextStyle(fontWeight: FontWeight.bold)),
