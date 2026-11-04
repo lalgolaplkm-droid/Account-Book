@@ -3,12 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await appSettings.initPrefs();
-  runApp(const AccountBookApp());
-}
-
 // ----------------- Models -----------------
 class TransactionItem {
   final String id;
@@ -701,3 +695,873 @@ class AppSettingsNotifier extends ChangeNotifier {
   void removeRepeatedTransaction(int index) {
     repeatedTransactions.removeAt(index);
     notifyListeners();
+  }
+
+  void addShoppingItem(String name, double amount) {
+    if (name.isNotEmpty) {
+      shoppingList.add(ShoppingItem(name: name, amount: amount));
+      shoppingList.sort((a, b) => a.name.compareTo(b.name));
+      notifyListeners();
+    }
+  }
+
+  void updateShoppingItem(int index, String name, double amount) {
+    if (name.isNotEmpty) {
+      shoppingList[index].name = name;
+      shoppingList[index].amount = amount;
+      shoppingList.sort((a, b) => a.name.compareTo(b.name));
+      notifyListeners();
+    }
+  }
+
+  void removeShoppingItem(int index) {
+    shoppingList.removeAt(index);
+    notifyListeners();
+  }
+
+  void toggleShoppingCheck(int index) {
+    shoppingList[index].isChecked = !shoppingList[index].isChecked;
+    if (shoppingList[index].isChecked && shoppingList[index].amount > 0) {
+      String defaultAcc = accounts.firstWhere((acc) => acc.isDefault, orElse: () => accounts[0]).name;
+      transactions.insert(0, TransactionItem(
+        id: DateTime.now().toString(),
+        type: 'Expense',
+        account: defaultAcc,
+        category: categories.first,
+        amount: shoppingList[index].amount,
+        description: 'Shopping: ${shoppingList[index].name}',
+        date: DateTime.now(),
+      ));
+    }
+    notifyListeners();
+  }
+
+  void addReminder(String title, double amount, String dueDate) {
+    if (title.isNotEmpty) {
+      reminders.add(ReminderModel(title: title, amount: amount, dueDate: dueDate));
+      reminders.sort((a, b) => a.title.compareTo(b.title));
+      notifyListeners();
+    }
+  }
+
+  void updateReminder(int index, String title, double amount, String dueDate) {
+    reminders[index] = ReminderModel(title: title, amount: amount, dueDate: dueDate);
+    reminders.sort((a, b) => a.title.compareTo(b.title));
+    notifyListeners();
+  }
+
+  void removeReminder(int index) {
+    reminders.removeAt(index);
+    notifyListeners();
+  }
+}
+
+// Global appSettings instance declared BEFORE main()
+final appSettings = AppSettingsNotifier();
+
+// ----------------- App Entry Point -----------------
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await appSettings.initPrefs();
+  runApp(const AccountBookApp());
+}
+
+class AccountBookApp extends StatelessWidget {
+  const AccountBookApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: appSettings,
+      builder: (context, child) {
+        return MaterialApp(
+          title: appSettings.getAppTitle(),
+          debugShowCheckedModeBanner: false,
+          themeMode: appSettings.themeMode,
+          theme: ThemeData(
+            brightness: Brightness.light,
+            scaffoldBackgroundColor: const Color(0xFFF3F4F6),
+            primaryColor: const Color(0xFF38BDF8),
+            cardColor: Colors.white,
+            appBarTheme: const AppBarTheme(backgroundColor: Colors.white, foregroundColor: Colors.black),
+            dialogTheme: const DialogTheme(backgroundColor: Colors.white, surfaceTintColor: Colors.white),
+            bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.white, surfaceTintColor: Colors.white),
+          ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            scaffoldBackgroundColor: const Color(0xFF0F172A),
+            primaryColor: const Color(0xFF10B981),
+            cardColor: const Color(0xFF1E293B),
+            appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF1E293B), foregroundColor: Colors.white),
+            dialogTheme: const DialogTheme(backgroundColor: Color(0xFF1E293B), surfaceTintColor: Color(0xFF1E293B)),
+            bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Color(0xFF1E293B), surfaceTintColor: Color(0xFF1E293B)),
+          ),
+          home: const PinLockScreen(),
+        );
+      },
+    );
+  }
+}
+
+// ----------------- Standard Menus Helpers -----------------
+void showStandardDownloadMenu(BuildContext context, Offset offset) {
+  String lang = appSettings.language;
+  String previewText = lang == 'Bangla' ? 'প্রিভিউ' : (lang == 'Arabic' ? 'معاينة' : 'Preview');
+  String pdfText = lang == 'Bangla' ? 'পিডিএফ ডাউনলোড' : (lang == 'Arabic' ? 'تحميل كـ PDF' : 'Download as PDF');
+  String excelText = lang == 'Bangla' ? 'এক্সেল ডাউনলোড' : (lang == 'Arabic' ? 'تحميل كـ Excel' : 'Download as Excel');
+
+  showMenu(
+    context: context,
+    position: RelativeRect.fromLTRB(offset.dx, offset.dy + 40, 20, 0),
+    items: [
+      PopupMenuItem(
+        value: 'preview',
+        child: Row(
+          children: [
+            const Icon(Icons.visibility, color: Colors.blue, size: 20),
+            const SizedBox(width: 8),
+            Text(previewText),
+          ],
+        ),
+      ),
+      PopupMenuItem(
+        value: 'pdf',
+        child: Row(
+          children: [
+            const Icon(Icons.picture_as_pdf, color: Colors.red, size: 20),
+            const SizedBox(width: 8),
+            Text(pdfText),
+          ],
+        ),
+      ),
+      PopupMenuItem(
+        value: 'excel',
+        child: Row(
+          children: [
+            const Icon(Icons.table_chart, color: Colors.green, size: 20),
+            const SizedBox(width: 8),
+            Text(excelText),
+          ],
+        ),
+      ),
+    ],
+  ).then((value) {
+    if (value != null) {
+      if (value == 'preview') {
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(lang == 'Bangla' ? 'রিপোর্ট প্রিভিউ' : (lang == 'Arabic' ? 'معاينة التقرير' : 'Report Preview')),
+            content: Text(lang == 'Bangla' ? 'এখানে আপনার বর্তমান হিসাবের সংক্ষিপ্ত প্রিভিউ দেখানো হচ্ছে।' : (lang == 'Arabic' ? 'هذا معاينة موجزة لحسابك الحالي.' : 'Here is a preview of your financial summary.')),
+            actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK'))],
+          ),
+        );
+      } else {
+        String formatType = value.toUpperCase();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Report saved to device storage as $formatType successfully!')),
+        );
+      }
+    }
+  });
+}
+
+void showStandardSortMenu(BuildContext context, Offset offset, Function(String) onSelected) {
+  showMenu(
+    context: context,
+    position: RelativeRect.fromLTRB(offset.dx, offset.dy + 40, 20, 0),
+    items: const [
+      PopupMenuItem(value: 'Date New-Old', child: Text('Sort by Date (Newest to Oldest)')),
+      PopupMenuItem(value: 'Date Old-New', child: Text('Sort by Date (Oldest to Newest)')),
+      PopupMenuItem(value: 'Name A-Z', child: Text('Sort by Name (A to Z)')),
+      PopupMenuItem(value: 'Name Z-A', child: Text('Sort by Name (Z to A)')),
+      PopupMenuItem(value: 'Number Large-Small', child: Text('Sort by Number (Large to Small)')),
+      PopupMenuItem(value: 'Number Small-Large', child: Text('Sort by Number (Small to Large)')),
+    ],
+  ).then((value) {
+    if (value != null) {
+      onSelected(value);
+    }
+  });
+}
+
+void showLocalizedDeleteDialog({
+  required BuildContext context,
+  required bool isImportant,
+  required String itemName,
+  required VoidCallback onDeleteConfirmed,
+}) {
+  String lang = appSettings.language;
+  String title1 = lang == 'Bangla' ? 'নিশ্চিতকরণ' : (lang == 'Arabic' ? 'تأكيد' : 'Confirmation');
+  String msg1 = lang == 'Bangla' 
+      ? 'আপনি কি আসলেই "$itemName" ডিলিট করতে চান?' 
+      : (lang == 'Arabic' ? 'هل أنت متأكد أنك تريد حذف "$itemName"؟' : 'Are you sure you want to delete "$itemName"?');
+  
+  String warningMsg = lang == 'Bangla'
+      ? 'সতর্কতা: এটি অন্য কোনো রেকর্ডের সাথে জড়িত। ডিলিট করলে ডাটা প্রভাবিত হতে পারে। নিশ্চিত?'
+      : (lang == 'Arabic' ? 'تحذير: هذا مرتبط بسجل آخر. هل أنت متأكد؟' : 'Warning: This is linked with other records. Are you sure?');
+  
+  String yesText = lang == 'Bangla' ? 'হ্যাঁ' : (lang == 'Arabic' ? 'نعم' : 'Yes');
+  String noText = lang == 'Bangla' ? 'না' : (lang == 'Arabic' ? 'لا' : 'No');
+
+  if (!isImportant) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(title1),
+        content: Text(msg1),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(noText)),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () {
+              Navigator.pop(ctx);
+              onDeleteConfirmed();
+            },
+            child: Text(yesText, style: const TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  } else {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(title1),
+        content: Text(warningMsg),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(noText)),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+            onPressed: () {
+              Navigator.pop(ctx);
+              showDialog(
+                context: context,
+                builder: (ctx2) => AlertDialog(
+                  title: Text(title1),
+                  content: Text(msg1),
+                  actions: [
+                    TextButton(onPressed: () => Navigator.pop(ctx2), child: Text(noText)),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                      onPressed: () {
+                        Navigator.pop(ctx2);
+                        onDeleteConfirmed();
+                      },
+                      child: Text(yesText, style: const TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
+              );
+            },
+            child: Text(yesText, style: const TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ----------------- Gmail-Style Notification Center Screen -----------------
+class NotificationScreen extends StatefulWidget {
+  const NotificationScreen({super.key});
+
+  @override
+  State<NotificationScreen> createState() => _NotificationScreenState();
+}
+
+class _NotificationScreenState extends State<NotificationScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Notification Center"),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'read_all') {
+                appSettings.markAllNotificationsRead();
+              } else if (value == 'unread_all') {
+                appSettings.markAllNotificationsUnread();
+              } else if (value == 'delete_all') {
+                appSettings.clearAllNotifications();
+              }
+              setState(() {});
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(value: 'read_all', child: Text('Mark all as read')),
+              const PopupMenuItem(value: 'unread_all', child: Text('Mark all as unread')),
+              const PopupMenuItem(value: 'delete_all', child: Text('Delete all')),
+            ],
+          )
+        ],
+      ),
+      body: appSettings.notifications.isEmpty
+          ? const Center(child: Text("No Notifications Available"))
+          : ListView.builder(
+              itemCount: appSettings.notifications.length,
+              itemBuilder: (context, index) {
+                final item = appSettings.notifications[index];
+                return ListTile(
+                  leading: Icon(Icons.notifications, color: item.isRead ? Colors.grey : const Color(0xFF10B981)),
+                  title: Text(item.title, style: TextStyle(fontWeight: item.isRead ? FontWeight.normal : FontWeight.bold)),
+                  subtitle: Text(item.body),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.redAccent),
+                    onPressed: () => setState(() => appSettings.notifications.removeAt(index)),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      item.isRead = !item.isRead;
+                    });
+                  },
+                );
+              },
+            ),
+    );
+  }
+}
+
+// ----------------- Financial Calculators Hub & Modules -----------------
+class FinancialCalculatorsHub extends StatelessWidget {
+  const FinancialCalculatorsHub({super.key});
+
+  Widget _calcTile(BuildContext context, String title, Widget screen) {
+    return Card(
+      color: Theme.of(context).cardColor,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ListTile(
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => screen)),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Financial Calculators")),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          _calcTile(context, "General Calculator", const GeneralCalculatorScreen()),
+          _calcTile(context, "EMI Calculator", const EmiCalculatorScreen()),
+          _calcTile(context, "Interest Calculator", const InterestCalculatorScreen()),
+          _calcTile(context, "SIP Calculator", const SipCalculatorScreen()),
+          _calcTile(context, "Tax Calculator", const TaxCalculatorScreen()),
+        ],
+      ),
+    );
+  }
+}
+
+class GeneralCalculatorScreen extends StatefulWidget {
+  const GeneralCalculatorScreen({super.key});
+
+  @override
+  State<GeneralCalculatorScreen> createState() => _GeneralCalculatorScreenState();
+}
+
+class _GeneralCalculatorScreenState extends State<GeneralCalculatorScreen> {
+  String _output = "0";
+  
+  void _buttonPressed(String val) {
+    setState(() {
+      if (_output == "0") {
+        _output = val;
+      } else {
+        _output += val;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("General Calculator")),
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              alignment: Alignment.bottomRight,
+              padding: const EdgeInsets.all(24),
+              child: Text(_output, style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold)),
+            ),
+          ),
+          Row(children: [_btn("7"), _btn("8"), _btn("9"), _btn("/")]),
+          Row(children: [_btn("4"), _btn("5"), _btn("6"), _btn("*")]),
+          Row(children: [_btn("1"), _btn("2"), _btn("3"), _btn("-")]),
+          Row(children: [_btn("0"), _btn("C"), _btn("="), _btn("+")]),
+        ],
+      ),
+    );
+  }
+
+  Widget _btn(String label) {
+    return Expanded(
+      child: OutlinedButton(
+        onPressed: () {
+          if (label == "C") {
+            setState(() => _output = "0");
+          } else {
+            _buttonPressed(label);
+          }
+        },
+        child: Text(label, style: const TextStyle(fontSize: 24)),
+      ),
+    );
+  }
+}
+
+class SipCalculatorScreen extends StatefulWidget {
+  const SipCalculatorScreen({super.key});
+
+  @override
+  State<SipCalculatorScreen> createState() => _SipCalculatorScreenState();
+}
+
+class _SipCalculatorScreenState extends State<SipCalculatorScreen> {
+  double monthlyInvestment = 5000;
+  double returnRate = 12.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("SIP Calculator")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Monthly Investment: ৳ ${monthlyInvestment.toStringAsFixed(0)}"),
+            Slider(value: monthlyInvestment, min: 500, max: 50000, divisions: 100, onChanged: (val) => setState(() => monthlyInvestment = val)),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Return Rate (%): ${returnRate.toStringAsFixed(1)}"),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.remove_circle, color: Colors.redAccent), 
+                      onPressed: () => setState(() => returnRate = (returnRate > 1) ? returnRate - 0.5 : 1),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.add_circle, color: Color(0xFF10B981)), 
+                      onPressed: () => setState(() => returnRate += 0.5),
+                    ),
+                  ],
+                )
+              ],
+            ),
+            Slider(value: returnRate, min: 1, max: 30, onChanged: (val) => setState(() => returnRate = val)),
+            const SizedBox(height: 20),
+            ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)), onPressed: () {}, child: const Text("Calculate SIP", style: TextStyle(color: Colors.white)))
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class EmiCalculatorScreen extends StatelessWidget {
+  const EmiCalculatorScreen({super.key});
+  @override
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('EMI Calculator')), body: const Center(child: Text('EMI Calculator Module')));
+}
+
+class InterestCalculatorScreen extends StatelessWidget {
+  const InterestCalculatorScreen({super.key});
+  @override
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Interest Calculator')), body: const Center(child: Text('Interest Calculator Module')));
+}
+
+class TaxCalculatorScreen extends StatelessWidget {
+  const TaxCalculatorScreen({super.key});
+  @override
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Tax Calculator')), body: const Center(child: Text('Tax Calculator Module')));
+}
+
+class GoalsScreen extends StatelessWidget {
+  const GoalsScreen({super.key});
+  @override
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Financial Goals')), body: const Center(child: Text('Goals Screen Module')));
+}
+
+// ----------------- Dashboard Analytics Screen -----------------
+class DashboardAnalyticsScreen extends StatelessWidget {
+  const DashboardAnalyticsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    String curr = appSettings.currency;
+    double income = appSettings.getTotalIncome();
+    double expense = appSettings.getTotalExpense();
+    double balance = appSettings.getTotalBalance();
+    double totalGiven = appSettings.getTotalGiven();
+    double totalTaken = appSettings.getTotalTaken();
+
+    return Scaffold(
+      appBar: AppBar(title: Text(appSettings.translate('Dashboard Analytics'))),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Financial Overview Summary', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Total Balance', style: TextStyle(color: Colors.grey)),
+                      Text('$balance $curr', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: balance >= 0 ? const Color(0xFF10B981) : Colors.redAccent)),
+                    ],
+                  ),
+                  const Divider(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Total Income', style: TextStyle(color: Colors.grey)),
+                      Text('$income $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Total Expense', style: TextStyle(color: Colors.grey)),
+                      Text('$expense $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text('Loan & Debt Overview', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Total Loan Given', style: TextStyle(color: Colors.grey)),
+                      Text('$totalGiven $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Total Loan Taken', style: TextStyle(color: Colors.grey)),
+                      Text('$totalTaken $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ----------------- App Drawer Widget -----------------
+class AppDrawer extends StatelessWidget {
+  const AppDrawer({super.key});
+
+  void _showThemeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setStateDialog) {
+            return AlertDialog(
+              title: Text(appSettings.translate('Theme')),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RadioListTile<ThemeMode>(
+                    title: const Text('Dark'),
+                    value: ThemeMode.dark,
+                    groupValue: appSettings.themeMode,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setTheme(val);
+                        setStateDialog(() {});
+                      }
+                    },
+                  ),
+                  RadioListTile<ThemeMode>(
+                    title: const Text('Light'),
+                    value: ThemeMode.light,
+                    groupValue: appSettings.themeMode,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setTheme(val);
+                        setStateDialog(() {});
+                      }
+                    },
+                  ),
+                  RadioListTile<ThemeMode>(
+                    title: const Text('System Default'),
+                    value: ThemeMode.system,
+                    groupValue: appSettings.themeMode,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setTheme(val);
+                        setStateDialog(() {});
+                      }
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setStateDialog) {
+            return AlertDialog(
+              title: Text(appSettings.translate('Language')),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RadioListTile<String>(
+                    title: const Text('Arabic (العربية)'),
+                    value: 'Arabic',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage(val);
+                        setStateDialog(() {});
+                      }
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: const Text('Bangla (বাংলা)'),
+                    value: 'Bangla',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage(val);
+                        setStateDialog(() {});
+                      }
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: const Text('English (Default)'),
+                    value: 'English',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage(val);
+                        setStateDialog(() {});
+                      }
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          UserAccountsDrawerHeader(
+            decoration: const BoxDecoration(color: Color(0xFF10B981)),
+            accountName: Text(appSettings.profileName, style: const TextStyle(fontWeight: FontWeight.bold)),
+            accountEmail: Text(appSettings.profileEmail),
+            currentAccountPicture: CircleAvatar(
+              backgroundColor: Colors.white,
+              backgroundImage: appSettings.profileImagePath.isNotEmpty ? FileImage(File(appSettings.profileImagePath)) : null,
+              child: appSettings.profileImagePath.isEmpty ? const Icon(Icons.person, size: 40, color: Color(0xFF10B981)) : null,
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.dashboard),
+            title: Text(appSettings.translate('Dashboard Analytics')),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const DashboardAnalyticsScreen()));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.track_changes),
+            title: const Text('Goals'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const GoalsScreen()));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.calculate),
+            title: const Text('Financial Calculators'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const FinancialCalculatorsHub()));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.category),
+            title: Text(appSettings.translate('Categories')),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const CategoriesScreen()));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.account_balance),
+            title: Text(appSettings.translate('Accounts')),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountsScreen()));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.palette),
+            title: Text(appSettings.translate('Theme')),
+            onTap: () {
+              Navigator.pop(context);
+              _showThemeDialog(context);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.language),
+            title: Text(appSettings.translate('Language')),
+            onTap: () {
+              Navigator.pop(context);
+              _showLanguageDialog(context);
+            },
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.info),
+            title: Text(appSettings.translate('About App')),
+            onTap: () {
+              Navigator.pop(context);
+              showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: Text(appSettings.translate('About App')),
+                  content: const Text('Account Book v1.0.0\nDeveloped for daily financial ledger & transaction management.'),
+                  actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close'))],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ----------------- Quick Access Interactive Screens -----------------
+
+class AccountsScreen extends StatefulWidget {
+  const AccountsScreen({super.key});
+  @override
+  State<AccountsScreen> createState() => _AccountsScreenState();
+}
+class _AccountsScreenState extends State<AccountsScreen> {
+  void _showAddEditDialog({int? index, AccountModel? account}) {
+    final nameC = TextEditingController(text: account?.name ?? '');
+    final typeC = TextEditingController(text: account?.type ?? 'Bank');
+    final detC = TextEditingController(text: account?.details ?? '');
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(index == null ? 'Add Account' : 'Edit Account'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(controller: nameC, decoration: const InputDecoration(labelText: 'Account Name', border: OutlineInputBorder())),
+            const SizedBox(height: 10),
+            TextField(controller: typeC, decoration: const InputDecoration(labelText: 'Type', border: OutlineInputBorder())),
+            const SizedBox(height: 10),
+            TextField(controller: detC, decoration: const InputDecoration(labelText: 'Details / Account Number', border: OutlineInputBorder())),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
+            onPressed: () {
+              if (nameC.text.isNotEmpty) {
+                if (index == null) {
+                  appSettings.addAccount(nameC.text, typeC.text, detC.text);
+                } else {
+                  appSettings.updateAccount(index, nameC.text, typeC.text, detC.text);
+                }
+                Navigator.pop(ctx);
+                setState(() {});
+              }
+            },
+            child: const Text('Save', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(appSettings.translate('Accounts')),
+        actions: [
+          Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
+          Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView.builder(
+          itemCount: appSettings.accounts.length,
+          itemBuilder: (context, index) {
+            final acc = appSettings.accounts[index];
+            return Card(
+              color: Theme.of(context).cardColor,
+              margin: const EdgeInsets.only(bottom: 10),
+              child: ListTile(
+                onTap: () {
+                  appSettings.setDefaultAccount(index);
+                  setState(() {});
+                },
+                leading: CircleAvatar(
+                  backgroundColor: acc.isDefault ? const Color(0xFF10B981).withOpacity(0.
