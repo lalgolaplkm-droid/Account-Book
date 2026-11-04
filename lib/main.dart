@@ -272,7 +272,7 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   Text("Current Balance", style: TextStyle(color: Colors.white70)),
                   SizedBox(height: 8),
-                  Text("৳ 44,650.0", style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
+                  Text("\$ 44,650.0", style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
@@ -362,7 +362,7 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  // Completely safe and correctly typed List to prevent compiler build errors
+  // Properly declared type to eliminate build errors completely
   final List> notifications = [
     {"title": "Balance Alert", "body": "Your default account 'Cash In Hand' balance is low.", "isRead": false},
     {"title": "Loan Payment Due", "body": "Tomorrow is the settlement date for Rafiqul Islam.", "isRead": true},
@@ -543,7 +543,7 @@ class _SipCalculatorScreenState extends State<SipCalculatorScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Monthly Investment: ৳ ${monthlyInvestment.toStringAsFixed(0)}"),
+            Text("Monthly Investment: \$ ${monthlyInvestment.toStringAsFixed(0)}"),
             Slider(value: monthlyInvestment, min: 500, max: 50000, divisions: 100, onChanged: (val) => setState(() => monthlyInvestment = val)),
             const SizedBox(height: 20),
             Row(
@@ -569,7 +569,7 @@ class _SipCalculatorScreenState extends State<SipCalculatorScreen> {
 }
 
 // ---------------------------------------------------------------------------
-// PLACEHOLDER SCREENS (Fully corrected syntax)
+// PLACEHOLDER SCREENS
 // ---------------------------------------------------------------------------
 class LoanScreen extends StatelessWidget { 
   const LoanScreen({Key? key}) : super(key: key); 
