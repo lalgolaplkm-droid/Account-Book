@@ -650,7 +650,7 @@ class NotificationSettingsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("Notification & Sound Settings")),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: constပြင်(16),
         children: [
           SwitchListTile(
             title: const Text("Notification Sound"),
