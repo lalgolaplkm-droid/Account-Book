@@ -355,14 +355,25 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  List> notifications = [
+  // Explicitly defined Map type to prevent type casting build errors
+  final List> notifications = [
     {"title": "Balance Alert", "body": "Your default account 'Cash In Hand' balance is low.", "isRead": false},
     {"title": "Loan Payment Due", "body": "Tomorrow is the settlement date for Rafiqul Islam.", "isRead": true},
     {"title": "Budget Limit Alert", "body": "Expenses have reached near your monthly budget limit.", "isRead": false},
   ];
 
-  void _markAllAsRead() => setState(() => notifications.forEach((n) => n['isRead'] = true));
-  void _markAllAsUnread() => setState(() => notifications.forEach((n) => n['isRead'] = false));
+  void _markAllAsRead() => setState(() {
+        for (var n in notifications) {
+          n['isRead'] = true;
+        }
+      });
+
+  void _markAllAsUnread() => setState(() {
+        for (var n in notifications) {
+          n['isRead'] = false;
+        }
+      });
+
   void _deleteAll() => setState(() => notifications.clear());
 
   @override
@@ -391,9 +402,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
               itemCount: notifications.length,
               itemBuilder: (context, index) {
                 final item = notifications[index];
+                final bool isRead = item['isRead'] as bool;
                 return ListTile(
-                  leading: Icon(Icons.notifications, color: (item['isRead'] as bool) ? Colors.grey : Colors.teal),
-                  title: Text(item['title'] as String, style: TextStyle(fontWeight: (item['isRead'] as bool) ? FontWeight.normal : FontWeight.bold)),
+                  leading: Icon(Icons.notifications, color: isRead ? Colors.grey : Colors.teal),
+                  title: Text(item['title'] as String, style: TextStyle(fontWeight: isRead ? FontWeight.normal : FontWeight.bold)),
                   subtitle: Text(item['body'] as String),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete, color: Colors.redAccent),
@@ -401,7 +413,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   ),
                   onTap: () {
                     setState(() {
-                      item['isRead'] = !(item['isRead'] as bool);
+                      item['isRead'] = !isRead;
                     });
                   },
                 );
@@ -604,7 +616,7 @@ class SettingsScreen extends StatelessWidget {
           const Text("App Language", style: TextStyle(fontWeight: FontWeight.bold)),
           ListTile(
             title: const Text("Language Selection"),
-            subtitle: const Text("English (Default) / বাংলা / العربية / System Default"),
+            subtitle: const Text("English (Default) / Bangla / Arabic / System Default"),
             leading: const Icon(Icons.language),
             onTap: () {},
           ),
