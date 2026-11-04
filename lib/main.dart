@@ -362,8 +362,8 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  // Properly declared type to eliminate build errors completely
-  final List> notifications = [
+  // Fully explicit type definition to avoid compiler type errors
+  List> notifications = [
     {"title": "Balance Alert", "body": "Your default account 'Cash In Hand' balance is low.", "isRead": false},
     {"title": "Loan Payment Due", "body": "Tomorrow is the settlement date for Rafiqul Islam.", "isRead": true},
     {"title": "Budget Limit Alert", "body": "Expenses have reached near your monthly budget limit.", "isRead": false},
