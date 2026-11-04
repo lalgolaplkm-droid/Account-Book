@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+Import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -12,22 +12,22 @@ void main() async {
 
 // ----------------- Models -----------------
 class TransactionItem {
-  final String id;
-  final String type;
+  Final String id;
+  Final String type;
   String account;
   String category;
-  double amount;
+  Double amount;
   String description;
   DateTime date;
 
   TransactionItem({
-    required this.id,
-    required this.type,
-    required this.account,
-    required this.category,
-    required this.amount,
-    required this.description,
-    required this.date,
+    Required this.id,
+    Required this.type,
+    Required this.account,
+    Required this.category,
+    Required this.amount,
+    Required this.description,
+    Required this.date,
   });
 
   Map<String, dynamic> toJson() => {
@@ -40,7 +40,7 @@ class TransactionItem {
     'date': date.toIso8601String(),
   };
 
-  factory TransactionItem.fromJson(Map<String, dynamic> json) => TransactionItem(
+  Factory TransactionItem.fromJson(Map<String, dynamic> json) => TransactionItem(
     id: json['id'],
     type: json['type'],
     account: json['account'],
@@ -52,20 +52,20 @@ class TransactionItem {
 }
 
 class LoanItem {
-  final String id;
+  Final String id;
   String personName;
-  double amount;
+  Double amount;
   String type;
   DateTime date;
-  bool isPaid;
+  Bool isPaid;
 
   LoanItem({
-    required this.id,
-    required this.personName,
-    required this.amount,
-    required this.type,
-    required this.date,
-    this.isPaid = false,
+    Required this.id,
+    Required this.personName,
+    Required this.amount,
+    Required this.type,
+    Required this.date,
+    This.isPaid = false,
   });
 
   Map<String, dynamic> toJson() => {
@@ -77,7 +77,7 @@ class LoanItem {
     'isPaid': isPaid,
   };
 
-  factory LoanItem.fromJson(Map<String, dynamic> json) => LoanItem(
+  Factory LoanItem.fromJson(Map<String, dynamic> json) => LoanItem(
     id: json['id'],
     personName: json['personName'],
     amount: json['amount'],
@@ -89,74 +89,74 @@ class LoanItem {
 
 class ShoppingItem {
   String name;
-  double amount;
-  bool isChecked;
+  Double amount;
+  Bool isChecked;
   ShoppingItem({required this.name, this.amount = 0.0, this.isChecked = false});
 
   Map<String, dynamic> toJson() => {'name': name, 'amount': amount, 'isChecked': isChecked};
-  factory ShoppingItem.fromJson(Map<String, dynamic> json) => ShoppingItem(name: json['name'], amount: json['amount'], isChecked: json['isChecked']);
+  Factory ShoppingItem.fromJson(Map<String, dynamic> json) => ShoppingItem(name: json['name'], amount: json['amount'], isChecked: json['isChecked']);
 }
 
 class BudgetModel {
   String category;
-  double amount;
+  Double amount;
   BudgetModel({required this.category, required this.amount});
 
   Map<String, dynamic> toJson() => {'category': category, 'amount': amount};
-  factory BudgetModel.fromJson(Map<String, dynamic> json) => BudgetModel(category: json['category'], amount: json['amount']);
+  Factory BudgetModel.fromJson(Map<String, dynamic> json) => BudgetModel(category: json['category'], amount: json['amount']);
 }
 
 class SavingsModel {
   String title;
-  double targetAmount;
-  double currentAmount;
-  bool isCompleted;
+  Double targetAmount;
+  Double currentAmount;
+  Bool isCompleted;
   SavingsModel({required this.title, required this.targetAmount, required this.currentAmount, this.isCompleted = false});
 
   Map<String, dynamic> toJson() => {'title': title, 'targetAmount': targetAmount, 'currentAmount': currentAmount, 'isCompleted': isCompleted};
-  factory SavingsModel.fromJson(Map<String, dynamic> json) => SavingsModel(title: json['title'], targetAmount: json['targetAmount'], currentAmount: json['currentAmount'], isCompleted: json['isCompleted']);
+  Factory SavingsModel.fromJson(Map<String, dynamic> json) => SavingsModel(title: json['title'], targetAmount: json['targetAmount'], currentAmount: json['currentAmount'], isCompleted: json['isCompleted']);
 }
 
 class AccountModel {
   String name;
   String type;
   String details;
-  bool isDefault;
+  Bool isDefault;
 
   AccountModel({
-    required this.name,
-    required this.type,
-    required this.details,
-    this.isDefault = false,
+    Required this.name,
+    Required this.type,
+    Required this.details,
+    This.isDefault = false,
   });
 
   Map<String, dynamic> toJson() => {'name': name, 'type': type, 'details': details, 'isDefault': isDefault};
-  factory AccountModel.fromJson(Map<String, dynamic> json) => AccountModel(name: json['name'], type: json['type'], details: json['details'], isDefault: json['isDefault']);
+  Factory AccountModel.fromJson(Map<String, dynamic> json) => AccountModel(name: json['name'], type: json['type'], details: json['details'], isDefault: json['isDefault']);
 }
 
 class RepeatedTransactionModel {
   String title;
-  double amount;
+  Double amount;
   String frequency;
   RepeatedTransactionModel({required this.title, required this.amount, required this.frequency});
 
   Map<String, dynamic> toJson() => {'title': title, 'amount': amount, 'frequency': frequency};
-  factory RepeatedTransactionModel.fromJson(Map<String, dynamic> json) => RepeatedTransactionModel(title: json['title'], amount: json['amount'], frequency: json['frequency']);
+  Factory RepeatedTransactionModel.fromJson(Map<String, dynamic> json) => RepeatedTransactionModel(title: json['title'], amount: json['amount'], frequency: json['frequency']);
 }
 
 class ReminderModel {
   String title;
-  double amount;
+  Double amount;
   String dueDate;
   ReminderModel({required this.title, required this.amount, required this.dueDate});
 
   Map<String, dynamic> toJson() => {'title': title, 'amount': amount, 'dueDate': dueDate};
-  factory ReminderModel.fromJson(Map<String, dynamic> json) => ReminderModel(title: json['title'], amount: json['amount'], dueDate: json['dueDate']);
+  Factory ReminderModel.fromJson(Map<String, dynamic> json) => ReminderModel(title: json['title'], amount: json['amount'], dueDate: json['dueDate']);
 }
 
 // ----------------- State Management with Persistent Storage -----------------
 class AppSettingsNotifier extends ChangeNotifier {
-  late SharedPreferences _prefs;
+  Late SharedPreferences _prefs;
 
   ThemeMode _themeMode = ThemeMode.dark;
   String _language = 'English';
@@ -172,20 +172,20 @@ class AppSettingsNotifier extends ChangeNotifier {
   String profileMobile = '018xxxxxxxx';
   String profileImagePath = '';
 
-  bool useFaceLock = false;
-  bool useFingerprint = false;
-  bool useNoneLock = false;
-  bool usePatternLock = false;
-  bool usePinLock = true;
+  Bool useFaceLock = false;
+  Bool useFingerprint = false;
+  Bool useNoneLock = false;
+  Bool usePatternLock = false;
+  Bool usePinLock = true;
 
-  bool dailyReminder = true;
-  bool budgetAlert = true;
-  bool loanAlert = true;
+  Bool dailyReminder = true;
+  Bool budgetAlert = true;
+  Bool loanAlert = true;
   String notificationSound = 'Default';
 
   // Selected Month & Year for Home and Reports
-  int selectedMonthIndex = DateTime.now().month;
-  int selectedYear = DateTime.now().year;
+  Int selectedMonthIndex = DateTime.now().month;
+  Int selectedYear = DateTime.now().year;
 
   List<String> categories = ['Grocery', 'Others', 'Salary', 'Tea & Snacks', 'Transport'];
   
@@ -198,7 +198,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   ];
 
   String defaultCategory = 'Others';
-  double monthlyBudget = 15000.0;
+  Double monthlyBudget = 15000.0;
 
   List<TransactionItem> transactions = [
     TransactionItem(
@@ -260,9 +260,9 @@ class AppSettingsNotifier extends ChangeNotifier {
     appPin = _prefs.getString('appPin') ?? '1234';
     _language = _prefs.getString('language') ?? 'English';
     String themeStr = _prefs.getString('themeMode') ?? 'dark';
-    if (themeStr == 'light') _themeMode = ThemeMode.light;
-    else if (themeStr == 'system') _themeMode = ThemeMode.system;
-    else _themeMode = ThemeMode.dark;
+    If (themeStr == 'light') _themeMode = ThemeMode.light;
+    Else if (themeStr == 'system') _themeMode = ThemeMode.system;
+    Else _themeMode = ThemeMode.dark;
 
     profileName = _prefs.getString('profileName') ?? 'MD ALAMGIR HOSSAIN';
     profileEmail = _prefs.getString('profileEmail') ?? 'alamgir@email.com';
@@ -274,579 +274,579 @@ class AppSettingsNotifier extends ChangeNotifier {
   }
 
   Future<void> _saveToPrefs() async {
-    await _prefs.setString('appPin', appPin);
-    await _prefs.setString('language', _language);
-    await _prefs.setString('themeMode', _themeMode == ThemeMode.light ? 'light' : (_themeMode == ThemeMode.system ? 'system' : 'dark'));
-    await _prefs.setString('profileName', profileName);
-    await _prefs.setString('profileEmail', profileEmail);
-    await _prefs.setString('profileGender', profileGender);
-    await _prefs.setString('profileBirthDate', profileBirthDate);
-    await _prefs.setString('profileMobile', profileMobile);
-    await _prefs.setString('profileImagePath', profileImagePath);
+    Await _prefs.setString('appPin', appPin);
+    Await _prefs.setString('language', _language);
+    Await _prefs.setString('themeMode', _themeMode == ThemeMode.light ? 'light' : (_themeMode == ThemeMode.system ? 'system' : 'dark'));
+    Await _prefs.setString('profileName', profileName);
+    Await _prefs.setString('profileEmail', profileEmail);
+    Await _prefs.setString('profileGender', profileGender);
+    Await _prefs.setString('profileBirthDate', profileBirthDate);
+    Await _prefs.setString('profileMobile', profileMobile);
+    Await _prefs.setString('profileImagePath', profileImagePath);
   }
 
   ThemeMode get themeMode => _themeMode;
   String get language => _language;
   
   String getAppTitle() {
-    if (_language == 'Bangla') return 'হিসাবের খাতা';
-    if (_language == 'Arabic') return 'دفتر الحسابات';
-    return 'Account Book';
+    If (_language == 'Bangla') return 'হিসাবের খাতা';
+    If (_language == 'Arabic') return 'دفتر الحسابات';
+    Return 'Account Book';
   }
 
   String translate(String key) {
-    if (_language == 'Bangla') {
-      switch (key) {
-        case 'Account Book': return 'হিসাবের খাতা';
-        case 'Dashboard Analytics': return 'ড্যাশবোর্ড অ্যানালিটিক্স';
-        case 'Categories': return 'ক্যাটাগরি সমূহ';
-        case 'Accounts': return 'অ্যাকাউন্ট সমূহ';
-        case 'Theme': return 'থিম';
-        case 'Language': return 'ভাষা';
-        case 'About App': return 'অ্যাপ সম্পর্কে';
-        case 'Current Balance': return 'বর্তমান ব্যালেন্স';
-        case 'Month': return 'মাস';
-        case 'Year': return 'বছর';
-        case 'Income': return 'আয়';
-        case 'Expense': return 'ব্যয়';
-        case 'Quick Access': return 'কুইক এক্সেস';
-        case 'Recent Transactions': return 'সাম্প্রতিক লেনদেন';
-        case 'Budget': return 'বাজেট';
-        case 'Reminder': return 'রিমাইন্ডার';
-        case 'Repeat': return 'রিপিট';
-        case 'Savings': return 'সেভিংস';
-        case 'Shopping': return 'শপিং';
-        case 'Account': return 'হিসাব';
-        case 'Loan': return 'লোন';
-        case 'Transactions': return 'লেনদেন';
-        case 'Report': return 'রিপোর্ট';
-        case 'Profile': return 'প্রোফাইল';
-        case 'Grocery': return 'মুদি বাজার';
-        case 'Others': return 'অন্যান্য';
-        case 'Salary': return 'বেতন';
-        case 'Tea & Snacks': return 'চা ও নাস্তা';
-        case 'Transport': return 'যাতায়াত';
-        case 'Food & Hotel': return 'খাবার ও হোটেল';
-        case 'Bikash': return 'বিকাশ';
-        case 'Cash in Hand': return 'হাতে নগদ টাকা';
-        case 'Dutch-Bangla Bank': return 'ডাচ-বাংলা ব্যাংক';
-        case 'Nagad': return 'নগদ';
-        case 'UCB Bank': return 'ইউসিবি ব্যাংক';
-        case 'Mobile Banking': return 'মোবাইল ব্যাংকিং';
-        case 'Cash': return 'নগদ';
-        case 'Bank': return 'ব্যাংক';
-        default: return key;
+    If (_language == 'Bangla') {
+      Switch (key) {
+        Case 'Account Book': return 'হিসাবের খাতা';
+        Case 'Dashboard Analytics': return 'ড্যাশবোর্ড অ্যানালিটিক্স';
+        Case 'Categories': return 'ক্যাটাগরি সমূহ';
+        Case 'Accounts': return 'অ্যাকাউন্ট সমূহ';
+        Case 'Theme': return 'থিম';
+        Case 'Language': return 'ভাষা';
+        Case 'About App': return 'অ্যাপ সম্পর্কে';
+        Case 'Current Balance': return 'বর্তমান ব্যালেন্স';
+        Case 'Month': return 'মাস';
+        Case 'Year': return 'বছর';
+        Case 'Income': return 'আয়';
+        Case 'Expense': return 'ব্যয়';
+        Case 'Quick Access': return 'কুইক এক্সেস';
+        Case 'Recent Transactions': return 'সাম্প্রতিক লেনদেন';
+        Case 'Budget': return 'বাজেট';
+        Case 'Reminder': return 'রিমাইন্ডার';
+        Case 'Repeat': return 'রিপিট';
+        Case 'Savings': return 'সেভিংস';
+        Case 'Shopping': return 'শপিং';
+        Case 'Account': return 'হিসাব';
+        Case 'Loan': return 'লোন';
+        Case 'Transactions': return 'লেনদেন';
+        Case 'Report': return 'রিপোর্ট';
+        Case 'Profile': return 'প্রোফাইল';
+        Case 'Grocery': return 'মুদি বাজার';
+        Case 'Others': return 'অন্যান্য';
+        Case 'Salary': return 'বেতন';
+        Case 'Tea & Snacks': return 'চা ও নাস্তা';
+        Case 'Transport': return 'যাতায়াত';
+        Case 'Food & Hotel': return 'খাবার ও হোটেল';
+        Case 'Bikash': return 'বিকাশ';
+        Case 'Cash in Hand': return 'হাতে নগদ টাকা';
+        Case 'Dutch-Bangla Bank': return 'ডাচ-বাংলা ব্যাংক';
+        Case 'Nagad': return 'নগদ';
+        Case 'UCB Bank': return 'ইউসিবি ব্যাংক';
+        Case 'Mobile Banking': return 'মোবাইল ব্যাংকিং';
+        Case 'Cash': return 'নগদ';
+        Case 'Bank': return 'ব্যাংক';
+        Default: return key;
       }
     } else if (_language == 'Arabic') {
-      switch (key) {
-        case 'Account Book': return 'دفتر الحسابات';
-        case 'Dashboard Analytics': return 'تحليلات لوحة القيادة';
-        case 'Categories': return 'الفئات';
-        case 'Accounts': return 'الحسابات';
-        case 'Theme': return 'المظهر';
-        case 'Language': return 'اللغة';
-        case 'About App': return 'حول التطبيق';
-        case 'Current Balance': return 'الرصيد الحالي';
-        case 'Month': return 'شهر';
-        case 'Year': return 'سنة';
-        case 'Income': return 'إيرادات';
-        case 'Expense': return 'مصروفات';
-        case 'Quick Access': return 'وصول سريع';
-        case 'Recent Transactions': return 'المعاملات الأخيرة';
-        case 'Budget': return 'الميزانية';
-        case 'Reminder': return 'التذكيرات';
-        case 'Repeat': return 'متكرر';
-        case 'Savings': return 'المدخرات';
-        case 'Shopping': return 'التسوق';
-        case 'Account': return 'حساب';
-        case 'Loan': return 'قرض';
-        case 'Transactions': return 'المعاملات';
-        case 'Report': return 'تقرير';
-        case 'Profile': return 'الملف الشخصي';
-        case 'Grocery': return 'بقالة';
-        case 'Others': return 'أخرى';
-        case 'Salary': return 'راتب';
-        case 'Tea & Snacks': return 'شاي ووجبات خفيفة';
-        case 'Transport': return 'مواصلات';
-        case 'Food & Hotel': return 'طعام وفنادق';
-        case 'Bikash': return 'ب বিকাশ';
-        case 'Cash in Hand': return 'نقداً في اليد';
-        case 'Dutch-Bangla Bank': return 'بنك دتش بنگلا';
-        case 'Nagad': return 'نقد';
-        case 'UCB Bank': return 'بنك UCB';
-        case 'Mobile Banking': return 'خدمات مصرفية عبر الهاتف المحمول';
-        case 'Cash': return 'نقدي';
-        case 'Bank': return 'بنك';
-        default: return key;
+      Switch (key) {
+        Case 'Account Book': return 'دفتر الحسابات';
+        Case 'Dashboard Analytics': return 'تحليلات لوحة القيادة';
+        Case 'Categories': return 'الفئات';
+        Case 'Accounts': return 'الحسابات';
+        Case 'Theme': return 'المظهر';
+        Case 'Language': return 'اللغة';
+        Case 'About App': return 'حول التطبيق';
+        Case 'Current Balance': return 'الرصيد الحالي';
+        Case 'Month': return 'شهر';
+        Case 'Year': return 'سنة';
+        Case 'Income': return 'إيرادات';
+        Case 'Expense': return 'مصروفات';
+        Case 'Quick Access': return 'وصول سريع';
+        Case 'Recent Transactions': return 'المعاملات الأخيرة';
+        Case 'Budget': return 'الميزانية';
+        Case 'Reminder': return 'التذكيرات';
+        Case 'Repeat': return 'متكرر';
+        Case 'Savings': return 'المدخرات';
+        Case 'Shopping': return 'التسوق';
+        Case 'Account': return 'حساب';
+        Case 'Loan': return 'قرض';
+        Case 'Transactions': return 'المعاملات';
+        Case 'Report': return 'تقرير';
+        Case 'Profile': return 'الملف الشخصي';
+        Case 'Grocery': return 'بقالة';
+        Case 'Others': return 'أخرى';
+        Case 'Salary': return 'راتب';
+        Case 'Tea & Snacks': return 'شاي ووجبات خفيفة';
+        Case 'Transport': return 'مواصلات';
+        Case 'Food & Hotel': return 'طعام وفنادق';
+        Case 'Bikash': return 'ب বিকাশ';
+        Case 'Cash in Hand': return 'نقداً في اليد';
+        Case 'Dutch-Bangla Bank': return 'بنك دتش بنگلا';
+        Case 'Nagad': return 'نقد';
+        Case 'UCB Bank': return 'بنك UCB';
+        Case 'Mobile Banking': return 'خدمات مصرفية عبر الهاتف المحمول';
+        Case 'Cash': return 'نقدي';
+        Case 'Bank': return 'بنك';
+        Default: return key;
       }
     }
-    return key;
+    Return key;
   }
 
-  void setTheme(ThemeMode mode) {
+  Void setTheme(ThemeMode mode) {
     _themeMode = mode;
     _saveToPrefs();
     notifyListeners();
   }
 
-  void setLanguage(String lang) {
+  Void setLanguage(String lang) {
     _language = lang;
     _saveToPrefs();
     notifyListeners();
   }
 
-  void setTimeFilter(String filter) {
-    timeFilter = filter;
+  Void setTimeFilter(String filter) {
+    TimeFilter = filter;
     notifyListeners();
   }
 
-  void setMonthYear(int month, int year) {
-    selectedMonthIndex = month;
-    selectedYear = year;
+  Void setMonthYear(int month, int year) {
+    SelectedMonthIndex = month;
+    SelectedYear = year;
     notifyListeners();
   }
 
-  void setCurrency(String newCurrency) {
-    currency = newCurrency;
+  Void setCurrency(String newCurrency) {
+    Currency = newCurrency;
     notifyListeners();
   }
 
-  void updatePin(String newPin) {
-    appPin = newPin;
+  Void updatePin(String newPin) {
+    AppPin = newPin;
     _saveToPrefs();
     notifyListeners();
   }
 
-  void updateProfile({required String name, required String email, required String gender, required String birthDate, required String mobile, String? imagePath}) {
-    profileName = name;
-    profileEmail = email;
-    profileGender = gender;
-    profileBirthDate = birthDate;
-    profileMobile = mobile;
-    if (imagePath != null) profileImagePath = imagePath;
+  Void updateProfile({required String name, required String email, required String gender, required String birthDate, required String mobile, String? imagePath}) {
+    ProfileName = name;
+    ProfileEmail = email;
+    ProfileGender = gender;
+    ProfileBirthDate = birthDate;
+    ProfileMobile = mobile;
+    If (imagePath != null) profileImagePath = imagePath;
     _saveToPrefs();
     notifyListeners();
   }
 
-  void updateSecurityToggles({required bool face, required bool fingerprint, required bool none, required bool pattern, required bool pin}) {
-    useFaceLock = face;
-    useFingerprint = fingerprint;
-    useNoneLock = none;
-    usePatternLock = pattern;
-    usePinLock = pin;
+  Void updateSecurityToggles({required bool face, required bool fingerprint, required bool none, required bool pattern, required bool pin}) {
+    UseFaceLock = face;
+    UseFingerprint = fingerprint;
+    UseNoneLock = none;
+    UsePatternLock = pattern;
+    UsePinLock = pin;
     notifyListeners();
   }
 
-  void toggleNotification(String key, bool val) {
-    if (key == 'daily') dailyReminder = val;
-    if (key == 'budget') budgetAlert = val;
-    if (key == 'loan') loanAlert = val;
+  Void toggleNotification(String key, bool val) {
+    If (key == 'daily') dailyReminder = val;
+    If (key == 'budget') budgetAlert = val;
+    If (key == 'loan') loanAlert = val;
     notifyListeners();
   }
 
-  void setNotificationSound(String sound) {
-    notificationSound = sound;
+  Void setNotificationSound(String sound) {
+    NotificationSound = sound;
     notifyListeners();
   }
 
-  void addTransaction(TransactionItem txn) {
-    transactions.insert(0, txn);
+  Void addTransaction(TransactionItem txn) {
+    Transactions.insert(0, txn);
     notifyListeners();
   }
 
-  void updateTransaction(int index, TransactionItem txn) {
-    transactions[index] = txn;
+  Void updateTransaction(int index, TransactionItem txn) {
+    Transactions[index] = txn;
     notifyListeners();
   }
 
-  void removeTransaction(int index) {
-    transactions.removeAt(index);
+  Void removeTransaction(int index) {
+    Transactions.removeAt(index);
     notifyListeners();
   }
 
-  void addLoan(LoanItem loan) {
-    loans.insert(0, loan);
+  Void addLoan(LoanItem loan) {
+    Loans.insert(0, loan);
     notifyListeners();
   }
 
-  void updateLoan(int index, String personName, double amount, String type) {
-    loans[index].personName = personName;
-    loans[index].amount = amount;
-    loans[index].type = type;
+  Void updateLoan(int index, String personName, double amount, String type) {
+    Loans[index].personName = personName;
+    Loans[index].amount = amount;
+    Loans[index].type = type;
     notifyListeners();
   }
 
-  void removeLoan(int index) {
-    loans.removeAt(index);
+  Void removeLoan(int index) {
+    Loans.removeAt(index);
     notifyListeners();
   }
 
-  void toggleLoanStatus(String id) {
-    for (var loan in loans) {
-      if (loan.id == id) {
-        loan.isPaid = !loan.isPaid;
+  Void toggleLoanStatus(String id) {
+    For (var loan in loans) {
+      If (loan.id == id) {
+        Loan.isPaid = !loan.isPaid;
         notifyListeners();
-        break;
+        Break;
       }
     }
   }
 
-  void sortLoans(String criteria) {
-    if (criteria.contains('New-Old')) {
-      loans.sort((a, b) => b.date.compareTo(a.date));
+  Void sortLoans(String criteria) {
+    If (criteria.contains('New-Old')) {
+      Loans.sort((a, b) => b.date.compareTo(a.date));
     } else if (criteria.contains('Old-New')) {
-      loans.sort((a, b) => a.date.compareTo(b.date));
+      Loans.sort((a, b) => a.date.compareTo(b.date));
     } else if (criteria.contains('A-Z')) {
-      loans.sort((a, b) => a.personName.compareTo(b.personName));
+      Loans.sort((a, b) => a.personName.compareTo(b.personName));
     } else if (criteria.contains('Z-A')) {
-      loans.sort((a, b) => b.personName.compareTo(a.personName));
+      Loans.sort((a, b) => b.personName.compareTo(a.personName));
     } else if (criteria.contains('Large-Small')) {
-      loans.sort((a, b) => b.amount.compareTo(a.amount));
+      Loans.sort((a, b) => b.amount.compareTo(a.amount));
     } else if (criteria.contains('Small-Large')) {
-      loans.sort((a, b) => a.amount.compareTo(b.amount));
+      Loans.sort((a, b) => a.amount.compareTo(b.amount));
     }
     notifyListeners();
   }
 
-  void sortTransactions(String criteria) {
-    if (criteria.contains('New-Old')) {
-      transactions.sort((a, b) => b.date.compareTo(a.date));
+  Void sortTransactions(String criteria) {
+    If (criteria.contains('New-Old')) {
+      Transactions.sort((a, b) => b.date.compareTo(a.date));
     } else if (criteria.contains('Old-New')) {
-      transactions.sort((a, b) => a.date.compareTo(b.date));
+      Transactions.sort((a, b) => a.date.compareTo(b.date));
     } else if (criteria.contains('A-Z')) {
-      transactions.sort((a, b) => a.category.compareTo(b.category));
+      Transactions.sort((a, b) => a.category.compareTo(b.category));
     } else if (criteria.contains('Z-A')) {
-      transactions.sort((a, b) => b.category.compareTo(a.category));
+      Transactions.sort((a, b) => b.category.compareTo(a.category));
     } else if (criteria.contains('Number Large-Small')) {
-      transactions.sort((a, b) => b.amount.compareTo(a.amount));
+      Transactions.sort((a, b) => b.amount.compareTo(a.amount));
     } else if (criteria.contains('Number Small-Large')) {
-      transactions.sort((a, b) => a.amount.compareTo(b.amount));
+      Transactions.sort((a, b) => a.amount.compareTo(b.amount));
     }
     notifyListeners();
   }
 
   List<TransactionItem> getFilteredTransactions() {
-    return transactions.where((txn) {
-      return txn.date.year == selectedYear && txn.date.month == selectedMonthIndex;
+    Return transactions.where((txn) {
+      Return txn.date.year == selectedYear && txn.date.month == selectedMonthIndex;
     }).toList();
   }
 
-  double getTotalIncome() {
-    double total = 0;
-    for (var txn in getFilteredTransactions()) {
-      if (txn.type == 'Income') total += txn.amount;
+  Double getTotalIncome() {
+    Double total = 0;
+    For (var txn in getFilteredTransactions()) {
+      If (txn.type == 'Income') total += txn.amount;
     }
-    return total;
+    Return total;
   }
 
-  double getTotalExpense() {
-    double total = 0;
-    for (var txn in getFilteredTransactions()) {
-      if (txn.type == 'Expense') total += txn.amount;
+  Double getTotalExpense() {
+    Double total = 0;
+    For (var txn in getFilteredTransactions()) {
+      If (txn.type == 'Expense') total += txn.amount;
     }
-    return total;
+    Return total;
   }
 
-  double getTotalBalance() {
-    return getTotalIncome() - getTotalExpense();
+  Double getTotalBalance() {
+    Return getTotalIncome() - getTotalExpense();
   }
 
-  double getTotalGiven() {
-    double total = 0;
-    for (var loan in loans) {
-      if (loan.type == 'Given' && !loan.isPaid) total += loan.amount;
+  Double getTotalGiven() {
+    Double total = 0;
+    For (var loan in loans) {
+      If (loan.type == 'Given' && !loan.isPaid) total += loan.amount;
     }
-    return total;
+    Return total;
   }
 
-  double getTotalTaken() {
-    double total = 0;
-    for (var loan in loans) {
-      if (loan.type == 'Taken' && !loan.isPaid) total += loan.amount;
+  Double getTotalTaken() {
+    Double total = 0;
+    For (var loan in loans) {
+      If (loan.type == 'Taken' && !loan.isPaid) total += loan.amount;
     }
-    return total;
+    Return total;
   }
 
-  double getNetBalance() {
-    return getTotalGiven() - getTotalTaken();
+  Double getNetBalance() {
+    Return getTotalGiven() - getTotalTaken();
   }
 
-  void addAccount(String name, String type, String details) {
-    if (name.isNotEmpty) {
-      accounts.add(AccountModel(
-        name: name,
-        type: type,
-        details: details.isEmpty ? (type == 'Cash' ? 'Hand Cash' : 'N/A') : details,
-        isDefault: accounts.isEmpty,
+  Void addAccount(String name, String type, String details) {
+    If (name.isNotEmpty) {
+      Accounts.add(AccountModel(
+        Name: name,
+        Type: type,
+        Details: details.isEmpty ? (type == 'Cash' ? 'Hand Cash' : 'N/A') : details,
+        IsDefault: accounts.isEmpty,
       ));
-      accounts.sort((a, b) => a.name.compareTo(b.name));
+      Accounts.sort((a, b) => a.name.compareTo(b.name));
       notifyListeners();
     }
   }
 
-  void updateAccount(int index, String name, String type, String details) {
-    accounts[index].name = name;
-    accounts[index].type = type;
-    accounts[index].details = details;
-    accounts.sort((a, b) => a.name.compareTo(b.name));
+  Void updateAccount(int index, String name, String type, String details) {
+    Accounts[index].name = name;
+    Accounts[index].type = type;
+    Accounts[index].details = details;
+    Accounts.sort((a, b) => a.name.compareTo(b.name));
     notifyListeners();
   }
 
-  void setDefaultAccount(int index) {
-    for (int i = 0; i < accounts.length; i++) {
-      accounts[i].isDefault = (i == index);
+  Void setDefaultAccount(int index) {
+    For (int i = 0; i < accounts.length; i++) {
+      Accounts[i].isDefault = (i == index);
     }
     notifyListeners();
   }
 
-  bool removeAccount(int index) {
-    if (accounts.length > 1) {
-      bool wasDefault = accounts[index].isDefault;
+  Bool removeAccount(int index) {
+    If (accounts.length > 1) {
+      Bool wasDefault = accounts[index].isDefault;
       String deletedAccName = accounts[index].name;
-      accounts.removeAt(index);
-      if (wasDefault) {
-        accounts[0].isDefault = true;
+      Accounts.removeAt(index);
+      If (wasDefault) {
+        Accounts[0].isDefault = true;
       }
       String defaultAccName = accounts.firstWhere((acc) => acc.isDefault, orElse: () => accounts[0]).name;
-      for (var txn in transactions) {
-        if (txn.account == deletedAccName) {
-          txn.account = defaultAccName;
+      For (var txn in transactions) {
+        If (txn.account == deletedAccName) {
+          Txn.account = defaultAccName;
         }
       }
-      accounts.sort((a, b) => a.name.compareTo(b.name));
+      Accounts.sort((a, b) => a.name.compareTo(b.name));
       notifyListeners();
-      return true;
+      Return true;
     }
-    return false;
+    Return false;
   }
 
-  void addBudget(String category, double amount) {
-    budgets.add(BudgetModel(category: category, amount: amount));
-    budgets.sort((a, b) => a.category.compareTo(b.category));
+  Void addBudget(String category, double amount) {
+    Budgets.add(BudgetModel(category: category, amount: amount));
+    Budgets.sort((a, b) => a.category.compareTo(b.category));
     notifyListeners();
   }
 
-  void updateBudget(int index, String category, double amount) {
-    budgets[index] = BudgetModel(category: category, amount: amount);
-    budgets.sort((a, b) => a.category.compareTo(b.category));
+  Void updateBudget(int index, String category, double amount) {
+    Budgets[index] = BudgetModel(category: category, amount: amount);
+    Budgets.sort((a, b) => a.category.compareTo(b.category));
     notifyListeners();
   }
 
-  void removeBudget(int index) {
-    budgets.removeAt(index);
+  Void removeBudget(int index) {
+    Budgets.removeAt(index);
     notifyListeners();
   }
 
-  void addSavings(String title, double target) {
-    savingsList.add(SavingsModel(title: title, targetAmount: target, currentAmount: 0));
-    savingsList.sort((a, b) => a.title.compareTo(b.title));
+  Void addSavings(String title, double target) {
+    SavingsList.add(SavingsModel(title: title, targetAmount: target, currentAmount: 0));
+    SavingsList.sort((a, b) => a.title.compareTo(b.title));
     notifyListeners();
   }
 
-  void updateSavings(int index, String title, double targetAmount) {
-    savingsList[index].title = title;
-    savingsList[index].targetAmount = targetAmount;
-    savingsList.sort((a, b) => a.title.compareTo(b.title));
+  Void updateSavings(int index, String title, double targetAmount) {
+    SavingsList[index].title = title;
+    SavingsList[index].targetAmount = targetAmount;
+    SavingsList.sort((a, b) => a.title.compareTo(b.title));
     notifyListeners();
   }
 
-  void removeSavings(int index) {
-    savingsList.removeAt(index);
+  Void removeSavings(int index) {
+    SavingsList.removeAt(index);
     notifyListeners();
   }
 
-  void addCategory(String cat) {
-    if (cat.isNotEmpty && !categories.contains(cat)) {
-      categories.add(cat);
-      categories.sort();
-      notifyListeners();
-    }
-  }
-
-  void updateCategory(int index, String newCat) {
-    if (newCat.isNotEmpty) {
-      categories[index] = newCat;
-      categories.sort();
+  Void addCategory(String cat) {
+    If (cat.isNotEmpty && !categories.contains(cat)) {
+      Categories.add(cat);
+      Categories.sort();
       notifyListeners();
     }
   }
 
-  void removeCategory(int index) {
-    if (categories.length > 1) {
-      categories.removeAt(index);
+  Void updateCategory(int index, String newCat) {
+    If (newCat.isNotEmpty) {
+      Categories[index] = newCat;
+      Categories.sort();
       notifyListeners();
     }
   }
 
-  void addRepeatedTransaction(String title, double amount, String frequency) {
-    if (title.isNotEmpty) {
-      repeatedTransactions.add(RepeatedTransactionModel(title: title, amount: amount, frequency: frequency));
-      repeatedTransactions.sort((a, b) => a.title.compareTo(b.title));
+  Void removeCategory(int index) {
+    If (categories.length > 1) {
+      Categories.removeAt(index);
       notifyListeners();
     }
   }
 
-  void updateRepeatedTransaction(int index, String title, double amount, String frequency) {
-    repeatedTransactions[index] = RepeatedTransactionModel(title: title, amount: amount, frequency: frequency);
-    repeatedTransactions.sort((a, b) => a.title.compareTo(b.title));
+  Void addRepeatedTransaction(String title, double amount, String frequency) {
+    If (title.isNotEmpty) {
+      RepeatedTransactions.add(RepeatedTransactionModel(title: title, amount: amount, frequency: frequency));
+      RepeatedTransactions.sort((a, b) => a.title.compareTo(b.title));
+      notifyListeners();
+    }
+  }
+
+  Void updateRepeatedTransaction(int index, String title, double amount, String frequency) {
+    RepeatedTransactions[index] = RepeatedTransactionModel(title: title, amount: amount, frequency: frequency);
+    RepeatedTransactions.sort((a, b) => a.title.compareTo(b.title));
     notifyListeners();
   }
 
-  void removeRepeatedTransaction(int index) {
-    repeatedTransactions.removeAt(index);
+  Void removeRepeatedTransaction(int index) {
+    RepeatedTransactions.removeAt(index);
     notifyListeners();
   }
 
-  void addShoppingItem(String name, double amount) {
-    if (name.isNotEmpty) {
-      shoppingList.add(ShoppingItem(name: name, amount: amount));
-      shoppingList.sort((a, b) => a.name.compareTo(b.name));
+  Void addShoppingItem(String name, double amount) {
+    If (name.isNotEmpty) {
+      ShoppingList.add(ShoppingItem(name: name, amount: amount));
+      ShoppingList.sort((a, b) => a.name.compareTo(b.name));
       notifyListeners();
     }
   }
 
-  void updateShoppingItem(int index, String name, double amount) {
-    if (name.isNotEmpty) {
-      shoppingList[index].name = name;
-      shoppingList[index].amount = amount;
-      shoppingList.sort((a, b) => a.name.compareTo(b.name));
+  Void updateShoppingItem(int index, String name, double amount) {
+    If (name.isNotEmpty) {
+      ShoppingList[index].name = name;
+      ShoppingList[index].amount = amount;
+      ShoppingList.sort((a, b) => a.name.compareTo(b.name));
       notifyListeners();
     }
   }
 
-  void removeShoppingItem(int index) {
-    shoppingList.removeAt(index);
+  Void removeShoppingItem(int index) {
+    ShoppingList.removeAt(index);
     notifyListeners();
   }
 
-  void toggleShoppingCheck(int index) {
-    shoppingList[index].isChecked = !shoppingList[index].isChecked;
-    if (shoppingList[index].isChecked && shoppingList[index].amount > 0) {
+  Void toggleShoppingCheck(int index) {
+    ShoppingList[index].isChecked = !shoppingList[index].isChecked;
+    If (shoppingList[index].isChecked && shoppingList[index].amount > 0) {
       String defaultAcc = accounts.firstWhere((acc) => acc.isDefault, orElse: () => accounts[0]).name;
-      transactions.insert(0, TransactionItem(
-        id: DateTime.now().toString(),
-        type: 'Expense',
-        account: defaultAcc,
-        category: categories.first,
-        amount: shoppingList[index].amount,
-        description: 'Shopping: ${shoppingList[index].name}',
-        date: DateTime.now(),
+      Transactions.insert(0, TransactionItem(
+        Id: DateTime.now().toString(),
+        Type: 'Expense',
+        Account: defaultAcc,
+        Category: categories.first,
+        Amount: shoppingList[index].amount,
+        Description: 'Shopping: ${shoppingList[index].name}',
+        Date: DateTime.now(),
       ));
     }
     notifyListeners();
   }
 
-  void addReminder(String title, double amount, String dueDate) {
-    if (title.isNotEmpty) {
-      reminders.add(ReminderModel(title: title, amount: amount, dueDate: dueDate));
-      reminders.sort((a, b) => a.title.compareTo(b.title));
+  Void addReminder(String title, double amount, String dueDate) {
+    If (title.isNotEmpty) {
+      Reminders.add(ReminderModel(title: title, amount: amount, dueDate: dueDate));
+      Reminders.sort((a, b) => a.title.compareTo(b.title));
       notifyListeners();
     }
   }
 
-  void updateReminder(int index, String title, double amount, String dueDate) {
-    reminders[index] = ReminderModel(title: title, amount: amount, dueDate: dueDate);
-    reminders.sort((a, b) => a.title.compareTo(b.title));
+  Void updateReminder(int index, String title, double amount, String dueDate) {
+    Reminders[index] = ReminderModel(title: title, amount: amount, dueDate: dueDate);
+    Reminders.sort((a, b) => a.title.compareTo(b.title));
     notifyListeners();
   }
 
-  void removeReminder(int index) {
-    reminders.removeAt(index);
+  Void removeReminder(int index) {
+    Reminders.removeAt(index);
     notifyListeners();
   }
 }
 
-final appSettings = AppSettingsNotifier();
+Final appSettings = AppSettingsNotifier();
 
 // ----------------- App Entry Point -----------------
 class AccountBookApp extends StatelessWidget {
-  const AccountBookApp({super.key});
+  Const AccountBookApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: appSettings,
-      builder: (context, child) {
-        return MaterialApp(
-          title: appSettings.getAppTitle(),
-          debugShowCheckedModeBanner: false,
-          themeMode: appSettings.themeMode,
-          theme: ThemeData(
-            brightness: Brightness.light,
-            scaffoldBackgroundColor: const Color(0xFFF3F4F6),
-            primaryColor: const Color(0xFF38BDF8),
-            cardColor: Colors.white,
-            appBarTheme: const AppBarTheme(backgroundColor: Colors.white, foregroundColor: Colors.black),
-            dialogTheme: const DialogTheme(backgroundColor: Colors.white, surfaceTintColor: Colors.white),
-            bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.white, surfaceTintColor: Colors.white),
+    Return AnimatedBuilder(
+      Animation: appSettings,
+      Builder: (context, child) {
+        Return MaterialApp(
+          Title: appSettings.getAppTitle(),
+          DebugShowCheckedModeBanner: false,
+          ThemeMode: appSettings.themeMode,
+          Theme: ThemeData(
+            Brightness: Brightness.light,
+            ScaffoldBackgroundColor: const Color(0xFFF3F4F6),
+            PrimaryColor: const Color(0xFF38BDF8),
+            CardColor: Colors.white,
+            AppBarTheme: const AppBarTheme(backgroundColor: Colors.white, foregroundColor: Colors.black),
+            DialogTheme: const DialogTheme(backgroundColor: Colors.white, surfaceTintColor: Colors.white),
+            BottomSheetThemeData: const BottomSheetThemeData(backgroundColor: Colors.white, surfaceTintColor: Colors.white),
           ),
-          darkTheme: ThemeData(
-            brightness: Brightness.dark,
-            scaffoldBackgroundColor: const Color(0xFF0F172A),
-            primaryColor: const Color(0xFF10B981),
-            cardColor: const Color(0xFF1E293B),
-            appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF1E293B), foregroundColor: Colors.white),
-            dialogTheme: const DialogTheme(backgroundColor: Color(0xFF1E293B), surfaceTintColor: Color(0xFF1E293B)),
-            bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Color(0xFF1E293B), surfaceTintColor: Color(0xFF1E293B)),
+          DarkTheme: ThemeData(
+            Brightness: Brightness.dark,
+            ScaffoldBackgroundColor: const Color(0xFF0F172A),
+            PrimaryColor: const Color(0xFF10B981),
+            CardColor: const Color(0xFF1E293B),
+            AppBarTheme: const AppBarTheme(backgroundColor: Color(0xFF1E293B), foregroundColor: Colors.white),
+            DialogTheme: const DialogTheme(backgroundColor: Color(0xFF1E293B), surfaceTintColor: Color(0xFF1E293B)),
+            BottomSheetThemeData: const BottomSheetThemeData(backgroundColor: Color(0xFF1E293B), surfaceTintColor: Color(0xFF1E293B)),
           ),
-          home: const PinLockScreen(),
+          Home: const PinLockScreen(),
         );
       },
     );
   }
 }
 
-// ----------------- Standard Menus Helpers (Fix #4 & #5 & #6) -----------------
+// ----------------- Standard Menus Helpers -----------------
 void showStandardDownloadMenu(BuildContext context, Offset offset) {
   String lang = appSettings.language;
   String previewText = lang == 'Bangla' ? 'প্রিভিউ' : (lang == 'Arabic' ? 'معاينة' : 'Preview');
   String pdfText = lang == 'Bangla' ? 'পিডিএফ ডাউনলোড' : (lang == 'Arabic' ? 'تحميل كـ PDF' : 'Download as PDF');
   String excelText = lang == 'Bangla' ? 'এক্সেল ডাউনলোড' : (lang == 'Arabic' ? 'تحميل كـ Excel' : 'Download as Excel');
 
-  showMenu(
-    context: context,
-    position: RelativeRect.fromLTRB(offset.dx, offset.dy + 40, 20, 0),
-    items: [
+  ShowMenu(
+    Context: context,
+    Position: RelativeRect.fromLTRB(offset.dx, offset.dy + 40, 20, 0),
+    Items: [
       PopupMenuItem(
-        value: 'preview',
-        child: Row(
-          children: [
-            const Icon(Icons.visibility, color: Colors.blue, size: 20),
-            const SizedBox(width: 8),
+        Value: 'preview',
+        Child: Row(
+          Children: [
+            Const Icon(Icons.visibility, color: Colors.blue, size: 20),
+            Const SizedBox(width: 8),
             Text(previewText),
           ],
         ),
       ),
       PopupMenuItem(
-        value: 'pdf',
-        child: Row(
-          children: [
-            const Icon(Icons.picture_as_pdf, color: Colors.red, size: 20),
-            const SizedBox(width: 8),
+        Value: 'pdf',
+        Child: Row(
+          Children: [
+            Const Icon(Icons.picture_as_pdf, color: Colors.red, size: 20),
+            Const SizedBox(width: 8),
             Text(pdfText),
           ],
         ),
       ),
       PopupMenuItem(
-        value: 'excel',
-        child: Row(
-          children: [
-            const Icon(Icons.table_chart, color: Colors.green, size: 20),
-            const SizedBox(width: 8),
+        Value: 'excel',
+        Child: Row(
+          Children: [
+            Const Icon(Icons.table_chart, color: Colors.green, size: 20),
+            Const SizedBox(width: 8),
             Text(excelText),
           ],
         ),
       ),
     ],
   ).then((value) {
-    if (value != null) {
-      if (value == 'preview') {
-        showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text(lang == 'Bangla' ? 'রিপোর্ট প্রিভিউ' : (lang == 'Arabic' ? 'معاينة التقرير' : 'Report Preview')),
-            content: Text(lang == 'Bangla' ? 'এখানে আপনার বর্তমান হিসাবের সংক্ষিপ্ত প্রিভিউ দেখানো হচ্ছে।' : (lang == 'Arabic' ? 'هذا معاينة موجزة لحسابك الحالي.' : 'Here is a preview of your financial summary.')),
-            actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK'))],
+    If (value != null) {
+      If (value == 'preview') {
+        ShowDialog(
+          Context: context,
+          Builder: (ctx) => AlertDialog(
+            Title: Text(lang == 'Bangla' ? 'রিপোর্ট প্রিভিউ' : (lang == 'Arabic' ? 'معاينة التقرير' : 'Report Preview')),
+            Content: Text(lang == 'Bangla' ? 'এখানে আপনার বর্তমান হিসাবের সংক্ষিপ্ত প্রিভিউ দেখানো হচ্ছে।' : (lang == 'Arabic' ? 'هذا معاينة موجزة لحسابك الحالي.' : 'Here is a preview of your financial summary.')),
+            Actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK'))],
           ),
         );
       } else {
@@ -860,10 +860,10 @@ void showStandardDownloadMenu(BuildContext context, Offset offset) {
 }
 
 void showStandardSortMenu(BuildContext context, Offset offset, Function(String) onSelected) {
-  showMenu(
-    context: context,
-    position: RelativeRect.fromLTRB(offset.dx, offset.dy + 40, 20, 0),
-    items: const [
+  ShowMenu(
+    Context: context,
+    Position: RelativeRect.fromLTRB(offset.dx, offset.dy + 40, 20, 0),
+    Items: const [
       PopupMenuItem(value: 'Date New-Old', child: Text('Sort by Date (Newest to Oldest)')),
       PopupMenuItem(value: 'Date Old-New', child: Text('Sort by Date (Oldest to Newest)')),
       PopupMenuItem(value: 'Name A-Z', child: Text('Sort by Name (A to Z)')),
@@ -872,18 +872,17 @@ void showStandardSortMenu(BuildContext context, Offset offset, Function(String) 
       PopupMenuItem(value: 'Number Small-Large', child: Text('Sort by Number (Small to Large)')),
     ],
   ).then((value) {
-    if (value != null) {
-      onSelected(value);
+    If (value != null) {
+      OnSelected(value);
     }
   });
 }
 
-// Helper for Localized Delete Dialogs (Fix #4: Bengali -> হ্যাঁ/না, English -> Yes/No)
 void showLocalizedDeleteDialog({
-  required BuildContext context,
-  required bool isImportant,
-  required String itemName,
-  required VoidCallback onDeleteConfirmed,
+  Required BuildContext context,
+  Required bool isImportant,
+  Required String itemName,
+  Required VoidCallback onDeleteConfirmed,
 }) {
   String lang = appSettings.language;
   String title1 = lang == 'Bangla' ? 'নিশ্চিতকরণ' : (lang == 'Arabic' ? 'تأكيد' : 'Confirmation');
@@ -898,57 +897,57 @@ void showLocalizedDeleteDialog({
   String yesText = lang == 'Bangla' ? 'হ্যাঁ' : (lang == 'Arabic' ? 'نعم' : 'Yes');
   String noText = lang == 'Bangla' ? 'না' : (lang == 'Arabic' ? 'لا' : 'No');
 
-  if (!isImportant) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(title1),
-        content: Text(msg1),
-        actions: [
+  If (!isImportant) {
+    ShowDialog(
+      Context: context,
+      Builder: (ctx) => AlertDialog(
+        Title: Text(title1),
+        Content: Text(msg1),
+        Actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: Text(noText)),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () {
+            Style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            OnPressed: () {
               Navigator.pop(ctx);
-              onDeleteConfirmed();
+              OnDeleteConfirmed();
             },
-            child: Text(yesText, style: const TextStyle(color: Colors.white)),
+            Child: Text(yesText, style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
     );
   } else {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(title1),
-        content: Text(warningMsg),
-        actions: [
+    ShowDialog(
+      Context: context,
+      Builder: (ctx) => AlertDialog(
+        Title: Text(title1),
+        Content: Text(warningMsg),
+        Actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: Text(noText)),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-            onPressed: () {
+            Style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+            OnPressed: () {
               Navigator.pop(ctx);
-              showDialog(
-                context: context,
-                builder: (ctx2) => AlertDialog(
-                  title: Text(title1),
-                  content: Text(msg1),
-                  actions: [
+              ShowDialog(
+                Context: context,
+                Builder: (ctx2) => AlertDialog(
+                  Title: Text(title1),
+                  Content: Text(msg1),
+                  Actions: [
                     TextButton(onPressed: () => Navigator.pop(ctx2), child: Text(noText)),
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                      onPressed: () {
+                      Style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                      OnPressed: () {
                         Navigator.pop(ctx2);
-                        onDeleteConfirmed();
+                        OnDeleteConfirmed();
                       },
-                      child: Text(yesText, style: const TextStyle(color: Colors.white)),
+                      Child: Text(yesText, style: const TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
               );
             },
-            child: Text(yesText, style: const TextStyle(color: Colors.white)),
+            Child: Text(yesText, style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -956,79 +955,79 @@ void showLocalizedDeleteDialog({
   }
 }
 
-// ----------------- Dashboard Analytics Screen (Fix #8) -----------------
+// ----------------- Dashboard Analytics Screen -----------------
 class DashboardAnalyticsScreen extends StatelessWidget {
-  const DashboardAnalyticsScreen({super.key});
+  Const DashboardAnalyticsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
-    double income = appSettings.getTotalIncome();
-    double expense = appSettings.getTotalExpense();
-    double balance = appSettings.getTotalBalance();
-    double totalGiven = appSettings.getTotalGiven();
-    double totalTaken = appSettings.getTotalTaken();
+    Double income = appSettings.getTotalIncome();
+    Double expense = appSettings.getTotalExpense();
+    Double balance = appSettings.getTotalBalance();
+    Double totalGiven = appSettings.getTotalGiven();
+    Double totalTaken = appSettings.getTotalTaken();
 
-    return Scaffold(
-      appBar: AppBar(title: Text(appSettings.translate('Dashboard Analytics'))),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Financial Overview Summary', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
+    Return Scaffold(
+      AppBar: AppBar(title: Text(appSettings.translate('Dashboard Analytics'))),
+      Body: SingleChildScrollView(
+        Padding: const EdgeInsets.all(16),
+        Child: Column(
+          CrossAxisAlignment: CrossAxisAlignment.start,
+          Children: [
+            Const Text('Financial Overview Summary', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Const SizedBox(height: 12),
             Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
-              child: Column(
-                children: [
+              Padding: const EdgeInsets.all(16),
+              Decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
+              Child: Column(
+                Children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Total Balance', style: TextStyle(color: Colors.grey)),
+                    MainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Children: [
+                      Const Text('Total Balance', style: TextStyle(color: Colors.grey)),
                       Text('$balance $curr', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: balance >= 0 ? const Color(0xFF10B981) : Colors.redAccent)),
                     ],
                   ),
-                  const Divider(height: 24),
+                  Const Divider(height: 24),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Total Income', style: TextStyle(color: Colors.grey)),
+                    MainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Children: [
+                      Const Text('Total Income', style: TextStyle(color: Colors.grey)),
                       Text('$income $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  Const SizedBox(height: 8),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Total Expense', style: TextStyle(color: Colors.grey)),
+                    MainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Children: [
+                      Const Text('Total Expense', style: TextStyle(color: Colors.grey)),
                       Text('$expense $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
                     ],
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-            const Text('Loan & Debt Overview', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
+            Const SizedBox(height: 24),
+            Const Text('Loan & Debt Overview', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Const SizedBox(height: 12),
             Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
-              child: Column(
-                children: [
+              Padding: const EdgeInsets.all(16),
+              Decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
+              Child: Column(
+                Children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Total Loan Given', style: TextStyle(color: Colors.grey)),
+                    MainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Children: [
+                      Const Text('Total Loan Given', style: TextStyle(color: Colors.grey)),
                       Text('$totalGiven $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  Const SizedBox(height: 8),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Total Loan Taken', style: TextStyle(color: Colors.grey)),
+                    MainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Children: [
+                      Const Text('Total Loan Taken', style: TextStyle(color: Colors.grey)),
                       Text('$totalTaken $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
                     ],
                   ),
@@ -1042,60 +1041,60 @@ class DashboardAnalyticsScreen extends StatelessWidget {
   }
 }
 
-// ----------------- App Drawer Widget (Fix #2 & #3) -----------------
+// ----------------- App Drawer Widget -----------------
 class AppDrawer extends StatelessWidget {
-  const AppDrawer({super.key});
+  Const AppDrawer({super.key});
 
-  void _showThemeDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (ctx, setStateDialog) {
-            return AlertDialog(
-              title: Text(appSettings.translate('Theme')),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
+  Void _showThemeDialog(BuildContext context) {
+    ShowDialog(
+      Context: context,
+      Builder: (ctx) {
+        Return StatefulBuilder(
+          Builder: (ctx, setStateDialog) {
+            Return AlertDialog(
+              Title: Text(appSettings.translate('Theme')),
+              Content: Column(
+                MainAxisSize: MainAxisSize.min,
+                Children: [
                   RadioListTile<ThemeMode>(
-                    title: const Text('Dark'),
-                    value: ThemeMode.dark,
-                    groupValue: appSettings.themeMode,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) {
-                      if (val != null) {
-                        appSettings.setTheme(val);
-                        setStateDialog(() {});
+                    Title: const Text('Dark'),
+                    Value: ThemeMode.dark,
+                    GroupValue: appSettings.themeMode,
+                    ActiveColor: const Color(0xFF10B981),
+                    OnChanged: (val) {
+                      If (val != null) {
+                        AppSettings.setTheme(val);
+                        SetStateDialog(() {});
                       }
                     },
                   ),
                   RadioListTile<ThemeMode>(
-                    title: const Text('Light'),
-                    value: ThemeMode.light,
-                    groupValue: appSettings.themeMode,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) {
-                      if (val != null) {
-                        appSettings.setTheme(val);
-                        setStateDialog(() {});
+                    Title: const Text('Light'),
+                    Value: ThemeMode.light,
+                    GroupValue: appSettings.themeMode,
+                    ActiveColor: const Color(0xFF10B981),
+                    OnChanged: (val) {
+                      If (val != null) {
+                        AppSettings.setTheme(val);
+                        SetStateDialog(() {});
                       }
                     },
                   ),
                   RadioListTile<ThemeMode>(
-                    title: const Text('System Default'),
-                    value: ThemeMode.system,
-                    groupValue: appSettings.themeMode,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) {
-                      if (val != null) {
-                        appSettings.setTheme(val);
-                        setStateDialog(() {});
+                    Title: const Text('System Default'),
+                    Value: ThemeMode.system,
+                    GroupValue: appSettings.themeMode,
+                    ActiveColor: const Color(0xFF10B981),
+                    OnChanged: (val) {
+                      If (val != null) {
+                        AppSettings.setTheme(val);
+                        SetStateDialog(() {});
                       }
                     },
                   ),
                 ],
               ),
-              actions: [
+              Actions: [
                 TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
               ],
             );
@@ -1105,68 +1104,68 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  void _showLanguageDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (ctx, setStateDialog) {
-            return AlertDialog(
-              title: Text(appSettings.translate('Language')),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
+  Void _showLanguageDialog(BuildContext context) {
+    ShowDialog(
+      Context: context,
+      Builder: (ctx) {
+        Return StatefulBuilder(
+          Builder: (ctx, setStateDialog) {
+            Return AlertDialog(
+              Title: Text(appSettings.translate('Language')),
+              Content: Column(
+                MainAxisSize: MainAxisSize.min,
+                Children: [
                   RadioListTile<String>(
-                    title: const Text('System Default'),
-                    value: 'System Default',
-                    groupValue: appSettings.language,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) {
-                      if (val != null) {
-                        appSettings.setLanguage('English');
-                        setStateDialog(() {});
+                    Title: const Text('System Default'),
+                    Value: 'System Default',
+                    GroupValue: appSettings.language,
+                    ActiveColor: const Color(0xFF10B981),
+                    OnChanged: (val) {
+                      If (val != null) {
+                        AppSettings.setLanguage('English');
+                        SetStateDialog(() {});
                       }
                     },
                   ),
                   RadioListTile<String>(
-                    title: const Text('Arabic (العربية)'),
-                    value: 'Arabic',
-                    groupValue: appSettings.language,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) {
-                      if (val != null) {
-                        appSettings.setLanguage(val);
-                        setStateDialog(() {});
+                    Title: const Text('Arabic (العربية)'),
+                    Value: 'Arabic',
+                    GroupValue: appSettings.language,
+                    ActiveColor: const Color(0xFF10B981),
+                    OnChanged: (val) {
+                      If (val != null) {
+                        AppSettings.setLanguage(val);
+                        SetStateDialog(() {});
                       }
                     },
                   ),
                   RadioListTile<String>(
-                    title: const Text('Bangla (বাংলা)'),
-                    value: 'Bangla',
-                    groupValue: appSettings.language,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) {
-                      if (val != null) {
-                        appSettings.setLanguage(val);
-                        setStateDialog(() {});
+                    Title: const Text('Bangla (বাংলা)'),
+                    Value: 'Bangla',
+                    GroupValue: appSettings.language,
+                    ActiveColor: const Color(0xFF10B981),
+                    OnChanged: (val) {
+                      If (val != null) {
+                        AppSettings.setLanguage(val);
+                        SetStateDialog(() {});
                       }
                     },
                   ),
                   RadioListTile<String>(
-                    title: const Text('English'),
-                    value: 'English',
-                    groupValue: appSettings.language,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) {
-                      if (val != null) {
-                        appSettings.setLanguage(val);
-                        setStateDialog(() {});
+                    Title: const Text('English'),
+                    Value: 'English',
+                    GroupValue: appSettings.language,
+                    ActiveColor: const Color(0xFF10B981),
+                    OnChanged: (val) {
+                      If (val != null) {
+                        AppSettings.setLanguage(val);
+                        SetStateDialog(() {});
                       }
                     },
                   ),
                 ],
               ),
-              actions: [
+              Actions: [
                 TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
               ],
             );
@@ -1178,72 +1177,72 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
+    Return Drawer(
+      Child: ListView(
+        Padding: EdgeInsets.zero,
+        Children: [
           UserAccountsDrawerHeader(
-            decoration: const BoxDecoration(color: Color(0xFF10B981)),
-            accountName: Text(appSettings.profileName, style: const TextStyle(fontWeight: FontWeight.bold)),
-            accountEmail: Text(appSettings.profileEmail),
-            currentAccountPicture: CircleAvatar(
-              backgroundColor: Colors.white,
-              backgroundImage: appSettings.profileImagePath.isNotEmpty ? FileImage(File(appSettings.profileImagePath)) : null,
-              child: appSettings.profileImagePath.isEmpty ? const Icon(Icons.person, size: 40, color: Color(0xFF10B981)) : null,
+            Decoration: const BoxDecoration(color: Color(0xFF10B981)),
+            AccountName: Text(appSettings.profileName, style: const TextStyle(fontWeight: FontWeight.bold)),
+            AccountEmail: Text(appSettings.profileEmail),
+            CurrentAccountPicture: CircleAvatar(
+              BackgroundColor: Colors.white,
+              BackgroundImage: appSettings.profileImagePath.isNotEmpty ? FileImage(File(appSettings.profileImagePath)) : null,
+              Child: appSettings.profileImagePath.isEmpty ? const Icon(Icons.person, size: 40, color: Color(0xFF10B981)) : null,
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.dashboard),
-            title: Text(appSettings.translate('Dashboard Analytics')),
-            onTap: () {
+            Leading: const Icon(Icons.dashboard),
+            Title: Text(appSettings.translate('Dashboard Analytics')),
+            OnTap: () {
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (context) => const DashboardAnalyticsScreen()));
             },
           ),
           ListTile(
-            leading: const Icon(Icons.category),
-            title: Text(appSettings.translate('Categories')),
-            onTap: () {
+            Leading: const Icon(Icons.category),
+            Title: Text(appSettings.translate('Categories')),
+            OnTap: () {
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (context) => const CategoriesScreen()));
             },
           ),
           ListTile(
-            leading: const Icon(Icons.account_balance),
-            title: Text(appSettings.translate('Accounts')),
-            onTap: () {
+            Leading: const Icon(Icons.account_balance),
+            Title: Text(appSettings.translate('Accounts')),
+            OnTap: () {
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountsScreen()));
             },
           ),
           ListTile(
-            leading: const Icon(Icons.palette),
-            title: Text(appSettings.translate('Theme')),
-            onTap: () {
+            Leading: const Icon(Icons.palette),
+            Title: Text(appSettings.translate('Theme')),
+            OnTap: () {
               Navigator.pop(context);
               _showThemeDialog(context);
             },
           ),
           ListTile(
-            leading: const Icon(Icons.language),
-            title: Text(appSettings.translate('Language')),
-            onTap: () {
+            Leading: const Icon(Icons.language),
+            Title: Text(appSettings.translate('Language')),
+            OnTap: () {
               Navigator.pop(context);
               _showLanguageDialog(context);
             },
           ),
-          const Divider(),
+          Const Divider(),
           ListTile(
-            leading: const Icon(Icons.info),
-            title: Text(appSettings.translate('About App')),
-            onTap: () {
+            Leading: const Icon(Icons.info),
+            Title: Text(appSettings.translate('About App')),
+            OnTap: () {
               Navigator.pop(context);
-              showDialog(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: Text(appSettings.translate('About App')),
-                  content: const Text('Account Book v1.0.0\nDeveloped for daily financial ledger & transaction management.'),
-                  actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close'))],
+              ShowDialog(
+                Context: context,
+                Builder: (ctx) => AlertDialog(
+                  Title: Text(appSettings.translate('About App')),
+                  Content: const Text('Account Book v1.0.0\nDeveloped for daily financial ledger & transaction management.'),
+                  Actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close'))],
                 ),
               );
             },
@@ -1258,45 +1257,46 @@ class AppDrawer extends StatelessWidget {
 
 // 1. Accounts Screen
 class AccountsScreen extends StatefulWidget {
-  const AccountsScreen({super.key});
+  Const AccountsScreen({super.key});
   @override
   State<AccountsScreen> createState() => _AccountsScreenState();
 }
 class _AccountsScreenState extends State<AccountsScreen> {
-  void _showAddEditDialog({int? index, AccountModel? account}) {
-    final nameC = TextEditingController(text: account?.name ?? '');
-    final typeC = TextEditingController(text: account?.type ?? 'Bank');
-    final detC = TextEditingController(text: account?.details ?? '');
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(index == null ? 'Add Account' : 'Edit Account'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+  Void _showAddEditDialog({int? index, AccountModel? account}) {
+    Final nameC = TextEditingController(text: account?.name ?? '');
+    Final typeC = TextEditingController(text: account?.type ?? 'Bank');
+    Final detC = TextEditingController(text: account?.details ?? '');
+    ShowDialog(
+      Context: context,
+      Builder: (ctx) => AlertDialog(
+        Title: Text(index == null ? 'Add Account' : 'Edit Account'),
+        Content: Column(
+          MainAxisSize: MainAxisSize.min,
+          Children: [
             TextField(controller: nameC, decoration: const InputDecoration(labelText: 'Account Name', border: OutlineInputBorder())),
-            const SizedBox(height: 10),
+            Const SizedBox(height: 10),
             TextField(controller: typeC, decoration: const InputDecoration(labelText: 'Type', border: OutlineInputBorder())),
-            const SizedBox(height: 10),
+            Const SizedBox(height: 10),
             TextField(controller: detC, decoration: const InputDecoration(labelText: 'Details / Account Number', border: OutlineInputBorder())),
           ],
         ),
-        actions: [
+        Actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
-            onPressed: () {
-              if (nameC.text.isNotEmpty) {
-                if (index == null) {
-                  appSettings.addAccount(nameC.text, typeC.text, detC.text);
+            Style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
+            OnPressed: () {
+              If (nameC.text.isNotEmpty) {
+                If (index == null) {
+                  AppPreferences.addAccount(nameC.text, typeC.text, detC.text); // Note: using appSettings
+                  AppSettings.addAccount(nameC.text, typeC.text, detC.text);
                 } else {
-                  appSettings.updateAccount(index, nameC.text, typeC.text, detC.text);
+                  AppSettings.updateAccount(index, nameC.text, typeC.text, detC.text);
                 }
                 Navigator.pop(ctx);
-                setState(() {});
+                SetState(() {});
               }
             },
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
+            Child: const Text('Save', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -1305,64 +1305,64 @@ class _AccountsScreenState extends State<AccountsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(appSettings.translate('Accounts')),
-        actions: [
+    Return Scaffold(
+      AppBar: AppBar(
+        Title: Text(appSettings.translate('Accounts')),
+        Actions: [
           Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
           Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: appSettings.accounts.length,
-          itemBuilder: (context, index) {
-            final acc = appSettings.accounts[index];
-            return Card(
-              color: Theme.of(context).cardColor,
-              margin: const EdgeInsets.only(bottom: 10),
-              child: ListTile(
-                onTap: () {
-                  appSettings.setDefaultAccount(index);
-                  setState(() {});
+      Body: Padding(
+        Padding: const EdgeInsets.all(16.0),
+        Child: ListView.builder(
+          ItemCount: appSettings.accounts.length,
+          ItemBuilder: (context, index) {
+            Final acc = appSettings.accounts[index];
+            Return Card(
+              Color: Theme.of(context).cardColor,
+              Margin: const EdgeInsets.only(bottom: 10),
+              Child: ListTile(
+                OnTap: () {
+                  AppSettings.setDefaultAccount(index);
+                  SetState(() {});
                 },
-                leading: CircleAvatar(
-                  backgroundColor: acc.isDefault ? const Color(0xFF10B981).withOpacity(0.2) : Colors.grey.withOpacity(0.1),
-                  child: Icon(
-                    acc.isDefault ? Icons.check : Icons.account_balance_wallet,
-                    color: acc.isDefault ? const Color(0xFF10B981) : Colors.grey,
+                Leading: CircleAvatar(
+                  BackgroundColor: acc.isDefault ? const Color(0xFF10B981).withOpacity(0.2) : Colors.grey.withOpacity(0.1),
+                  Child: Icon(
+                    Acc.isDefault ? Icons.check : Icons.account_balance_wallet,
+                    Color: acc.isDefault ? const Color(0xFF10B981) : Colors.grey,
                   ),
                 ),
-                title: Text(appSettings.translate(acc.name) + (acc.isDefault ? ' [Default]' : ''), style: const TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 4),
+                Title: Text(appSettings.translate(acc.name) + (acc.isDefault ? ' [Default]' : ''), style: const TextStyle(fontWeight: FontWeight.bold)),
+                Subtitle: Column(
+                  CrossAxisAlignment: CrossAxisAlignment.start,
+                  Children: [
+                    Const SizedBox(height: 4),
                     Text(appSettings.translate(acc.type)),
-                    const SizedBox(height: 2),
+                    Const SizedBox(height: 2),
                     Text(acc.details, style: const TextStyle(color: Colors.grey)),
                   ],
                 ),
-                isThreeLine: true,
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+                IsThreeLine: true,
+                Trailing: Row(
+                  MainAxisSize: MainAxisSize.min,
+                  Children: [
                     IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddEditDialog(index: index, account: acc)),
                     IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20), 
-                      onPressed: () {
-                        if (appSettings.accounts.length <= 1) {
+                      Icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20), 
+                      OnPressed: () {
+                        If (appSettings.accounts.length <= 1) {
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cannot delete the last remaining account!')));
-                          return;
+                          Return;
                         }
-                        showLocalizedDeleteDialog(
-                          context: context,
-                          isImportant: true,
-                          itemName: acc.name,
-                          onDeleteConfirmed: () {
-                            appSettings.removeAccount(index);
-                            setState(() {});
+                        ShowLocalizedDeleteDialog(
+                          Context: context,
+                          IsImportant: true,
+                          ItemName: acc.name,
+                          OnDeleteConfirmed: () {
+                            AppSettings.removeAccount(index);
+                            SetState(() {});
                           },
                         );
                       },
@@ -1374,10 +1374,10 @@ class _AccountsScreenState extends State<AccountsScreen> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF10B981),
-        onPressed: () => _showAddEditDialog(),
-        child: const Icon(Icons.add, color: Colors.white),
+      FloatingActionButton: FloatingActionButton(
+        BackgroundColor: const Color(0xFF10B981),
+        OnPressed: () => _showAddEditDialog(),
+        Child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -1385,54 +1385,54 @@ class _AccountsScreenState extends State<AccountsScreen> {
 
 // 2. Budget Screen
 class BudgetScreen extends StatefulWidget {
-  const BudgetScreen({super.key});
+  Const BudgetScreen({super.key});
   @override
   State<BudgetScreen> createState() => _BudgetScreenState();
 }
 class _BudgetScreenState extends State<BudgetScreen> {
-  void _showAddEditBudgetDialog({int? index, BudgetModel? budget}) {
+  Void _showAddEditBudgetDialog({int? index, BudgetModel? budget}) {
     String selectedCategory = budget?.category ?? appSettings.categories[0];
-    final amountC = TextEditingController(text: budget != null ? budget.amount.toString() : '');
+    Final amountC = TextEditingController(text: budget != null ? budget.amount.toString() : '');
     
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setStateSheet) => Padding(
-          padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+    ShowModalBottomSheet(
+      Context: context,
+      IsScrollControlled: true,
+      Builder: (ctx) => StatefulBuilder(
+        Builder: (ctx, setStateSheet) => Padding(
+          Padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
+          Child: Column(
+            MainAxisSize: MainAxisSize.min,
+            CrossAxisAlignment: CrossAxisAlignment.start,
+            Children: [
               Text(index == null ? 'Add New Budget' : 'Edit Budget', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 12),
+              Const SizedBox(height: 12),
               DropdownButtonFormField<String>(
-                value: selectedCategory,
-                dropdownColor: Theme.of(context).cardColor,
-                decoration: const InputDecoration(labelText: 'Select Category', border: OutlineInputBorder()),
-                items: appSettings.categories.map((c) => DropdownMenuItem(value: c, child: Text(appSettings.translate(c)))).toList(),
-                onChanged: (val) { if (val != null) setStateSheet(() => selectedCategory = val); },
+                Value: selectedCategory,
+                DropdownColor: Theme.of(context).cardColor,
+                Decoration: const InputDecoration(labelText: 'Select Category', border: OutlineInputBorder()),
+                Items: appSettings.categories.map((c) => DropdownMenuItem(value: c, child: Text(appSettings.translate(c)))).toList(),
+                OnChanged: (val) { if (val != null) setStateSheet(() => selectedCategory = val); },
               ),
-              const SizedBox(height: 12),
+              Const SizedBox(height: 12),
               TextField(controller: amountC, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Amount', border: OutlineInputBorder())),
-              const SizedBox(height: 16),
+              Const SizedBox(height: 16),
               SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
-                  onPressed: () {
-                    if (amountC.text.isNotEmpty) {
-                      double amt = double.tryParse(amountC.text) ?? 0.0;
-                      if (index == null) {
-                        appSettings.addBudget(selectedCategory, amt);
+                Width: double.infinity,
+                Child: ElevatedButton(
+                  Style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
+                  OnPressed: () {
+                    If (amountC.text.isNotEmpty) {
+                      Double amt = double.tryParse(amountC.text) ?? 0.0;
+                      If (index == null) {
+                        AppSettings.addBudget(selectedCategory, amt);
                       } else {
-                        appSettings.updateBudget(index, selectedCategory, amt);
+                        AppSettings.updateBudget(index, selectedCategory, amt);
                       }
                       Navigator.pop(ctx);
-                      setState(() {});
+                      SetState(() {});
                     }
                   },
-                  child: const Text('Save', style: TextStyle(color: Colors.white)),
+                  Child: const Text('Save', style: TextStyle(color: Colors.white)),
                 ),
               ),
             ],
@@ -1445,44 +1445,44 @@ class _BudgetScreenState extends State<BudgetScreen> {
   @override
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(appSettings.translate('Budget')),
-        actions: [
+    Return Scaffold(
+      AppBar: AppBar(
+        Title: Text(appSettings.translate('Budget')),
+        Actions: [
           Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
           Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: appSettings.budgets.isEmpty
+      Body: Padding(
+        Padding: const EdgeInsets.all(16.0),
+        Child: appSettings.budgets.isEmpty
             ? const Center(child: Text('No budget found', style: TextStyle(color: Colors.grey)))
             : ListView.builder(
-                itemCount: appSettings.budgets.length,
-                itemBuilder: (context, index) {
-                  final b = appSettings.budgets[index];
-                  return Card(
-                    color: Theme.of(context).cardColor,
-                    margin: const EdgeInsets.only(bottom: 8),
-                    child: ListTile(
-                      leading: const Icon(Icons.track_changes, color: Color(0xFF10B981)),
-                      title: Text(appSettings.translate(b.category)),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
+                ItemCount: appSettings.budgets.length,
+                ItemBuilder: (context, index) {
+                  Final b = appSettings.budgets[index];
+                  Return Card(
+                    Color: Theme.of(context).cardColor,
+                    Margin: const EdgeInsets.only(bottom: 8),
+                    Child: ListTile(
+                      Leading: const Icon(Icons.track_changes, color: Color(0xFF10B981)),
+                      Title: Text(appSettings.translate(b.category)),
+                      Trailing: Row(
+                        MainAxisSize: MainAxisSize.min,
+                        Children: [
                           Text('$curr ${b.amount}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
-                          const SizedBox(width: 8),
+                          Const SizedBox(width: 8),
                           IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddEditBudgetDialog(index: index, budget: b)),
                           IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20), 
-                            onPressed: () {
-                              showLocalizedDeleteDialog(
-                                context: context,
-                                isImportant: false,
-                                itemName: b.category,
-                                onDeleteConfirmed: () {
-                                  appSettings.removeBudget(index);
-                                  setState(() {});
+                            Icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20), 
+                            OnPressed: () {
+                              ShowLocalizedDeleteDialog(
+                                Context: context,
+                                IsImportant: false,
+                                ItemName: b.category,
+                                OnDeleteConfirmed: () {
+                                  AppSettings.removeBudget(index);
+                                  SetState(() {});
                                 },
                               );
                             },
@@ -1494,10 +1494,10 @@ class _BudgetScreenState extends State<BudgetScreen> {
                 },
               ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF10B981),
-        onPressed: () => _showAddEditBudgetDialog(),
-        child: const Icon(Icons.add, color: Colors.white),
+      FloatingActionButton: FloatingActionButton(
+        BackgroundColor: const Color(0xFF10B981),
+        OnPressed: () => _showAddEditBudgetDialog(),
+        Child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -1505,34 +1505,34 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
 // 3. Categories Screen
 class CategoriesScreen extends StatefulWidget {
-  const CategoriesScreen({super.key});
+  Const CategoriesScreen({super.key});
   @override
   State<CategoriesScreen> createState() => _CategoriesScreenState();
 }
 class _CategoriesScreenState extends State<CategoriesScreen> {
-  void _showAddCategoryDialog({int? index, String? category}) {
-    final catController = TextEditingController(text: category ?? '');
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(index == null ? 'Add Category' : 'Edit Category'),
-        content: TextField(controller: catController, decoration: const InputDecoration(labelText: 'Category Name', border: OutlineInputBorder())),
-        actions: [
+  Void _showAddCategoryDialog({int? index, String? category}) {
+    Final catController = TextEditingController(text: category ?? '');
+    ShowDialog(
+      Context: context,
+      Builder: (ctx) => AlertDialog(
+        Title: Text(index == null ? 'Add Category' : 'Edit Category'),
+        Content: TextField(controller: catController, decoration: const InputDecoration(labelText: 'Category Name', border: OutlineInputBorder())),
+        Actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
-            onPressed: () {
-              if (catController.text.isNotEmpty) {
-                if (index == null) {
-                  appSettings.addCategory(catController.text);
+            Style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
+            OnPressed: () {
+              If (catController.text.isNotEmpty) {
+                If (index == null) {
+                  AppSettings.addCategory(catController.text);
                 } else {
-                  appSettings.updateCategory(index, catController.text);
+                  AppSettings.updateCategory(index, catController.text);
                 }
                 Navigator.pop(ctx);
-                setState(() {});
+                SetState(() {});
               }
             },
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
+            Child: const Text('Save', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -1541,44 +1541,44 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(appSettings.translate('Categories')),
-        actions: [
+    Return Scaffold(
+      AppBar: AppBar(
+        Title: Text(appSettings.translate('Categories')),
+        Actions: [
           Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
           Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: appSettings.categories.length,
-          itemBuilder: (context, index) {
-            final cat = appSettings.categories[index];
-            return Card(
-              color: Theme.of(context).cardColor,
-              margin: const EdgeInsets.only(bottom: 8),
-              child: ListTile(
-                leading: const Icon(Icons.category, color: Color(0xFF10B981)),
-                title: Text(appSettings.translate(cat)),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+      Body: Padding(
+        Padding: const EdgeInsets.all(16.0),
+        Child: ListView.builder(
+          ItemCount: appSettings.categories.length,
+          ItemBuilder: (context, index) {
+            Final cat = appSettings.categories[index];
+            Return Card(
+              Color: Theme.of(context).cardColor,
+              Margin: const EdgeInsets.only(bottom: 8),
+              Child: ListTile(
+                Leading: const Icon(Icons.category, color: Color(0xFF10B981)),
+                Title: Text(appSettings.translate(cat)),
+                Trailing: Row(
+                  MainAxisSize: MainAxisSize.min,
+                  Children: [
                     IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20),
-                      onPressed: () => _showAddCategoryDialog(index: index, category: cat),
+                      Icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20),
+                      OnPressed: () => _showAddCategoryDialog(index: index, category: cat),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20), 
-                      onPressed: () {
-                        if (appSettings.categories.length > 1) {
-                          showLocalizedDeleteDialog(
-                            context: context,
-                            isImportant: true,
-                            itemName: cat,
-                            onDeleteConfirmed: () {
-                              appSettings.removeCategory(index);
-                              setState(() {});
+                      Icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20), 
+                      OnPressed: () {
+                        If (appSettings.categories.length > 1) {
+                          ShowLocalizedDeleteDialog(
+                            Context: context,
+                            IsImportant: true,
+                            ItemName: cat,
+                            OnDeleteConfirmed: () {
+                              AppSettings.removeCategory(index);
+                              SetState(() {});
                             },
                           );
                         } else {
@@ -1593,10 +1593,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF10B981),
-        onPressed: () => _showAddCategoryDialog(),
-        child: const Icon(Icons.add, color: Colors.white),
+      FloatingActionButton: FloatingActionButton(
+        BackgroundColor: const Color(0xFF10B981),
+        OnPressed: () => _showAddCategoryDialog(),
+        Child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -1604,43 +1604,43 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
 // 4. Fund Shopping Screen
 class FundShoppingScreen extends StatefulWidget {
-  const FundShoppingScreen({super.key});
+  Const FundShoppingScreen({super.key});
   @override
   State<FundShoppingScreen> createState() => _FundShoppingScreenState();
 }
 class _FundShoppingScreenState extends State<FundShoppingScreen> {
-  void _showAddShoppingDialog({int? index, ShoppingItem? item}) {
-    final itemController = TextEditingController(text: item?.name ?? '');
-    final amountController = TextEditingController(text: item != null ? item.amount.toString() : '');
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(index == null ? 'Add Shopping Item' : 'Edit Shopping Item'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+  Void _showAddShoppingDialog({int? index, ShoppingItem? item}) {
+    Final itemController = TextEditingController(text: item?.name ?? '');
+    Final amountController = TextEditingController(text: item != null ? item.amount.toString() : '');
+    ShowDialog(
+      Context: context,
+      Builder: (ctx) => AlertDialog(
+        Title: Text(index == null ? 'Add Shopping Item' : 'Edit Shopping Item'),
+        Content: Column(
+          MainAxisSize: MainAxisSize.min,
+          Children: [
             TextField(controller: itemController, decoration: const InputDecoration(labelText: 'Item Name', border: OutlineInputBorder())),
-            const SizedBox(height: 10),
+            Const SizedBox(height: 10),
             TextField(controller: amountController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Estimated Amount', border: OutlineInputBorder())),
           ],
         ),
-        actions: [
+        Actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
-            onPressed: () {
-              if (itemController.text.isNotEmpty) {
-                double amt = double.tryParse(amountController.text) ?? 0.0;
-                if (index == null) {
-                  appSettings.addShoppingItem(itemController.text, amt);
+            Style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
+            OnPressed: () {
+              If (itemController.text.isNotEmpty) {
+                Double amt = double.tryParse(amountController.text) ?? 0.0;
+                If (index == null) {
+                  AppSettings.addShoppingItem(itemController.text, amt);
                 } else {
-                  appSettings.updateShoppingItem(index, itemController.text, amt);
+                  AppSettings.updateShoppingItem(index, itemController.text, amt);
                 }
                 Navigator.pop(ctx);
-                setState(() {});
+                SetState(() {});
               }
             },
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
+            Child: const Text('Save', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -1650,56 +1650,56 @@ class _FundShoppingScreenState extends State<FundShoppingScreen> {
   @override
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(appSettings.translate('Shopping')),
-        actions: [
+    Return Scaffold(
+      AppBar: AppBar(
+        Title: Text(appSettings.translate('Shopping')),
+        Actions: [
           Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
           Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: appSettings.shoppingList.isEmpty
+      Body: Padding(
+        Padding: const EdgeInsets.all(16.0),
+        Child: appSettings.shoppingList.isEmpty
             ? const Center(child: Text('Your shopping list is empty', style: TextStyle(color: Colors.grey)))
             : ListView.builder(
-                itemCount: appSettings.shoppingList.length,
-                itemBuilder: (context, index) {
-                  final item = appSettings.shoppingList[index];
-                  return Card(
-                    color: Theme.of(context).cardColor,
-                    margin: const EdgeInsets.only(bottom: 8),
-                    child: ListTile(
-                      leading: Checkbox(
-                        value: item.isChecked,
-                        activeColor: const Color(0xFF10B981),
-                        onChanged: (val) {
-                          appSettings.toggleShoppingCheck(index);
-                          setState(() {});
+                ItemCount: appSettings.shoppingList.length,
+                ItemBuilder: (context, index) {
+                  Final item = appSettings.shoppingList[index];
+                  Return Card(
+                    Color: Theme.of(context).cardColor,
+                    Margin: const EdgeInsets.only(bottom: 8),
+                    Child: ListTile(
+                      Leading: Checkbox(
+                        Value: item.isChecked,
+                        ActiveColor: const Color(0xFF10B981),
+                        OnChanged: (val) {
+                          AppSettings.toggleShoppingCheck(index);
+                          SetState(() {});
                         },
                       ),
-                      title: Text(
-                        appSettings.translate(item.name),
-                        style: TextStyle(decoration: item.isChecked ? TextDecoration.lineThrough : null),
+                      Title: Text(
+                        AppSettings.translate(item.name),
+                        Style: TextStyle(decoration: item.isChecked ? TextDecoration.lineThrough : null),
                       ),
-                      subtitle: Text('$curr ${item.amount}'),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
+                      Subtitle: Text('$curr ${item.amount}'),
+                      Trailing: Row(
+                        MainAxisSize: MainAxisSize.min,
+                        Children: [
                           IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20),
-                            onPressed: () => _showAddShoppingDialog(index: index, item: item),
+                            Icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20),
+                            OnPressed: () => _showAddShoppingDialog(index: index, item: item),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20),
-                            onPressed: () {
-                              showLocalizedDeleteDialog(
-                                context: context,
-                                isImportant: false,
-                                itemName: item.name,
-                                onDeleteConfirmed: () {
-                                  appSettings.removeShoppingItem(index);
-                                  setState(() {});
+                            Icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20),
+                            OnPressed: () {
+                              ShowLocalizedDeleteDialog(
+                                Context: context,
+                                IsImportant: false,
+                                ItemName: item.name,
+                                OnDeleteConfirmed: () {
+                                  AppSettings.removeShoppingItem(index);
+                                  SetState(() {});
                                 },
                               );
                             },
@@ -1711,66 +1711,66 @@ class _FundShoppingScreenState extends State<FundShoppingScreen> {
                 },
               ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF10B981),
-        onPressed: () => _showAddShoppingDialog(),
-        child: const Icon(Icons.add, color: Colors.white),
+      FloatingActionButton: FloatingActionButton(
+        BackgroundColor: const Color(0xFF10B981),
+        OnPressed: () => _showAddShoppingDialog(),
+        Child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 }
 
-// 5. Reminders Screen (Fix #13: 1-31 dropdown for due date)
+// 5. Reminders Screen
 class RemindersScreen extends StatefulWidget {
-  const RemindersScreen({super.key});
+  Const RemindersScreen({super.key});
   @override
   State<RemindersScreen> createState() => _RemindersScreenState();
 }
 class _RemindersScreenState extends State<RemindersScreen> {
-  void _showAddReminderDialog({int? index, ReminderModel? reminder}) {
-    final titleC = TextEditingController(text: reminder?.title ?? '');
-    final amountC = TextEditingController(text: reminder != null ? reminder.amount.toString() : '');
+  Void _showAddReminderDialog({int? index, ReminderModel? reminder}) {
+    Final titleC = TextEditingController(text: reminder?.title ?? '');
+    Final amountC = TextEditingController(text: reminder != null ? reminder.amount.toString() : '');
     String selectedDay = reminder?.dueDate ?? '1';
     List<String> daysList = List.generate(31, (i) => (i + 1).toString());
 
-    showDialog(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setStateDialog) => AlertDialog(
-          title: Text(index == null ? 'Add Bill Reminder' : 'Edit Bill Reminder'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+    ShowDialog(
+      Context: context,
+      Builder: (ctx) => StatefulBuilder(
+        Builder: (ctx, setStateDialog) => AlertDialog(
+          Title: Text(index == null ? 'Add Bill Reminder' : 'Edit Bill Reminder'),
+          Content: Column(
+            MainAxisSize: MainAxisSize.min,
+            Children: [
               TextField(controller: titleC, decoration: const InputDecoration(labelText: 'Bill Title', border: OutlineInputBorder())),
-              const SizedBox(height: 10),
+              Const SizedBox(height: 10),
               TextField(controller: amountC, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Amount', border: OutlineInputBorder())),
-              const SizedBox(height: 10),
+              Const SizedBox(height: 10),
               DropdownButtonFormField<String>(
-                value: selectedDay,
-                dropdownColor: Theme.of(context).cardColor,
-                decoration: const InputDecoration(labelText: 'Due Date (Day of Month)', border: OutlineInputBorder()),
-                items: daysList.map((d) => DropdownMenuItem(value: d, child: Text('Day $d'))).toList(),
-                onChanged: (val) { if (val != null) setStateDialog(() => selectedDay = val); },
+                Value: selectedDay,
+                DropdownColor: Theme.of(context).cardColor,
+                Decoration: const InputDecoration(labelText: 'Due Date (Day of Month)', border: OutlineInputBorder()),
+                Items: daysList.map((d) => DropdownMenuItem(value: d, child: Text('Day $d'))).toList(),
+                OnChanged: (val) { if (val != null) setStateDialog(() => selectedDay = val); },
               ),
             ],
           ),
-          actions: [
+          Actions: [
             TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
-              onPressed: () {
-                if (titleC.text.isNotEmpty && amountC.text.isNotEmpty) {
-                  double amt = double.tryParse(amountC.text) ?? 0.0;
-                  if (index == null) {
-                    appSettings.addReminder(titleC.text, amt, selectedDay);
+              Style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
+              OnPressed: () {
+                If (titleC.text.isNotEmpty && amountC.text.isNotEmpty) {
+                  Double amt = double.tryParse(amountC.text) ?? 0.0;
+                  If (index == null) {
+                    AppSettings.addReminder(titleC.text, amt, selectedDay);
                   } else {
-                    appSettings.updateReminder(index, titleC.text, amt, selectedDay);
+                    AppSettings.updateReminder(index, titleC.text, amt, selectedDay);
                   }
                   Navigator.pop(ctx);
-                  setState(() {});
+                  SetState(() {});
                 }
               },
-              child: const Text('Save', style: TextStyle(color: Colors.white)),
+              Child: const Text('Save', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
@@ -1781,45 +1781,45 @@ class _RemindersScreenState extends State<RemindersScreen> {
   @override
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(appSettings.translate('Reminder')),
-        actions: [
+    Return Scaffold(
+      AppBar: AppBar(
+        Title: Text(appSettings.translate('Reminder')),
+        Actions: [
           Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
           Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: appSettings.reminders.isEmpty
+      Body: Padding(
+        Padding: const EdgeInsets.all(16.0),
+        Child: appSettings.reminders.isEmpty
             ? const Center(child: Text('No reminders found', style: TextStyle(color: Colors.grey)))
             : ListView.builder(
-                itemCount: appSettings.reminders.length,
-                itemBuilder: (context, index) {
-                  final rem = appSettings.reminders[index];
-                  return Card(
-                    color: Theme.of(context).cardColor,
-                    margin: const EdgeInsets.only(bottom: 8),
-                    child: ListTile(
-                      leading: const Icon(Icons.notifications_active, color: Color(0xFF10B981)),
-                      title: Text(appSettings.translate(rem.title)),
-                      subtitle: Text('Due Day: ${rem.dueDate}'),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
+                ItemCount: appSettings.reminders.length,
+                ItemBuilder: (context, index) {
+                  Final rem = appSettings.reminders[index];
+                  Return Card(
+                    Color: Theme.of(context).cardColor,
+                    Margin: const EdgeInsets.only(bottom: 8),
+                    Child: ListTile(
+                      Leading: const Icon(Icons.notifications_active, color: Color(0xFF10B981)),
+                      Title: Text(appSettings.translate(rem.title)),
+                      Subtitle: Text('Due Day: ${rem.dueDate}'),
+                      Trailing: Row(
+                        MainAxisSize: MainAxisSize.min,
+                        Children: [
                           Text('$curr ${rem.amount}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
-                          const SizedBox(width: 8),
+                          Const SizedBox(width: 8),
                           IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddReminderDialog(index: index, reminder: rem)),
                           IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20), 
-                            onPressed: () {
-                              showLocalizedDeleteDialog(
-                                context: context,
-                                isImportant: false,
-                                itemName: rem.title,
-                                onDeleteConfirmed: () {
-                                  appSettings.removeReminder(index);
-                                  setState(() {});
+                            Icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20), 
+                            OnPressed: () {
+                              ShowLocalizedDeleteDialog(
+                                Context: context,
+                                IsImportant: false,
+                                ItemName: rem.title,
+                                OnDeleteConfirmed: () {
+                                  AppSettings.removeReminder(index);
+                                  SetState(() {});
                                 },
                               );
                             },
@@ -1831,66 +1831,66 @@ class _RemindersScreenState extends State<RemindersScreen> {
                 },
               ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF10B981),
-        onPressed: () => _showAddReminderDialog(),
-        child: const Icon(Icons.add, color: Colors.white),
+      FloatingActionButton: FloatingActionButton(
+        BackgroundColor: const Color(0xFF10B981),
+        OnPressed: () => _showAddReminderDialog(),
+        Child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 }
 
-// 6. Repeated Transactions Screen (Fix #13: 1-31 dropdown for frequency)
+// 6. Repeated Transactions Screen
 class RepeatedTransactionsScreen extends StatefulWidget {
-  const RepeatedTransactionsScreen({super.key});
+  Const RepeatedTransactionsScreen({super.key});
   @override
   State<RepeatedTransactionsScreen> createState() => _RepeatedTransactionsScreenState();
 }
 class _RepeatedTransactionsScreenState extends State<RepeatedTransactionsScreen> {
-  void _showAddRepeatedDialog({int? index, RepeatedTransactionModel? repeated}) {
-    final titleC = TextEditingController(text: repeated?.title ?? '');
-    final amountC = TextEditingController(text: repeated != null ? repeated.amount.toString() : '');
+  Void _showAddRepeatedDialog({int? index, RepeatedTransactionModel? repeated}) {
+    Final titleC = TextEditingController(text: repeated?.title ?? '');
+    Final amountC = TextEditingController(text: repeated != null ? repeated.amount.toString() : '');
     String selectedDay = repeated?.frequency ?? '1';
     List<String> daysList = List.generate(31, (i) => (i + 1).toString());
 
-    showDialog(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setStateDialog) => AlertDialog(
-          title: Text(index == null ? 'Add Repeated Transaction' : 'Edit Repeated Transaction'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+    ShowDialog(
+      Context: context,
+      Builder: (ctx) => StatefulBuilder(
+        Builder: (ctx, setStateDialog) => AlertDialog(
+          Title: Text(index == null ? 'Add Repeated Transaction' : 'Edit Repeated Transaction'),
+          Content: Column(
+            MainAxisSize: MainAxisSize.min,
+            Children: [
               TextField(controller: titleC, decoration: const InputDecoration(labelText: 'Title', border: OutlineInputBorder())),
-              const SizedBox(height: 10),
+              Const SizedBox(height: 10),
               TextField(controller: amountC, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Amount', border: OutlineInputBorder())),
-              const SizedBox(height: 10),
+              Const SizedBox(height: 10),
               DropdownButtonFormField<String>(
-                value: selectedDay,
-                dropdownColor: Theme.of(context).cardColor,
-                decoration: const InputDecoration(labelText: 'Frequency (Day of Month)', border: OutlineInputBorder()),
-                items: daysList.map((d) => DropdownMenuItem(value: d, child: Text('Day $d of every month'))).toList(),
-                onChanged: (val) { if (val != null) setStateDialog(() => selectedDay = val); },
+                Value: selectedDay,
+                DropdownColor: Theme.of(context).cardColor,
+                Decoration: const InputDecoration(labelText: 'Frequency (Day of Month)', border: OutlineInputBorder()),
+                Items: daysList.map((d) => DropdownMenuItem(value: d, child: Text('Day $d of every month'))).toList(),
+                OnChanged: (val) { if (val != null) setStateDialog(() => selectedDay = val); },
               ),
             ],
           ),
-          actions: [
+          Actions: [
             TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
-              onPressed: () {
-                if (titleC.text.isNotEmpty && amountC.text.isNotEmpty) {
-                  double amt = double.tryParse(amountC.text) ?? 0.0;
-                  if (index == null) {
-                    appSettings.addRepeatedTransaction(titleC.text, amt, selectedDay);
+              Style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
+              OnPressed: () {
+                If (titleC.text.isNotEmpty && amountC.text.isNotEmpty) {
+                  Double amt = double.tryParse(amountC.text) ?? 0.0;
+                  If (index == null) {
+                    AppSettings.addRepeatedTransaction(titleC.text, amt, selectedDay);
                   } else {
-                    appSettings.updateRepeatedTransaction(index, titleC.text, amt, selectedDay);
+                    AppSettings.updateRepeatedTransaction(index, titleC.text, amt, selectedDay);
                   }
                   Navigator.pop(ctx);
-                  setState(() {});
+                  SetState(() {});
                 }
               },
-              child: const Text('Save', style: TextStyle(color: Colors.white)),
+              Child: const Text('Save', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
@@ -1901,43 +1901,43 @@ class _RepeatedTransactionsScreenState extends State<RepeatedTransactionsScreen>
   @override
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(appSettings.translate('Repeat')),
-        actions: [
+    Return Scaffold(
+      AppBar: AppBar(
+        Title: Text(appSettings.translate('Repeat')),
+        Actions: [
           Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
           Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: appSettings.repeatedTransactions.length,
-          itemBuilder: (context, index) {
-            final rep = appSettings.repeatedTransactions[index];
-            return Card(
-              color: Theme.of(context).cardColor,
-              margin: const EdgeInsets.only(bottom: 8),
-              child: ListTile(
-                leading: const Icon(Icons.repeat, color: Color(0xFF10B981)),
-                title: Text(appSettings.translate(rep.title)),
-                subtitle: Text('Day ${rep.frequency} of every month'),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+      Body: Padding(
+        Padding: const EdgeInsets.all(16.0),
+        Child: ListView.builder(
+          ItemCount: appSettings.repeatedTransactions.length,
+          ItemBuilder: (context, index) {
+            Final rep = appSettings.repeatedTransactions[index];
+            Return Card(
+              Color: Theme.of(context).cardColor,
+              Margin: const EdgeInsets.only(bottom: 8),
+              Child: ListTile(
+                Leading: const Icon(Icons.repeat, color: Color(0xFF10B981)),
+                Title: Text(appSettings.translate(rep.title)),
+                Subtitle: Text('Day ${rep.frequency} of every month'),
+                Trailing: Row(
+                  MainAxisSize: MainAxisSize.min,
+                  Children: [
                     Text('$curr ${rep.amount}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
-                    const SizedBox(width: 8),
+                    Const SizedBox(width: 8),
                     IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddRepeatedDialog(index: index, repeated: rep)),
                     IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20), 
-                      onPressed: () {
-                        showLocalizedDeleteDialog(
-                          context: context,
-                          isImportant: false,
-                          itemName: rep.title,
-                          onDeleteConfirmed: () {
-                            appSettings.removeRepeatedTransaction(index);
-                            setState(() {});
+                      Icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20), 
+                      OnPressed: () {
+                        ShowLocalizedDeleteDialog(
+                          Context: context,
+                          IsImportant: false,
+                          ItemName: rep.title,
+                          OnDeleteConfirmed: () {
+                            AppSettings.removeRepeatedTransaction(index);
+                            SetState(() {});
                           },
                         );
                       },
@@ -1949,10 +1949,10 @@ class _RepeatedTransactionsScreenState extends State<RepeatedTransactionsScreen>
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF10B981),
-        onPressed: () => _showAddRepeatedDialog(),
-        child: const Icon(Icons.add, color: Colors.white),
+      FloatingActionButton: FloatingActionButton(
+        BackgroundColor: const Color(0xFF10B981),
+        OnPressed: () => _showAddRepeatedDialog(),
+        Child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -1960,43 +1960,43 @@ class _RepeatedTransactionsScreenState extends State<RepeatedTransactionsScreen>
 
 // 7. Savings Screen
 class SavingsScreen extends StatefulWidget {
-  const SavingsScreen({super.key});
+  Const SavingsScreen({super.key});
   @override
   State<SavingsScreen> createState() => _SavingsScreenState();
 }
 class _SavingsScreenState extends State<SavingsScreen> {
-  void _showAddSavingsDialog({int? index, SavingsModel? savings}) {
-    final titleC = TextEditingController(text: savings?.title ?? '');
-    final targetC = TextEditingController(text: savings != null ? savings.targetAmount.toString() : '');
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(index == null ? 'Add Savings Goal' : 'Edit Savings Goal'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+  Void _showAddSavingsDialog({int? index, SavingsModel? savings}) {
+    Final titleC = TextEditingController(text: savings?.title ?? '');
+    Final targetC = TextEditingController(text: savings != null ? savings.targetAmount.toString() : '');
+    ShowDialog(
+      Context: context,
+      Builder: (ctx) => AlertDialog(
+        Title: Text(index == null ? 'Add Savings Goal' : 'Edit Savings Goal'),
+        Content: Column(
+          MainAxisSize: MainAxisSize.min,
+          Children: [
             TextField(controller: titleC, decoration: const InputDecoration(labelText: 'Savings Title', border: OutlineInputBorder())),
-            const SizedBox(height: 10),
+            Const SizedBox(height: 10),
             TextField(controller: targetC, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Target Amount', border: OutlineInputBorder())),
           ],
         ),
-        actions: [
+        Actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
-            onPressed: () {
-              if (titleC.text.isNotEmpty && targetC.text.isNotEmpty) {
-                double target = double.tryParse(targetC.text) ?? 0.0;
-                if (index == null) {
-                  appSettings.addSavings(titleC.text, target);
+            Style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
+            OnPressed: () {
+              If (titleC.text.isNotEmpty && targetC.text.isNotEmpty) {
+                Double target = double.tryParse(targetC.text) ?? 0.0;
+                If (index == null) {
+                  AppSettings.addSavings(titleC.text, target);
                 } else {
-                  appSettings.updateSavings(index, titleC.text, target);
+                  AppSettings.updateSavings(index, titleC.text, target);
                 }
                 Navigator.pop(ctx);
-                setState(() {});
+                SetState(() {});
               }
             },
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
+            Child: const Text('Save', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -2006,43 +2006,43 @@ class _SavingsScreenState extends State<SavingsScreen> {
   @override
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(appSettings.translate('Savings')),
-        actions: [
+    Return Scaffold(
+      AppBar: AppBar(
+        Title: Text(appSettings.translate('Savings')),
+        Actions: [
           Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
           Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: appSettings.savingsList.length,
-          itemBuilder: (context, index) {
-            final sav = appSettings.savingsList[index];
-            return Card(
-              color: Theme.of(context).cardColor,
-              margin: const EdgeInsets.only(bottom: 8),
-              child: ListTile(
-                leading: const Icon(Icons.savings, color: Color(0xFF10B981)),
-                title: Text(appSettings.translate(sav.title), style: const TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text('Saved: ${sav.currentAmount} $curr'),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+      Body: Padding(
+        Padding: const EdgeInsets.all(16.0),
+        Child: ListView.builder(
+          ItemCount: appSettings.savingsList.length,
+          ItemBuilder: (context, index) {
+            Final sav = appSettings.savingsList[index];
+            Return Card(
+              Color: Theme.of(context).cardColor,
+              Margin: const EdgeInsets.only(bottom: 8),
+              Child: ListTile(
+                Leading: const Icon(Icons.savings, color: Color(0xFF10B981)),
+                Title: Text(appSettings.translate(sav.title), style: const TextStyle(fontWeight: FontWeight.bold)),
+                Subtitle: Text('Saved: ${sav.currentAmount} $curr'),
+                Trailing: Row(
+                  MainAxisSize: MainAxisSize.min,
+                  Children: [
                     Text('Target: ${sav.targetAmount} $curr', style: const TextStyle(color: Colors.grey, fontSize: 12)),
-                    const SizedBox(width: 8),
+                    Const SizedBox(width: 8),
                     IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddSavingsDialog(index: index, savings: sav)),
                     IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20), 
-                      onPressed: () {
-                        showLocalizedDeleteDialog(
-                          context: context,
-                          isImportant: false,
-                          itemName: sav.title,
-                          onDeleteConfirmed: () {
-                            appSettings.removeSavings(index);
-                            setState(() {});
+                      Icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20), 
+                      OnPressed: () {
+                        ShowLocalizedDeleteDialog(
+                          Context: context,
+                          IsImportant: false,
+                          ItemName: sav.title,
+                          OnDeleteConfirmed: () {
+                            AppSettings.removeSavings(index);
+                            SetState(() {});
                           },
                         );
                       },
@@ -2054,119 +2054,119 @@ class _SavingsScreenState extends State<SavingsScreen> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF10B981),
-        onPressed: () => _showAddSavingsDialog(),
-        child: const Icon(Icons.add, color: Colors.white),
+      FloatingActionButton: FloatingActionButton(
+        BackgroundColor: const Color(0xFF10B981),
+        OnPressed: () => _showAddSavingsDialog(),
+        Child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 }
 
-// ----------------- Pin & Main Container (Fix #1) -----------------
+// ----------------- Pin & Main Container -----------------
 class PinLockScreen extends StatefulWidget {
-  const PinLockScreen({super.key});
+  Const PinLockScreen({super.key});
 
   @override
   State<PinLockScreen> createState() => _PinLockScreenState();
 }
 
 class _PinLockScreenState extends State<PinLockScreen> {
-  final TextEditingController _pinController = TextEditingController();
+  Final TextEditingController _pinController = TextEditingController();
 
-  void _verifyPin(BuildContext context) {
-    if (_pinController.text == appSettings.appPin || appSettings.useNoneLock) {
+  Void _verifyPin(BuildContext context) {
+    If (_pinController.text == appSettings.appPin || appSettings.useNoneLock) {
       Navigator.pushReplacement(
-        context,
+        Context,
         MaterialPageRoute(builder: (context) => const MainHomeScreen()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Wrong PIN!')),
+        Const SnackBar(content: Text('Wrong PIN!')),
       );
     }
   }
 
-  void _showForgotPinDialog(BuildContext context) {
-    final TextEditingController identifierController = TextEditingController();
-    final TextEditingController newPinController = TextEditingController();
-    final TextEditingController confirmPinController = TextEditingController();
-    bool obscureNewPin = true;
-    bool obscureConfirmPin = true;
+  Void _showForgotPinDialog(BuildContext context) {
+    Final TextEditingController identifierController = TextEditingController();
+    Final TextEditingController newPinController = TextEditingController();
+    Final TextEditingController confirmPinController = TextEditingController();
+    Bool obscureNewPin = true;
+    Bool obscureConfirmPin = true;
 
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (ctx, setStateDialog) {
-            return AlertDialog(
-              title: const Text('Forgot PIN'),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('Enter your registered Email, Birth Date (DD-MM-YYYY), or Mobile Number to verify your identity.', style: TextStyle(fontSize: 13, color: Colors.grey)),
-                    const SizedBox(height: 16),
+    ShowDialog(
+      Context: context,
+      Builder: (ctx) {
+        Return StatefulBuilder(
+          Builder: (ctx, setStateDialog) {
+            Return AlertDialog(
+              Title: const Text('Forgot PIN'),
+              Content: SingleChildScrollView(
+                Child: Column(
+                  MainAxisSize: MainAxisSize.min,
+                  Children: [
+                    Const Text('Enter your registered Email, Birth Date (DD-MM-YYYY), or Mobile Number to verify your identity.', style: TextStyle(fontSize: 13, color: Colors.grey)),
+                    Const SizedBox(height: 16),
                     TextField(controller: identifierController, decoration: const InputDecoration(labelText: 'Email / Birth Date / Mobile', border: OutlineInputBorder())),
-                    const SizedBox(height: 12),
+                    Const SizedBox(height: 12),
                     TextField(
-                      controller: newPinController,
-                      keyboardType: TextInputType.number,
-                      maxLength: 4,
-                      obscureText: obscureNewPin,
-                      decoration: InputDecoration(
-                        labelText: 'New 4-Digit PIN',
-                        border: const OutlineInputBorder(),
-                        counterText: '',
-                        suffixIcon: IconButton(
-                          icon: Icon(obscureNewPin ? Icons.visibility_off : Icons.visibility),
-                          onPressed: () => setStateDialog(() => obscureNewPin = !obscureNewPin),
+                      Controller: newPinController,
+                      KeyboardType: TextInputType.number,
+                      MaxLength: 4,
+                      ObscureText: obscureNewPin,
+                      Decoration: InputDecoration(
+                        LabelText: 'New 4-Digit PIN',
+                        Border: const OutlineInputBorder(),
+                        CounterText: '',
+                        SuffixIcon: IconButton(
+                          Icon: Icon(obscureNewPin ? Icons.visibility_off : Icons.visibility),
+                          OnPressed: () => setStateDialog(() => obscureNewPin = !obscureNewPin),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    Const SizedBox(height: 12),
                     TextField(
-                      controller: confirmPinController,
-                      keyboardType: TextInputType.number,
-                      maxLength: 4,
-                      obscureText: obscureConfirmPin,
-                      decoration: InputDecoration(
-                        labelText: 'Re-Type 4-Digit PIN',
-                        border: const OutlineInputBorder(),
-                        counterText: '',
-                        suffixIcon: IconButton(
-                          icon: Icon(obscureConfirmPin ? Icons.visibility_off : Icons.visibility),
-                          onPressed: () => setStateDialog(() => obscureConfirmPin = !obscureConfirmPin),
+                      Controller: confirmPinController,
+                      KeyboardType: TextInputType.number,
+                      MaxLength: 4,
+                      ObscureText: obscureConfirmPin,
+                      Decoration: InputDecoration(
+                        LabelText: 'Re-Type 4-Digit PIN',
+                        Border: const OutlineInputBorder(),
+                        CounterText: '',
+                        SuffixIcon: IconButton(
+                          Icon: Icon(obscureConfirmPin ? Icons.visibility_off : Icons.visibility),
+                          OnPressed: () => setStateDialog(() => obscureConfirmPin = !obscureConfirmPin),
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-              actions: [
+              Actions: [
                 TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
                 ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
-                  onPressed: () {
+                  Style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
+                  OnPressed: () {
                     String input = identifierController.text.trim();
-                    bool isValidUser = input == appSettings.profileEmail || input == appSettings.profileBirthDate || input == appSettings.profileMobile;
+                    Bool isValidUser = input == appSettings.profileEmail || input == appSettings.profileBirthDate || input == appSettings.profileMobile;
 
-                    if (!isValidUser) {
+                    If (!isValidUser) {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error: Information does not match!'), backgroundColor: Colors.red));
-                      return;
+                      Return;
                     }
 
-                    if (newPinController.text.length != 4 || newPinController.text != confirmPinController.text) {
+                    If (newPinController.text.length != 4 || newPinController.text != confirmPinController.text) {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error: PIN must be 4 digits and match!'), backgroundColor: Colors.red));
-                      return;
+                      Return;
                     }
 
-                    appSettings.updatePin(newPinController.text);
+                    AppSettings.updatePin(newPinController.text);
                     Navigator.pop(ctx);
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('PIN successfully updated and saved!')));
-                    setState(() {});
+                    SetState(() {});
                   },
-                  child: const Text('Reset', style: TextStyle(color: Colors.white)),
+                  Child: const Text('Reset', style: TextStyle(color: Colors.white)),
                 ),
               ],
             );
@@ -2178,70 +2178,70 @@ class _PinLockScreenState extends State<PinLockScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.lock_rounded, size: 70, color: Color(0xFF10B981)),
-              const SizedBox(height: 24),
-              const Text('Enter Your PIN', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
-              const SizedBox(height: 40),
+    Return Scaffold(
+      BackgroundColor: const Color(0xFF0F172A),
+      Body: SafeArea(
+        Child: Padding(
+          Padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          Child: Column(
+            MainAxisAlignment: MainAxisAlignment.center,
+            Children: [
+              Const Icon(Icons.lock_rounded, size: 70, color: Color(0xFF10B981)),
+              Const SizedBox(height: 24),
+              Const Text('Enter Your PIN', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
+              Const SizedBox(height: 40),
               Stack(
-                alignment: Alignment.center,
-                children: [
+                Alignment: Alignment.center,
+                Children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(4, (index) {
-                      return Container(
-                        width: 55,
-                        height: 55,
-                        margin: const EdgeInsets.symmetric(horizontal: 6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF1E293B),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: const Color(0xFF10B981), width: 1.5),
+                    MainAxisAlignment: MainAxisAlignment.center,
+                    Children: List.generate(4, (index) {
+                      Return Container(
+                        Width: 55,
+                        Height: 55,
+                        Margin: const EdgeInsets.symmetric(horizontal: 6),
+                        Decoration: BoxDecoration(
+                          Color: const Color(0xFF1E293B),
+                          BorderRadius: BorderRadius.circular(12),
+                          Border: Border.all(color: const Color(0xFF10B981), width: 1.5),
                         ),
-                        child: Center(
-                          child: Text(_pinController.text.length > index ? '•' : '', style: const TextStyle(color: Colors.white, fontSize: 28)),
+                        Child: Center(
+                          Child: Text(_pinController.text.length > index ? '•' : '', style: const TextStyle(color: Colors.white, fontSize: 28)),
                         ),
                       );
                     }),
                   ),
                   SizedBox(
-                    width: 250,
-                    height: 60,
-                    child: TextField(
-                      controller: _pinController,
-                      keyboardType: TextInputType.number,
-                      maxLength: 4,
-                      style: const TextStyle(color: Colors.transparent),
-                      cursorColor: Colors.transparent,
-                      decoration: const InputDecoration(counterText: '', border: InputBorder.none),
-                      onChanged: (value) {
-                        setState(() {});
-                        if (value.length == 4) _verifyPin(context);
+                    Width: 250,
+                    Height: 60,
+                    Child: TextField(
+                      Controller: _pinController,
+                      KeyboardType: TextInputType.number,
+                      MaxLength: 4,
+                      Style: const TextStyle(color: Colors.transparent),
+                      CursorColor: Colors.transparent,
+                      Decoration: const InputDecoration(counterText: '', border: InputBorder.none),
+                      OnChanged: (value) {
+                        SetState(() {});
+                        If (value.length == 4) _verifyPin(context);
                       },
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
+              Const SizedBox(height: 30),
               SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28))),
-                  onPressed: () => _verifyPin(context),
-                  child: const Text('Unlock', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold)),
+                Width: double.infinity,
+                Child: ElevatedButton(
+                  Style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28))),
+                  OnPressed: () => _verifyPin(context),
+                  Child: const Text('Unlock', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ),
-              const SizedBox(height: 20),
+              Const SizedBox(height: 20),
               TextButton(
-                onPressed: () => _showForgotPinDialog(context),
-                child: const Text('Forgot PIN?', style: TextStyle(color: Color(0xFF38BDF8), fontSize: 14, fontWeight: FontWeight.w500)),
+                OnPressed: () => _showForgotPinDialog(context),
+                Child: const Text('Forgot PIN?', style: TextStyle(color: Color(0xFF38BDF8), fontSize: 14, fontWeight: FontWeight.w500)),
               ),
             ],
           ),
@@ -2251,94 +2251,94 @@ class _PinLockScreenState extends State<PinLockScreen> {
   }
 }
 
-// ----------------- Home Screen Content (Fix #9: Month & Year Dropdowns) -----------------
+// ----------------- Home Screen Content -----------------
 class HomeScreenContent extends StatelessWidget {
-  const HomeScreenContent({super.key});
+  Const HomeScreenContent({super.key});
 
-  void _showAddTransactionDialog(BuildContext context) {
+  Void _showAddTransactionDialog(BuildContext context) {
     String transactionType = 'Expense';
     String selectedCategory = appSettings.categories[0];
     String selectedAccount = appSettings.accounts.firstWhere((acc) => acc.isDefault, orElse: () => appSettings.accounts[0]).name;
     
-    final TextEditingController amountController = TextEditingController();
-    final TextEditingController descController = TextEditingController();
+    Final TextEditingController amountController = TextEditingController();
+    Final TextEditingController descController = TextEditingController();
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (ctx, setStateModal) {
-            return Padding(
-              padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Add New Transaction', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 16),
+    ShowModalBottomSheet(
+      Context: context,
+      IsScrollControlled: true,
+      Shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      Builder: (ctx) {
+        Return StatefulBuilder(
+          Builder: (ctx, setStateModal) {
+            Return Padding(
+              Padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
+              Child: SingleChildScrollView(
+                Child: Column(
+                  MainAxisSize: MainAxisSize.min,
+                  CrossAxisAlignment: CrossAxisAlignment.start,
+                  Children: [
+                    Const Text('Add New Transaction', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Const SizedBox(height: 16),
                     Row(
-                      children: [
+                      Children: [
                         Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: transactionType == 'Income' ? Colors.green : const Color(0xFF1E293B)),
-                            onPressed: () => setStateModal(() => transactionType = 'Income'),
-                            child: const Text('Cash In', style: TextStyle(color: Colors.white)),
+                          Child: ElevatedButton(
+                            Style: ElevatedButton.styleFrom(backgroundColor: transactionType == 'Income' ? Colors.green : const Color(0xFF1E293B)),
+                            OnPressed: () => setStateModal(() => transactionType = 'Income'),
+                            Child: const Text('Cash In', style: TextStyle(color: Colors.white)),
                           ),
                         ),
-                        const SizedBox(width: 10),
+                        Const SizedBox(width: 10),
                         Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: transactionType == 'Expense' ? Colors.red : const Color(0xFF1E293B)),
-                            onPressed: () => setStateModal(() => transactionType = 'Expense'),
-                            child: const Text('Cash Out', style: TextStyle(color: Colors.white)),
+                          Child: ElevatedButton(
+                            Style: ElevatedButton.styleFrom(backgroundColor: transactionType == 'Expense' ? Colors.red : const Color(0xFF1E293B)),
+                            OnPressed: () => setStateModal(() => transactionType = 'Expense'),
+                            Child: const Text('Cash Out', style: TextStyle(color: Colors.white)),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    Const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
-                      value: selectedAccount,
-                      dropdownColor: Theme.of(context).cardColor,
-                      decoration: const InputDecoration(labelText: 'Account', border: OutlineInputBorder()),
-                      items: appSettings.accounts.map((acc) => DropdownMenuItem(value: acc.name, child: Text(appSettings.translate(acc.name)))).toList(),
-                      onChanged: (val) { if (val != null) setStateModal(() => selectedAccount = val); },
+                      Value: selectedAccount,
+                      DropdownColor: Theme.of(context).cardColor,
+                      Decoration: const InputDecoration(labelText: 'Account', border: OutlineInputBorder()),
+                      Items: appSettings.accounts.map((acc) => DropdownMenuItem(value: acc.name, child: Text(appSettings.translate(acc.name)))).toList(),
+                      OnChanged: (val) { if (val != null) setStateModal(() => selectedAccount = val); },
                     ),
-                    const SizedBox(height: 12),
+                    Const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
-                      value: selectedCategory,
-                      dropdownColor: Theme.of(context).cardColor,
-                      decoration: const InputDecoration(labelText: 'Category', border: OutlineInputBorder()),
-                      items: appSettings.categories.map((cat) => DropdownMenuItem(value: cat, child: Text(appSettings.translate(cat)))).toList(),
-                      onChanged: (val) { if (val != null) setStateModal(() => selectedCategory = val); },
+                      Value: selectedCategory,
+                      DropdownColor: Theme.of(context).cardColor,
+                      Decoration: const InputDecoration(labelText: 'Category', border: OutlineInputBorder()),
+                      Items: appSettings.categories.map((cat) => DropdownMenuItem(value: cat, child: Text(appSettings.translate(cat)))).toList(),
+                      OnChanged: (val) { if (val != null) setStateModal(() => selectedCategory = val); },
                     ),
-                    const SizedBox(height: 12),
+                    Const SizedBox(height: 12),
                     TextField(controller: amountController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Amount', border: OutlineInputBorder())),
-                    const SizedBox(height: 12),
+                    Const SizedBox(height: 12),
                     TextField(controller: descController, decoration: const InputDecoration(labelText: 'Description', border: OutlineInputBorder())),
-                    const SizedBox(height: 20),
+                    Const SizedBox(height: 20),
                     SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), padding: const EdgeInsets.symmetric(vertical: 14)),
-                        onPressed: () {
-                          if (amountController.text.isNotEmpty) {
-                            double amount = double.tryParse(amountController.text) ?? 0.0;
-                            appSettings.addTransaction(TransactionItem(
-                              id: DateTime.now().toString(),
-                              type: transactionType,
-                              account: selectedAccount,
-                              category: selectedCategory,
-                              amount: amount,
-                              description: descController.text,
-                              date: DateTime.now(),
+                      Width: double.infinity,
+                      Child: ElevatedButton(
+                        Style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), padding: const EdgeInsets.symmetric(vertical: 14)),
+                        OnPressed: () {
+                          If (amountController.text.isNotEmpty) {
+                            Double amount = double.tryParse(amountController.text) ?? 0.0;
+                            AppSettings.addTransaction(TransactionItem(
+                              Id: DateTime.now().toString(),
+                              Type: transactionType,
+                              Account: selectedAccount,
+                              Category: selectedCategory,
+                              Amount: amount,
+                              Description: descController.text,
+                              Date: DateTime.now(),
                             ));
                             Navigator.pop(ctx);
                           }
                         },
-                        child: const Text('Save', style: TextStyle(fontSize: 16, color: Colors.white)),
+                        Child: const Text('Save', style: TextStyle(fontSize: 16, color: Colors.white)),
                       ),
                     ),
                   ],
@@ -2352,16 +2352,16 @@ class HomeScreenContent extends StatelessWidget {
   }
 
   Widget _buildQuickAccessIcon(BuildContext context, IconData icon, String label, Widget targetScreen) {
-    return InkWell(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => targetScreen)),
-      child: Column(
-        children: [
+    Return InkWell(
+      OnTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => targetScreen)),
+      Child: Column(
+        Children: [
           Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: const Color(0xFF1E293B), borderRadius: BorderRadius.circular(14)),
-            child: Icon(icon, color: const Color(0xFF10B981), size: 22),
+            Padding: const EdgeInsets.all(10),
+            Decoration: BoxDecoration(color: const Color(0xFF1E293B), borderRadius: BorderRadius.circular(14)),
+            Child: Icon(icon, color: const Color(0xFF10B981), size: 22),
           ),
-          const SizedBox(height: 4),
+          Const SizedBox(height: 4),
           Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey)),
         ],
       ),
@@ -2374,75 +2374,75 @@ class HomeScreenContent extends StatelessWidget {
     List<String> months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     List<int> years = List.generate(110, (index) => 1990 + index);
 
-    return AnimatedBuilder(
-      animation: appSettings,
-      builder: (context, child) {
-        return Scaffold(
-          appBar: AppBar(title: Text(appSettings.getAppTitle(), style: const TextStyle(fontWeight: FontWeight.bold))),
-          drawer: const AppDrawer(),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+    Return AnimatedBuilder(
+      Animation: appSettings,
+      Builder: (context, child) {
+        Return Scaffold(
+          AppBar: AppBar(title: Text(appSettings.getAppTitle(), style: const TextStyle(fontWeight: FontWeight.bold))),
+          Drawer: const AppDrawer(),
+          Body: SingleChildScrollView(
+            Padding: const EdgeInsets.all(16.0),
+            Child: Column(
+              CrossAxisAlignment: CrossAxisAlignment.start,
+              Children: [
                 Container(
-                  padding: const EdgeInsets.all(18),
-                  decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(16)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                  Padding: const EdgeInsets.all(18),
+                  Decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(16)),
+                  Child: Column(
+                    CrossAxisAlignment: CrossAxisAlignment.start,
+                    Children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
+                        MainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        Children: [
                           Text(appSettings.translate('Current Balance'), style: const TextStyle(color: Colors.grey, fontSize: 13)),
                           Row(
-                            children: [
+                            Children: [
                               DropdownButton<int>(
-                                value: appSettings.selectedMonthIndex,
-                                dropdownColor: Theme.of(context).cardColor,
-                                items: List.generate(12, (index) => DropdownMenuItem(value: index + 1, child: Text(months[index], style: const TextStyle(fontSize: 12)))),
-                                onChanged: (val) { if (val != null) appSettings.setMonthYear(val, appSettings.selectedYear); },
+                                Value: appSettings.selectedMonthIndex,
+                                DropdownColor: Theme.of(context).cardColor,
+                                Items: List.generate(12, (index) => DropdownMenuItem(value: index + 1, child: Text(months[index], style: const TextStyle(fontSize: 12)))),
+                                OnChanged: (val) { if (val != null) appSettings.setMonthYear(val, appSettings.selectedYear); },
                               ),
-                              const SizedBox(width: 6),
+                              Const SizedBox(width: 6),
                               DropdownButton<int>(
-                                value: appSettings.selectedYear,
-                                dropdownColor: Theme.of(context).cardColor,
-                                items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString(), style: const TextStyle(fontSize: 12)))).toList(),
-                                onChanged: (val) { if (val != null) appSettings.setMonthYear(appSettings.selectedMonthIndex, val); },
+                                Value: appSettings.selectedYear,
+                                DropdownColor: Theme.of(context).cardColor,
+                                Items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString(), style: const TextStyle(fontSize: 12)))).toList(),
+                                OnChanged: (val) { if (val != null) appSettings.setMonthYear(appSettings.selectedMonthIndex, val); },
                               ),
                             ],
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      Const SizedBox(height: 8),
                       Text('${appSettings.getTotalBalance()} $curr', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-                      const Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Divider(color: Colors.grey)),
+                      Const Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Divider(color: Colors.grey)),
                       Row(
-                        children: [
+                        Children: [
                           Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
+                            Child: Container(
+                              Padding: const EdgeInsets.all(10),
+                              Decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+                              Child: Column(
+                                CrossAxisAlignment: CrossAxisAlignment.start,
+                                Children: [
                                   Text(appSettings.translate('Income'), style: const TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
-                                  const SizedBox(height: 4),
+                                  Const SizedBox(height: 4),
                                   Text('${appSettings.getTotalIncome()} $curr', style: const TextStyle(color: Colors.green, fontSize: 15, fontWeight: FontWeight.bold)),
                                 ],
                               ),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          Const SizedBox(width: 12),
                           Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(color: Colors.red.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
+                            Child: Container(
+                              Padding: const EdgeInsets.all(10),
+                              Decoration: BoxDecoration(color: Colors.red.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+                              Child: Column(
+                                CrossAxisAlignment: CrossAxisAlignment.start,
+                                Children: [
                                   Text(appSettings.translate('Expense'), style: const TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.w600)),
-                                  const SizedBox(height: 4),
+                                  Const SizedBox(height: 4),
                                   Text('${appSettings.getTotalExpense()} $curr', style: const TextStyle(color: Colors.redAccent, fontSize: 15, fontWeight: FontWeight.bold)),
                                 ],
                               ),
@@ -2453,12 +2453,12 @@ class HomeScreenContent extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
+                Const SizedBox(height: 24),
                 Text(appSettings.translate('Quick Access'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                const SizedBox(height: 12),
+                Const SizedBox(height: 12),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+                  MainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Children: [
                     _buildQuickAccessIcon(context, Icons.account_balance_wallet, appSettings.translate('Account'), const AccountsScreen()),
                     _buildQuickAccessIcon(context, Icons.track_changes, appSettings.translate('Budget'), const BudgetScreen()),
                     _buildQuickAccessIcon(context, Icons.category, appSettings.translate('Categories'), const CategoriesScreen()),
@@ -2468,31 +2468,31 @@ class HomeScreenContent extends StatelessWidget {
                     _buildQuickAccessIcon(context, Icons.shopping_cart, appSettings.translate('Shopping'), const FundShoppingScreen()),
                   ],
                 ),
-                const SizedBox(height: 24),
+                Const SizedBox(height: 24),
                 Text(appSettings.translate('Recent Transactions'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 12),
+                Const SizedBox(height: 12),
                 appSettings.transactions.isEmpty
                     ? const Padding(padding: EdgeInsets.all(20.0), child: Center(child: Text('No transactions found')))
                     : ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: appSettings.transactions.length > 4 ? 4 : appSettings.transactions.length,
-                        itemBuilder: (context, index) {
-                          final txn = appSettings.transactions[index];
-                          bool isIncome = txn.type == 'Income';
-                          return Container(
-                            margin: const EdgeInsets.only(bottom: 10),
-                            decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(10)),
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: (isIncome ? Colors.green : Colors.red).withOpacity(0.2),
-                                child: Icon(isIncome ? Icons.add : Icons.remove, color: isIncome ? Colors.green : Colors.red),
+                        ShrinkWrap: true,
+                        Physics: const NeverScrollableScrollPhysics(),
+                        ItemCount: appSettings.transactions.length > 4 ? 4 : appSettings.transactions.length,
+                        ItemBuilder: (context, index) {
+                          Final txn = appSettings.transactions[index];
+                          Bool isIncome = txn.type == 'Income';
+                          Return Container(
+                            Margin: const EdgeInsets.only(bottom: 10),
+                            Decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(10)),
+                            Child: ListTile(
+                              Leading: CircleAvatar(
+                                BackgroundColor: (isIncome ? Colors.green : Colors.red).withOpacity(0.2),
+                                Child: Icon(isIncome ? Icons.add : Icons.remove, color: isIncome ? Colors.green : Colors.red),
                               ),
-                              title: Text('${appSettings.translate(txn.category)} (${appSettings.translate(txn.account)})'),
-                              subtitle: Text(appSettings.translate(txn.description)),
-                              trailing: Text(
+                              Title: Text('${appSettings.translate(txn.category)} (${appSettings.translate(txn.account)})'),
+                              Subtitle: Text(appSettings.translate(txn.description)),
+                              Trailing: Text(
                                 '${isIncome ? '+' : '-'} $curr ${txn.amount}',
-                                style: TextStyle(color: isIncome ? Colors.green : Colors.red, fontWeight: FontWeight.bold, fontSize: 15),
+                                Style: TextStyle(color: isIncome ? Colors.green : Colors.red, fontWeight: FontWeight.bold, fontSize: 15),
                               ),
                             ),
                           );
@@ -2501,10 +2501,10 @@ class HomeScreenContent extends StatelessWidget {
               ],
             ),
           ),
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: const Color(0xFF10B981),
-            onPressed: () => _showAddTransactionDialog(context),
-            child: const Icon(Icons.add, color: Colors.white),
+          FloatingActionButton: FloatingActionButton(
+            BackgroundColor: const Color(0xFF10B981),
+            OnPressed: () => _showAddTransactionDialog(context),
+            Child: const Icon(Icons.add, color: Colors.white),
           ),
         );
       },
@@ -2512,9 +2512,9 @@ class HomeScreenContent extends StatelessWidget {
   }
 }
 
-// ----------------- 1. Loan & Debt Screen -----------------
+// ----------------- Loan & Debt Screen -----------------
 class LoanDebtScreen extends StatefulWidget {
-  const LoanDebtScreen({super.key});
+  Const LoanDebtScreen({super.key});
 
   @override
   State<LoanDebtScreen> createState() => _LoanDebtScreenState();
@@ -2523,69 +2523,69 @@ class LoanDebtScreen extends StatefulWidget {
 class _LoanDebtScreenState extends State<LoanDebtScreen> {
   String selectedFilter = 'All';
 
-  void _showAddEditLoanDialog(BuildContext context, {int? index, LoanItem? loan}) {
+  Void _showAddEditLoanDialog(BuildContext context, {int? index, LoanItem? loan}) {
     String loanType = loan?.type ?? 'Given';
-    final TextEditingController nameController = TextEditingController(text: loan?.personName ?? '');
-    final TextEditingController amountController = TextEditingController(text: loan != null ? loan.amount.toString() : '');
+    Final TextEditingController nameController = TextEditingController(text: loan?.personName ?? '');
+    Final TextEditingController amountController = TextEditingController(text: loan != null ? loan.amount.toString() : '');
 
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (ctx, setStateModal) {
-            return AlertDialog(
-              title: Text(index == null ? 'Add New Loan / Debt' : 'Edit Loan / Debt'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
+    ShowDialog(
+      Context: context,
+      Builder: (ctx) {
+        Return StatefulBuilder(
+          Builder: (ctx, setStateModal) {
+            Return AlertDialog(
+              Title: Text(index == null ? 'Add New Loan / Debt' : 'Edit Loan / Debt'),
+              Content: Column(
+                MainAxisSize: MainAxisSize.min,
+                Children: [
                   Row(
-                    children: [
+                    Children: [
                       Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(backgroundColor: loanType == 'Given' ? Colors.green : const Color(0xFF1E293B)),
-                          onPressed: () => setStateModal(() => loanType = 'Given'),
-                          child: const Text('Given', style: TextStyle(color: Colors.white, fontSize: 11)),
+                        Child: ElevatedButton(
+                          Style: ElevatedButton.styleFrom(backgroundColor: loanType == 'Given' ? Colors.green : const Color(0xFF1E293B)),
+                          OnPressed: () => setStateModal(() => loanType = 'Given'),
+                          Child: const Text('Given', style: TextStyle(color: Colors.white, fontSize: 11)),
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      Const SizedBox(width: 8),
                       Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(backgroundColor: loanType == 'Taken' ? Colors.red : const Color(0xFF1E293B)),
-                          onPressed: () => setStateModal(() => loanType = 'Taken'),
-                          child: const Text('Taken', style: TextStyle(color: Colors.white, fontSize: 11)),
+                        Child: ElevatedButton(
+                          Style: ElevatedButton.styleFrom(backgroundColor: loanType == 'Taken' ? Colors.red : const Color(0xFF1E293B)),
+                          OnPressed: () => setStateModal(() => loanType = 'Taken'),
+                          Child: const Text('Taken', style: TextStyle(color: Colors.white, fontSize: 11)),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  Const SizedBox(height: 12),
                   TextField(controller: nameController, decoration: const InputDecoration(labelText: 'Person Name', border: OutlineInputBorder())),
-                  const SizedBox(height: 12),
+                  Const SizedBox(height: 12),
                   TextField(controller: amountController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Amount', border: OutlineInputBorder())),
                 ],
               ),
-              actions: [
+              Actions: [
                 TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
                 ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
-                  onPressed: () {
-                    if (nameController.text.isNotEmpty && amountController.text.isNotEmpty) {
-                      double amt = double.tryParse(amountController.text) ?? 0.0;
-                      if (index == null) {
-                        appSettings.addLoan(LoanItem(
-                          id: DateTime.now().toString(),
-                          personName: nameController.text,
-                          amount: amt,
-                          type: loanType,
-                          date: DateTime.now(),
+                  Style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
+                  OnPressed: () {
+                    If (nameController.text.isNotEmpty && amountController.text.isNotEmpty) {
+                      Double amt = double.tryParse(amountController.text) ?? 0.0;
+                      If (index == null) {
+                        AppSettings.addLoan(LoanItem(
+                          Id: DateTime.now().toString(),
+                          PersonName: nameController.text,
+                          Amount: amt,
+                          Type: loanType,
+                          Date: DateTime.now(),
                         ));
                       } else {
-                        appSettings.updateLoan(index, nameController.text, amt, loanType);
+                        AppSettings.updateLoan(index, nameController.text, amt, loanType);
                       }
                       Navigator.pop(ctx);
-                      setState(() {});
+                      SetState(() {});
                     }
                   },
-                  child: const Text('Save', style: TextStyle(color: Colors.white)),
+                  Child: const Text('Save', style: TextStyle(color: Colors.white)),
                 ),
               ],
             );
@@ -2599,77 +2599,77 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
 
-    var filteredLoans = appSettings.loans.where((loan) {
-      if (selectedFilter == 'Given') return loan.type == 'Given' && !loan.isPaid;
-      if (selectedFilter == 'Taken') return loan.type == 'Taken' && !loan.isPaid;
-      if (selectedFilter == 'Paid') return loan.isPaid;
-      return true;
+    Var filteredLoans = appSettings.loans.where((loan) {
+      If (selectedFilter == 'Given') return loan.type == 'Given' && !loan.isPaid;
+      If (selectedFilter == 'Taken') return loan.type == 'Taken' && !loan.isPaid;
+      If (selectedFilter == 'Paid') return loan.isPaid;
+      Return true;
     }).toList();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Loan & Debt'),
-        actions: [
+    Return Scaffold(
+      AppBar: AppBar(
+        Title: const Text('Loan & Debt'),
+        Actions: [
           Builder(
-            builder: (ctx) => IconButton(
-              icon: const Icon(Icons.download),
-              tooltip: 'Download',
-              onPressed: () {
-                final RenderBox box = ctx.findRenderObject() as RenderBox;
-                final offset = box.localToGlobal(Offset.zero);
-                showStandardDownloadMenu(context, offset);
+            Builder: (ctx) => IconButton(
+              Icon: const Icon(Icons.download),
+              Tooltip: 'Download',
+              OnPressed: () {
+                Final RenderBox box = ctx.findRenderObject() as RenderBox;
+                Final offset = box.localToGlobal(Offset.zero);
+                ShowStandardDownloadMenu(context, offset);
               },
             ),
           ),
           Builder(
-            builder: (ctx) => IconButton(
-              icon: const Icon(Icons.sort),
-              tooltip: 'Sort Loans',
-              onPressed: () {
-                final RenderBox box = ctx.findRenderObject() as RenderBox;
-                final offset = box.localToGlobal(Offset.zero);
-                showStandardSortMenu(context, offset, (val) {
-                  appSettings.sortLoans(val);
-                  setState(() {});
+            Builder: (ctx) => IconButton(
+              Icon: const Icon(Icons.sort),
+              Tooltip: 'Sort Loans',
+              OnPressed: () {
+                Final RenderBox box = ctx.findRenderObject() as RenderBox;
+                Final offset = box.localToGlobal(Offset.zero);
+                ShowStandardSortMenu(context, offset, (val) {
+                  AppSettings.sortLoans(val);
+                  SetState(() {});
                 });
               },
             ),
           ),
         ],
       ),
-      drawer: const AppDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
+      Drawer: const AppDrawer(),
+      Body: Padding(
+        Padding: const EdgeInsets.all(16.0),
+        Child: Column(
+          Children: [
             Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1E293B),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFF38BDF8), width: 1),
+              Padding: const EdgeInsets.all(20),
+              Decoration: BoxDecoration(
+                Color: const Color(0xFF1E293B),
+                BorderRadius: BorderRadius.circular(16),
+                Border: Border.all(color: const Color(0xFF38BDF8), width: 1),
               ),
-              child: Column(
-                children: [
-                  const Text('Net Balance', style: TextStyle(color: Colors.white70, fontSize: 14)),
-                  const SizedBox(height: 6),
+              Child: Column(
+                Children: [
+                  Const Text('Net Balance', style: TextStyle(color: Colors.white70, fontSize: 14)),
+                  Const SizedBox(height: 6),
                   Text('${appSettings.getNetBalance()} $curr', style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white)),
-                  const Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Divider(color: Colors.white24)),
+                  Const Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Divider(color: Colors.white24)),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
+                    MainAxisAlignment: MainAxisAlignment.spaceAround,
+                    Children: [
                       Column(
-                        children: [
-                          const Row(children: [Icon(Icons.arrow_downward, size: 14, color: Colors.green), SizedBox(width: 4), Text('Given', style: TextStyle(color: Colors.green, fontWeight: FontWeight.w600))]),
-                          const SizedBox(height: 4),
+                        Children: [
+                          Const Row(children: [Icon(Icons.arrow_downward, size: 14, color: Colors.green), SizedBox(width: 4), Text('Given', style: TextStyle(color: Colors.green, fontWeight: FontWeight.w600))]),
+                          Const SizedBox(height: 4),
                           Text('${appSettings.getTotalGiven()} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
                         ],
                       ),
                       Container(height: 30, width: 1, color: Colors.white24),
                       Column(
-                        children: [
-                          const Row(children: [Icon(Icons.arrow_upward, size: 14, color: Colors.redAccent), SizedBox(width: 4), Text('Taken', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w600))]),
-                          const SizedBox(height: 4),
+                        Children: [
+                          Const Row(children: [Icon(Icons.arrow_upward, size: 14, color: Colors.redAccent), SizedBox(width: 4), Text('Taken', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w600))]),
+                          Const SizedBox(height: 4),
                           Text('${appSettings.getTotalTaken()} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.redAccent)),
                         ],
                       ),
@@ -2678,73 +2678,73 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            Const SizedBox(height: 16),
             Row(
-              children: ['All', 'Given', 'Taken', 'Paid'].map((filter) {
-                bool isSelected = selectedFilter == filter;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: ChoiceChip(
-                    label: Text(filter),
-                    selected: isSelected,
-                    selectedColor: const Color(0xFF10B981),
-                    backgroundColor: const Color(0xFF1E293B),
-                    labelStyle: TextStyle(color: isSelected ? Colors.white : Colors.grey),
-                    onSelected: (val) => setState(() => selectedFilter = filter),
+              Children: ['All', 'Given', 'Taken', 'Paid'].map((filter) {
+                Bool isSelected = selectedFilter == filter;
+                Return Padding(
+                  Padding: const EdgeInsets.only(right: 8.0),
+                  Child: ChoiceChip(
+                    Label: Text(filter),
+                    Selected: isSelected,
+                    SelectedColor: const Color(0xFF10B981),
+                    BackgroundColor: const Color(0xFF1E293B),
+                    LabelStyle: TextStyle(color: isSelected ? Colors.white : Colors.grey),
+                    OnSelected: (val) => setState(() => selectedFilter = filter),
                   ),
                 );
               }).toList(),
             ),
-            const SizedBox(height: 16),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text('Loan List', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Const SizedBox(height: 16),
+            Const Align(
+              Alignment: Alignment.centerLeft,
+              Child: Text('Loan List', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             ),
-            const SizedBox(height: 10),
+            Const SizedBox(height: 10),
             Expanded(
-              child: filteredLoans.isEmpty
+              Child: filteredLoans.isEmpty
                   ? const Center(child: Text('No loans found', style: TextStyle(color: Colors.grey)))
                   : ListView.builder(
-                      itemCount: filteredLoans.length,
-                      itemBuilder: (context, index) {
-                        final loan = filteredLoans[index];
-                        bool isGiven = loan.type == 'Given';
-                        return Card(
-                          color: Theme.of(context).cardColor,
-                          margin: const EdgeInsets.only(bottom: 8),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: (isGiven ? Colors.green : Colors.red).withOpacity(0.2),
-                              child: Icon(isGiven ? Icons.arrow_upward : Icons.arrow_downward, color: isGiven ? Colors.green : Colors.red),
+                      ItemCount: filteredLoans.length,
+                      ItemBuilder: (context, index) {
+                        Final loan = filteredLoans[index];
+                        Bool isGiven = loan.type == 'Given';
+                        Return Card(
+                          Color: Theme.of(context).cardColor,
+                          Margin: const EdgeInsets.only(bottom: 8),
+                          Child: ListTile(
+                            Leading: CircleAvatar(
+                              BackgroundColor: (isGiven ? Colors.green : Colors.red).withOpacity(0.2),
+                              Child: Icon(isGiven ? Icons.arrow_upward : Icons.arrow_downward, color: isGiven ? Colors.green : Colors.red),
                             ),
-                            title: Text(appSettings.translate(loan.personName), style: TextStyle(fontWeight: FontWeight.bold, decoration: loan.isPaid ? TextDecoration.lineThrough : null)),
-                            subtitle: Text('${loan.type} - ${loan.date.toString().substring(0, 10)}'),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
+                            Title: Text(appSettings.translate(loan.personName), style: TextStyle(fontWeight: FontWeight.bold, decoration: loan.isPaid ? TextDecoration.lineThrough : null)),
+                            Subtitle: Text('${loan.type} - ${loan.date.toString().substring(0, 10)}'),
+                            Trailing: Row(
+                              MainAxisSize: MainAxisSize.min,
+                              Children: [
                                 Text('$curr ${loan.amount}', style: TextStyle(color: isGiven ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold)),
                                 Checkbox(
-                                  value: loan.isPaid,
-                                  activeColor: const Color(0xFF10B981),
-                                  onChanged: (val) {
-                                    appSettings.toggleLoanStatus(loan.id);
-                                    setState(() {});
+                                  Value: loan.isPaid,
+                                  ActiveColor: const Color(0xFF10B981),
+                                  OnChanged: (val) {
+                                    AppSettings.toggleLoanStatus(loan.id);
+                                    SetState(() {});
                                   },
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20),
-                                  onPressed: () => _showAddEditLoanDialog(context, index: index, loan: loan),
+                                  Icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20),
+                                  OnPressed: () => _showAddEditLoanDialog(context, index: index, loan: loan),
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20),
-                                  onPressed: () {
-                                    showLocalizedDeleteDialog(
-                                      context: context,
-                                      isImportant: true,
-                                      itemName: loan.personName,
-                                      onDeleteConfirmed: () {
-                                        appSettings.removeLoan(index);
-                                        setState(() {});
+                                  Icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20),
+                                  OnPressed: () {
+                                    ShowLocalizedDeleteDialog(
+                                      Context: context,
+                                      IsImportant: true,
+                                      ItemName: loan.personName,
+                                      OnDeleteConfirmed: () {
+                                        AppSettings.removeLoan(index);
+                                        SetState(() {});
                                       },
                                     );
                                   },
@@ -2759,18 +2759,18 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF10B981),
-        onPressed: () => _showAddEditLoanDialog(context),
-        child: const Icon(Icons.add, color: Colors.white),
+      FloatingActionButton: FloatingActionButton(
+        BackgroundColor: const Color(0xFF10B981),
+        OnPressed: () => _showAddEditLoanDialog(context),
+        Child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 }
 
-// ----------------- 2. All Transactions Screen -----------------
+// ----------------- All Transactions Screen -----------------
 class AllTransactionsScreen extends StatefulWidget {
-  const AllTransactionsScreen({super.key});
+  Const AllTransactionsScreen({super.key});
 
   @override
   State<AllTransactionsScreen> createState() => _AllTransactionsScreenState();
@@ -2780,103 +2780,103 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
   String searchQuery = '';
   String filterType = 'All';
 
-  void _showAddEditTransactionDialog(BuildContext context, {int? index, TransactionItem? txn}) {
+  Void _showAddEditTransactionDialog(BuildContext context, {int? index, TransactionItem? txn}) {
     String transactionType = txn?.type ?? 'Expense';
     String selectedCategory = txn?.category ?? appSettings.categories[0];
     String selectedAccount = txn?.account ?? appSettings.accounts.firstWhere((acc) => acc.isDefault, orElse: () => appSettings.accounts[0]).name;
     
-    final TextEditingController amountController = TextEditingController(text: txn != null ? txn.amount.toString() : '');
-    final TextEditingController descController = TextEditingController(text: txn?.description ?? '');
+    Final TextEditingController amountController = TextEditingController(text: txn != null ? txn.amount.toString() : '');
+    Final TextEditingController descController = TextEditingController(text: txn?.description ?? '');
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (ctx, setStateModal) {
-            return Padding(
-              padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+    ShowModalBottomSheet(
+      Context: context,
+      IsScrollControlled: true,
+      Shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      Builder: (ctx) {
+        Return StatefulBuilder(
+          Builder: (ctx, setStateModal) {
+            Return Padding(
+              Padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
+              Child: SingleChildScrollView(
+                Child: Column(
+                  MainAxisSize: MainAxisSize.min,
+                  CrossAxisAlignment: CrossAxisAlignment.start,
+                  Children: [
                     Text(index == null ? 'Add New Transaction' : 'Edit Transaction', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 16),
+                    Const SizedBox(height: 16),
                     Row(
-                      children: [
+                      Children: [
                         Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: transactionType == 'Income' ? Colors.green : const Color(0xFF1E293B)),
-                            onPressed: () => setStateModal(() => transactionType = 'Income'),
-                            child: const Text('Cash In', style: TextStyle(color: Colors.white)),
+                          Child: ElevatedButton(
+                            Style: ElevatedButton.styleFrom(backgroundColor: transactionType == 'Income' ? Colors.green : const Color(0xFF1E293B)),
+                            OnPressed: () => setStateModal(() => transactionType = 'Income'),
+                            Child: const Text('Cash In', style: TextStyle(color: Colors.white)),
                           ),
                         ),
-                        const SizedBox(width: 10),
+                        Const SizedBox(width: 10),
                         Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: transactionType == 'Expense' ? Colors.red : const Color(0xFF1E293B)),
-                            onPressed: () => setStateModal(() => transactionType = 'Expense'),
-                            child: const Text('Cash Out', style: TextStyle(color: Colors.white)),
+                          Child: ElevatedButton(
+                            Style: ElevatedButton.styleFrom(backgroundColor: transactionType == 'Expense' ? Colors.red : const Color(0xFF1E293B)),
+                            OnPressed: () => setStateModal(() => transactionType = 'Expense'),
+                            Child: const Text('Cash Out', style: TextStyle(color: Colors.white)),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    Const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
-                      value: selectedAccount,
-                      dropdownColor: Theme.of(context).cardColor,
-                      decoration: const InputDecoration(labelText: 'Account', border: OutlineInputBorder()),
-                      items: appSettings.accounts.map((acc) => DropdownMenuItem(value: acc.name, child: Text(appSettings.translate(acc.name)))).toList(),
-                      onChanged: (val) { if (val != null) setStateModal(() => selectedAccount = val); },
+                      Value: selectedAccount,
+                      DropdownColor: Theme.of(context).cardColor,
+                      Decoration: const InputDecoration(labelText: 'Account', border: OutlineInputBorder()),
+                      Items: appSettings.accounts.map((acc) => DropdownMenuItem(value: acc.name, child: Text(appSettings.translate(acc.name)))).toList(),
+                      OnChanged: (val) { if (val != null) setStateModal(() => selectedAccount = val); },
                     ),
-                    const SizedBox(height: 12),
+                    Const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
-                      value: selectedCategory,
-                      dropdownColor: Theme.of(context).cardColor,
-                      decoration: const InputDecoration(labelText: 'Category', border: OutlineInputBorder()),
-                      items: appSettings.categories.map((cat) => DropdownMenuItem(value: cat, child: Text(appSettings.translate(cat)))).toList(),
-                      onChanged: (val) { if (val != null) setStateModal(() => selectedCategory = val); },
+                      Value: selectedCategory,
+                      DropdownColor: Theme.of(context).cardColor,
+                      Decoration: const InputDecoration(labelText: 'Category', border: OutlineInputBorder()),
+                      Items: appSettings.categories.map((cat) => DropdownMenuItem(value: cat, child: Text(appSettings.translate(cat)))).toList(),
+                      OnChanged: (val) { if (val != null) setStateModal(() => selectedCategory = val); },
                     ),
-                    const SizedBox(height: 12),
+                    Const SizedBox(height: 12),
                     TextField(controller: amountController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Amount', border: OutlineInputBorder())),
-                    const SizedBox(height: 12),
+                    Const SizedBox(height: 12),
                     TextField(controller: descController, decoration: const InputDecoration(labelText: 'Description', border: OutlineInputBorder())),
-                    const SizedBox(height: 20),
+                    Const SizedBox(height: 20),
                     SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), padding: const EdgeInsets.symmetric(vertical: 14)),
-                        onPressed: () {
-                          if (amountController.text.isNotEmpty) {
-                            double amount = double.tryParse(amountController.text) ?? 0.0;
-                            if (index == null) {
-                              appSettings.addTransaction(TransactionItem(
-                                id: DateTime.now().toString(),
-                                type: transactionType,
-                                account: selectedAccount,
-                                category: selectedCategory,
-                                amount: amount,
-                                description: descController.text,
-                                date: DateTime.now(),
+                      Width: double.infinity,
+                      Child: ElevatedButton(
+                        Style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), padding: const EdgeInsets.symmetric(vertical: 14)),
+                        OnPressed: () {
+                          If (amountController.text.isNotEmpty) {
+                            Double amount = double.tryParse(amountController.text) ?? 0.0;
+                            If (index == null) {
+                              AppSettings.addTransaction(TransactionItem(
+                                Id: DateTime.now().toString(),
+                                Type: transactionType,
+                                Account: selectedAccount,
+                                Category: selectedCategory,
+                                Amount: amount,
+                                Description: descController.text,
+                                Date: DateTime.now(),
                               ));
                             } else {
-                              appSettings.updateTransaction(index, TransactionItem(
-                                id: txn!.id,
-                                type: transactionType,
-                                account: selectedAccount,
-                                category: selectedCategory,
-                                amount: amount,
-                                description: descController.text,
-                                date: txn.date,
+                              AppSettings.updateTransaction(index, TransactionItem(
+                                Id: txn!.id,
+                                Type: transactionType,
+                                Account: selectedAccount,
+                                Category: selectedCategory,
+                                Amount: amount,
+                                Description: descController.text,
+                                Date: txn.date,
                               ));
                             }
                             Navigator.pop(ctx);
-                            setState(() {});
+                            SetState(() {});
                           }
                         },
-                        child: const Text('Save', style: TextStyle(fontSize: 16, color: Colors.white)),
+                        Child: const Text('Save', style: TextStyle(fontSize: 16, color: Colors.white)),
                       ),
                     ),
                   ],
@@ -2889,18 +2889,18 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
     );
   }
 
-  void _showFilterDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Filter Transactions'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: ['All', 'Income', 'Expense'].map((type) {
-            return ListTile(
-              title: Text(type),
-              onTap: () {
-                setState(() => filterType = type);
+  Void _showFilterDialog(BuildContext context) {
+    ShowDialog(
+      Context: context,
+      Builder: (ctx) => AlertDialog(
+        Title: const Text('Filter Transactions'),
+        Content: Column(
+          MainAxisSize: MainAxisSize.min,
+          Children: ['All', 'Income', 'Expense'].map((type) {
+            Return ListTile(
+              Title: Text(type),
+              OnTap: () {
+                SetState(() => filterType = type);
                 Navigator.pop(ctx);
               },
             );
@@ -2914,116 +2914,116 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
 
-    var list = appSettings.transactions.where((txn) {
-      bool matchesSearch = txn.category.toLowerCase().contains(searchQuery.toLowerCase()) ||
-          txn.description.toLowerCase().contains(searchQuery.toLowerCase()) ||
-          txn.account.toLowerCase().contains(searchQuery.toLowerCase());
-      if (filterType == 'Income') return matchesSearch && txn.type == 'Income';
-      if (filterType == 'Expense') return matchesSearch && txn.type == 'Expense';
-      return matchesSearch;
+    Var list = appSettings.transactions.where((txn) {
+      Bool matchesSearch = txn.category.toLowerCase().contains(searchQuery.toLowerCase()) ||
+          Txn.description.toLowerCase().contains(searchQuery.toLowerCase()) ||
+          Txn.account.toLowerCase().contains(searchQuery.toLowerCase());
+      If (filterType == 'Income') return matchesSearch && txn.type == 'Income';
+      If (filterType == 'Expense') return matchesSearch && txn.type == 'Expense';
+      Return matchesSearch;
     }).toList();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('All Transactions'),
-        actions: [
+    Return Scaffold(
+      AppBar: AppBar(
+        Title: const Text('All Transactions'),
+        Actions: [
           Builder(
-            builder: (ctx) => IconButton(
-              icon: const Icon(Icons.download),
-              tooltip: 'Download',
-              onPressed: () {
-                final RenderBox box = ctx.findRenderObject() as RenderBox;
-                final offset = box.localToGlobal(Offset.zero);
-                showStandardDownloadMenu(context, offset);
+            Builder: (ctx) => IconButton(
+              Icon: const Icon(Icons.download),
+              Tooltip: 'Download',
+              OnPressed: () {
+                Final RenderBox box = ctx.findRenderObject() as RenderBox;
+                Final offset = box.localToGlobal(Offset.zero);
+                ShowStandardDownloadMenu(context, offset);
               },
             ),
           ),
           Builder(
-            builder: (ctx) => IconButton(
-              icon: const Icon(Icons.sort),
-              tooltip: 'Sort Transactions',
-              onPressed: () {
-                final RenderBox box = ctx.findRenderObject() as RenderBox;
-                final offset = box.localToGlobal(Offset.zero);
-                showStandardSortMenu(context, offset, (val) {
-                  appSettings.sortTransactions(val);
-                  setState(() {});
+            Builder: (ctx) => IconButton(
+              Icon: const Icon(Icons.sort),
+              Tooltip: 'Sort Transactions',
+              OnPressed: () {
+                Final RenderBox box = ctx.findRenderObject() as RenderBox;
+                Final offset = box.localToGlobal(Offset.zero);
+                ShowStandardSortMenu(context, offset, (val) {
+                  AppSettings.sortTransactions(val);
+                  SetState(() {});
                 });
               },
             ),
           ),
         ],
       ),
-      drawer: const AppDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
+      Drawer: const AppDrawer(),
+      Body: Padding(
+        Padding: const EdgeInsets.all(16.0),
+        Child: Column(
+          Children: [
             Row(
-              children: [
+              Children: [
                 Expanded(
-                  child: TextField(
-                    onChanged: (val) => setState(() => searchQuery = val),
-                    decoration: InputDecoration(
-                      hintText: 'Search (note, category)...',
-                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                      filled: true,
-                      fillColor: Theme.of(context).cardColor,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                  Child: TextField(
+                    OnChanged: (val) => setState(() => searchQuery = val),
+                    Decoration: InputDecoration(
+                      HintText: 'Search (note, category)...',
+                      PrefixIcon: const Icon(Icons.search, color: Colors.grey),
+                      Filled: true,
+                      FillColor: Theme.of(context).cardColor,
+                      Border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                Const SizedBox(width: 8),
                 InkWell(
-                  onTap: () => _showFilterDialog(context),
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
-                    child: const Icon(Icons.filter_list, color: Color(0xFF10B981)),
+                  OnTap: () => _showFilterDialog(context),
+                  Child: Container(
+                    Padding: const EdgeInsets.all(12),
+                    Decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
+                    Child: const Icon(Icons.filter_list, color: Color(0xFF10B981)),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            Const SizedBox(height: 16),
             Expanded(
-              child: list.isEmpty
+              Child: list.isEmpty
                   ? const Center(child: Text('No transactions found', style: TextStyle(color: Colors.grey)))
                   : ListView.builder(
-                      itemCount: list.length,
-                      itemBuilder: (context, index) {
-                        final txn = list[index];
-                        bool isIncome = txn.type == 'Income';
-                        return Card(
-                          color: Theme.of(context).cardColor,
-                          margin: const EdgeInsets.only(bottom: 8),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: (isIncome ? Colors.green : Colors.red).withOpacity(0.2),
-                              child: Icon(isIncome ? Icons.add : Icons.remove, color: isIncome ? Colors.green : Colors.red),
+                      ItemCount: list.length,
+                      ItemBuilder: (context, index) {
+                        Final txn = list[index];
+                        Bool isIncome = txn.type == 'Income';
+                        Return Card(
+                          Color: Theme.of(context).cardColor,
+                          Margin: const EdgeInsets.only(bottom: 8),
+                          Child: ListTile(
+                            Leading: CircleAvatar(
+                              BackgroundColor: (isIncome ? Colors.green : Colors.red).withOpacity(0.2),
+                              Child: Icon(isIncome ? Icons.add : Icons.remove, color: isIncome ? Colors.green : Colors.red),
                             ),
-                            title: Text('${appSettings.translate(txn.category)} (${appSettings.translate(txn.account)})', style: const TextStyle(fontWeight: FontWeight.bold)),
-                            subtitle: Text(appSettings.translate(txn.description)),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
+                            Title: Text('${appSettings.translate(txn.category)} (${appSettings.translate(txn.account)})', style: const TextStyle(fontWeight: FontWeight.bold)),
+                            Subtitle: Text(appSettings.translate(txn.description)),
+                            Trailing: Row(
+                              MainAxisSize: MainAxisSize.min,
+                              Children: [
                                 Text(
                                   '${isIncome ? '+' : '-'} $curr ${txn.amount}',
-                                  style: TextStyle(color: isIncome ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold),
+                                  Style: TextStyle(color: isIncome ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold),
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20),
-                                  onPressed: () => _showAddEditTransactionDialog(context, index: index, txn: txn),
+                                  Icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20),
+                                  OnPressed: () => _showAddEditTransactionDialog(context, index: index, txn: txn),
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20),
-                                  onPressed: () {
-                                    showLocalizedDeleteDialog(
-                                      context: context,
-                                      isImportant: true,
-                                      itemName: txn.category,
-                                      onDeleteConfirmed: () {
-                                        appSettings.removeTransaction(index);
-                                        setState(() {});
+                                  Icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20),
+                                  OnPressed: () {
+                                    ShowLocalizedDeleteDialog(
+                                      Context: context,
+                                      IsImportant: true,
+                                      ItemName: txn.category,
+                                      OnDeleteConfirmed: () {
+                                        AppSettings.removeTransaction(index);
+                                        SetState(() {});
                                       },
                                     );
                                   },
@@ -3038,75 +3038,75 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF10B981),
-        onPressed: () => _showAddEditTransactionDialog(context),
-        child: const Icon(Icons.add, color: Colors.white),
+      FloatingActionButton: FloatingActionButton(
+        BackgroundColor: const Color(0xFF10B981),
+        OnPressed: () => _showAddEditTransactionDialog(context),
+        Child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 }
 
-// ----------------- 3. Reports & Analysis Screen (Fix #11: 12 months & 1990-2099 year dropdowns) -----------------
+// ----------------- Reports & Analysis Screen -----------------
 class ReportsScreen extends StatefulWidget {
-  const ReportsScreen({super.key});
+  Const ReportsScreen({super.key});
 
   @override
   State<ReportsScreen> createState() => _ReportsScreenState();
 }
 
 class _ReportsScreenState extends State<ReportsScreen> {
-  bool isSortedAscending = true;
+  Bool isSortedAscending = true;
 
   @override
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
-    double income = appSettings.getTotalIncome();
-    double expense = appSettings.getTotalExpense();
-    double budget = appSettings.monthlyBudget;
-    double progress = budget > 0 ? (expense / budget).clamp(0.0, 1.0) : 0.0;
+    Double income = appSettings.getTotalIncome();
+    Double expense = appSettings.getTotalExpense();
+    Double budget = appSettings.monthlyBudget;
+    Double progress = budget > 0 ? (expense / budget).clamp(0.0, 1.0) : 0.0;
 
     List<String> months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     List<int> years = List.generate(110, (index) => 1990 + index);
 
     Map<String, double> categoryExpenses = {};
-    for (var txn in appSettings.getFilteredTransactions()) {
-      if (txn.type == 'Expense') {
-        categoryExpenses[txn.category] = (categoryExpenses[txn.category] ?? 0.0) + txn.amount;
+    For (var txn in appSettings.getFilteredTransactions()) {
+      If (txn.type == 'Expense') {
+        CategoryExpenses[txn.category] = (categoryExpenses[txn.category] ?? 0.0) + txn.amount;
       }
     }
 
-    var categoryList = categoryExpenses.entries.toList();
-    if (isSortedAscending) {
-      categoryList.sort((a, b) => a.value.compareTo(b.value));
+    Var categoryList = categoryExpenses.entries.toList();
+    If (isSortedAscending) {
+      CategoryList.sort((a, b) => a.value.compareTo(b.value));
     } else {
-      categoryList.sort((a, b) => b.value.compareTo(a.value));
+      CategoryList.sort((a, b) => b.value.compareTo(a.value));
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Reports & Analysis'),
-        actions: [
+    Return Scaffold(
+      AppBar: AppBar(
+        Title: const Text('Reports & Analysis'),
+        Actions: [
           Builder(
-            builder: (ctx) => IconButton(
-              icon: const Icon(Icons.download),
-              tooltip: 'Download',
-              onPressed: () {
-                final RenderBox box = ctx.findRenderObject() as RenderBox;
-                final offset = box.localToGlobal(Offset.zero);
-                showStandardDownloadMenu(context, offset);
+            Builder: (ctx) => IconButton(
+              Icon: const Icon(Icons.download),
+              Tooltip: 'Download',
+              OnPressed: () {
+                Final RenderBox box = ctx.findRenderObject() as RenderBox;
+                Final offset = box.localToGlobal(Offset.zero);
+                ShowStandardDownloadMenu(context, offset);
               },
             ),
           ),
           Builder(
-            builder: (ctx) => IconButton(
-              icon: const Icon(Icons.sort),
-              tooltip: 'Sort Categories',
-              onPressed: () {
-                final RenderBox box = ctx.findRenderObject() as RenderBox;
-                final offset = box.localToGlobal(Offset.zero);
-                showStandardSortMenu(context, offset, (val) {
-                  setState(() => isSortedAscending = val.contains('Small-Large') || val.contains('A-Z') || val.contains('Old-New'));
+            Builder: (ctx) => IconButton(
+              Icon: const Icon(Icons.sort),
+              Tooltip: 'Sort Categories',
+              OnPressed: () {
+                Final RenderBox box = ctx.findRenderObject() as RenderBox;
+                Final offset = box.localToGlobal(Offset.zero);
+                ShowStandardSortMenu(context, offset, (val) {
+                  SetState(() => isSortedAscending = val.contains('Small-Large') || val.contains('A-Z') || val.contains('Old-New'));
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Report Sorted by: $val')));
                 });
               },
@@ -3114,51 +3114,51 @@ class _ReportsScreenState extends State<ReportsScreen> {
           ),
         ],
       ),
-      drawer: const AppDrawer(),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      Drawer: const AppDrawer(),
+      Body: SingleChildScrollView(
+        Padding: const EdgeInsets.all(16.0),
+        Child: Column(
+          CrossAxisAlignment: CrossAxisAlignment.start,
+          Children: [
             Row(
-              children: [
+              Children: [
                 Expanded(
-                  child: DropdownButtonFormField<int>(
-                    value: appSettings.selectedMonthIndex,
-                    dropdownColor: Theme.of(context).cardColor,
-                    decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
-                    items: List.generate(12, (i) => DropdownMenuItem(value: i + 1, child: Text(months[i]))),
-                    onChanged: (val) { if (val != null) setState(() => appSettings.setMonthYear(val, appSettings.selectedYear)); },
+                  Child: DropdownButtonFormField<int>(
+                    Value: appSettings.selectedMonthIndex,
+                    DropdownColor: Theme.of(context).cardColor,
+                    Decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
+                    Items: List.generate(12, (i) => DropdownMenuItem(value: i + 1, child: Text(months[i]))),
+                    OnChanged: (val) { if (val != null) setState(() => appSettings.setMonthYear(val, appSettings.selectedYear)); },
                   ),
                 ),
-                const SizedBox(width: 12),
+                Const SizedBox(width: 12),
                 Expanded(
-                  child: DropdownButtonFormField<int>(
-                    value: appSettings.selectedYear,
-                    dropdownColor: Theme.of(context).cardColor,
-                    decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
-                    items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString()))).toList(),
-                    onChanged: (val) { if (val != null) setState(() => appSettings.setMonthYear(appSettings.selectedMonthIndex, val)); },
+                  Child: DropdownButtonFormField<int>(
+                    Value: appSettings.selectedYear,
+                    DropdownColor: Theme.of(context).cardColor,
+                    Decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
+                    Items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString()))).toList(),
+                    OnChanged: (val) { if (val != null) setState(() => appSettings.setMonthYear(appSettings.selectedMonthIndex, val)); },
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            Const SizedBox(height: 16),
             Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Monthly Budget Overview', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  const SizedBox(height: 8),
+              Padding: const EdgeInsets.all(16),
+              Decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
+              Child: Column(
+                CrossAxisAlignment: CrossAxisAlignment.start,
+                Children: [
+                  Const Text('Monthly Budget Overview', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  Const SizedBox(height: 8),
                   Text('Budget: $budget $curr | Spent: $expense $curr', style: const TextStyle(color: Colors.grey, fontSize: 13)),
-                  const SizedBox(height: 8),
+                  Const SizedBox(height: 8),
                   LinearProgressIndicator(value: progress, color: const Color(0xFF10B981), backgroundColor: Colors.white12),
-                  const SizedBox(height: 16),
+                  Const SizedBox(height: 16),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
+                    MainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Children: [
                       Text('Total Income: $income $curr', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
                       Text('Total Expense: $expense $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
                     ],
@@ -3166,36 +3166,36 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            Const SizedBox(height: 20),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Expense Categories', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              MainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Children: [
+                Const Text('Expense Categories', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 TextButton.icon(
-                  onPressed: () {
-                    setState(() => isSortedAscending = !isSortedAscending);
+                  OnPressed: () {
+                    SetState(() => isSortedAscending = !isSortedAscending);
                   },
-                  icon: const Icon(Icons.sort, size: 16, color: Color(0xFF10B981)),
-                  label: Text(isSortedAscending ? 'Sort: Low-High' : 'Sort: High-Low', style: const TextStyle(fontSize: 12, color: Color(0xFF10B981))),
+                  Icon: const Icon(Icons.sort, size: 16, color: Color(0xFF10B981)),
+                  Label: Text(isSortedAscending ? 'Sort: Low-High' : 'Sort: High-Low', style: const TextStyle(fontSize: 12, color: Color(0xFF10B981))),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            categoryList.isEmpty
+            Const SizedBox(height: 8),
+            CategoryList.isEmpty
                 ? const Padding(padding: EdgeInsets.all(20.0), child: Center(child: Text('No expense categories found', style: TextStyle(color: Colors.grey))))
                 : ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: categoryList.length,
-                    itemBuilder: (context, index) {
-                      final catEntry = categoryList[index];
-                      return Card(
-                        color: Theme.of(context).cardColor,
-                        margin: const EdgeInsets.only(bottom: 8),
-                        child: ListTile(
-                          leading: CircleAvatar(backgroundColor: Colors.red.withOpacity(0.2), child: const Icon(Icons.category, color: Colors.redAccent)),
-                          title: Text(appSettings.translate(catEntry.key), style: const TextStyle(fontWeight: FontWeight.bold)),
-                          trailing: Text('${catEntry.value} $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                    ShrinkWrap: true,
+                    Physics: const NeverScrollableScrollPhysics(),
+                    ItemCount: categoryList.length,
+                    ItemBuilder: (context, index) {
+                      Final catEntry = categoryList[index];
+                      Return Card(
+                        Color: Theme.of(context).cardColor,
+                        Margin: const EdgeInsets.only(bottom: 8),
+                        Child: ListTile(
+                          Leading: CircleAvatar(backgroundColor: Colors.red.withOpacity(0.2), child: const Icon(Icons.category, color: Colors.redAccent)),
+                          Title: Text(appSettings.translate(catEntry.key), style: const TextStyle(fontWeight: FontWeight.bold)),
+                          Trailing: Text('${catEntry.value} $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
                         ),
                       );
                     },
@@ -3207,27 +3207,27 @@ class _ReportsScreenState extends State<ReportsScreen> {
   }
 }
 
-// ----------------- Privacy & Security Screen (Fix #7) -----------------
+// ----------------- Privacy & Security Screen -----------------
 class PrivacySecurityScreen extends StatefulWidget {
-  const PrivacySecurityScreen({super.key});
+  Const PrivacySecurityScreen({super.key});
 
   @override
   State<PrivacySecurityScreen> createState() => _PrivacySecurityScreenState();
 }
 
 class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
-  late TextEditingController _pinController;
-  bool _obscurePin = true;
+  Late TextEditingController _pinController;
+  Bool _obscurePin = true;
 
-  bool _faceLock = false;
-  bool _fingerprint = false;
-  bool _noneLock = false;
-  bool _patternLock = false;
-  bool _pinLock = true;
+  Bool _faceLock = false;
+  Bool _fingerprint = false;
+  Bool _noneLock = false;
+  Bool _patternLock = false;
+  Bool _pinLock = true;
 
   @override
-  void initState() {
-    super.initState();
+  Void initState() {
+    Super.initState();
     _pinController = TextEditingController(text: appSettings.appPin);
     _faceLock = appSettings.useFaceLock;
     _fingerprint = appSettings.useFingerprint;
@@ -3238,50 +3238,50 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Privacy & Security')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          const Text('Security Options (Alphabetically Sorted)', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 10),
+    Return Scaffold(
+      AppBar: AppBar(title: const Text('Privacy & Security')),
+      Body: ListView(
+        Padding: const EdgeInsets.all(16),
+        Children: [
+          Const Text('Security Options (Alphabetically Sorted)', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
+          Const SizedBox(height: 10),
           Card(
-            color: Theme.of(context).cardColor,
-            child: Column(
-              children: [
+            Color: Theme.of(context).cardColor,
+            Child: Column(
+              Children: [
                 SwitchListTile(
-                  title: const Text('Face Unlock'),
-                  subtitle: const Text('Scan & unlock with camera'),
-                  value: _faceLock,
-                  activeColor: const Color(0xFF10B981),
-                  onChanged: (val) {
-                    setState(() {
+                  Title: const Text('Face Unlock'),
+                  Subtitle: const Text('Scan & unlock with camera'),
+                  Value: _faceLock,
+                  ActiveColor: const Color(0xFF10B981),
+                  OnChanged: (val) {
+                    SetState(() {
                       _faceLock = val;
-                      if (val) _noneLock = false;
+                      If (val) _noneLock = false;
                     });
                   },
                 ),
                 SwitchListTile(
-                  title: const Text('Fingerprint Sensor'),
-                  subtitle: const Text('Unlock using device fingerprint'),
-                  value: _fingerprint,
-                  activeColor: const Color(0xFF10B981),
-                  onChanged: (val) {
-                    setState(() {
+                  Title: const Text('Fingerprint Sensor'),
+                  Subtitle: const Text('Unlock using device fingerprint'),
+                  Value: _fingerprint,
+                  ActiveColor: const Color(0xFF10B981),
+                  OnChanged: (val) {
+                    SetState(() {
                       _fingerprint = val;
-                      if (val) _noneLock = false;
+                      If (val) _noneLock = false;
                     });
                   },
                 ),
                 SwitchListTile(
-                  title: const Text('None (No Lock)'),
-                  subtitle: const Text('Bypass lock screen security'),
-                  value: _noneLock,
-                  activeColor: const Color(0xFF10B981),
-                  onChanged: (val) {
-                    setState(() {
+                  Title: const Text('None (No Lock)'),
+                  Subtitle: const Text('Bypass lock screen security'),
+                  Value: _noneLock,
+                  ActiveColor: const Color(0xFF10B981),
+                  OnChanged: (val) {
+                    SetState(() {
                       _noneLock = val;
-                      if (val) {
+                      If (val) {
                         _faceLock = false;
                         _fingerprint = false;
                         _patternLock = false;
@@ -3291,76 +3291,76 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                   },
                 ),
                 SwitchListTile(
-                  title: const Text('Pattern Lock'),
-                  subtitle: const Text('Draw a secure pattern shape'),
-                  value: _patternLock,
-                  activeColor: const Color(0xFF10B981),
-                  onChanged: (val) {
-                    setState(() {
+                  Title: const Text('Pattern Lock'),
+                  Subtitle: const Text('Draw a secure pattern shape'),
+                  Value: _patternLock,
+                  ActiveColor: const Color(0xFF10B981),
+                  OnChanged: (val) {
+                    SetState(() {
                       _patternLock = val;
-                      if (val) _noneLock = false;
+                      If (val) _noneLock = false;
                     });
                   },
                 ),
                 SwitchListTile(
-                  title: const Text('PIN Code Lock'),
-                  subtitle: const Text('Use a 4-digit numeric code'),
-                  value: _pinLock,
-                  activeColor: const Color(0xFF10B981),
-                  onChanged: (val) {
-                    setState(() {
+                  Title: const Text('PIN Code Lock'),
+                  Subtitle: const Text('Use a 4-digit numeric code'),
+                  Value: _pinLock,
+                  ActiveColor: const Color(0xFF10B981),
+                  OnChanged: (val) {
+                    SetState(() {
                       _pinLock = val;
-                      if (val) _noneLock = false;
+                      If (val) _noneLock = false;
                     });
                   },
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 20),
-          if (_pinLock) ...[
-            const Text('Change PIN Code', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
+          Const SizedBox(height: 20),
+          If (_pinLock) ...[
+            Const Text('Change PIN Code', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
+            Const SizedBox(height: 10),
             Card(
-              color: Theme.of(context).cardColor,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: TextField(
-                  controller: _pinController,
-                  keyboardType: TextInputType.number,
-                  maxLength: 4,
-                  obscureText: _obscurePin,
-                  decoration: InputDecoration(
-                    labelText: '4-Digit App PIN',
-                    border: const OutlineInputBorder(),
-                    counterText: '',
-                    suffixIcon: IconButton(
-                      icon: Icon(_obscurePin ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () => setState(() => _obscurePin = !_obscurePin),
+              Color: Theme.of(context).cardColor,
+              Child: Padding(
+                Padding: const EdgeInsets.all(16.0),
+                Child: TextField(
+                  Controller: _pinController,
+                  KeyboardType: TextInputType.number,
+                  MaxLength: 4,
+                  ObscureText: _obscurePin,
+                  Decoration: InputDecoration(
+                    LabelText: '4-Digit App PIN',
+                    Border: const OutlineInputBorder(),
+                    CounterText: '',
+                    SuffixIcon: IconButton(
+                      Icon: Icon(_obscurePin ? Icons.visibility : Icons.visibility_off),
+                      OnPressed: () => setState(() => _obscurePin = !_obscurePin),
                     ),
                   ),
                 ),
               ),
             ),
           ],
-          const SizedBox(height: 30),
+          Const SizedBox(height: 30),
           SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF10B981),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            Width: double.infinity,
+            Child: ElevatedButton(
+              Style: ElevatedButton.styleFrom(
+                BackgroundColor: const Color(0xFF10B981),
+                Padding: const EdgeInsets.symmetric(vertical: 16),
+                Shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              onPressed: () {
-                if (_pinController.text.length == 4 || _noneLock || !_pinLock) {
-                  if (_pinLock) appSettings.updatePin(_pinController.text);
-                  appSettings.updateSecurityToggles(
-                    face: _faceLock,
-                    fingerprint: _fingerprint,
-                    none: _noneLock,
-                    pattern: _patternLock,
-                    pin: _pinLock,
+              OnPressed: () {
+                If (_pinController.text.length == 4 || _noneLock || !_pinLock) {
+                  If (_pinLock) appSettings.updatePin(_pinController.text);
+                  AppSettings.updateSecurityToggles(
+                    Face: _faceLock,
+                    Fingerprint: _fingerprint,
+                    None: _noneLock,
+                    Pattern: _patternLock,
+                    Pin: _pinLock,
                   );
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Security settings updated successfully!')));
@@ -3368,7 +3368,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('PIN must be exactly 4 digits!')));
                 }
               },
-              child: const Text('Save Changes', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold)),
+              Child: const Text('Save Changes', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ),
         ],
@@ -3377,94 +3377,94 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
   }
 }
 
-// ----------------- Notification Settings Screen (Fix #13) -----------------
+// ----------------- Notification Settings Screen -----------------
 class NotificationSettingsScreen extends StatefulWidget {
-  const NotificationSettingsScreen({super.key});
+  Const NotificationSettingsScreen({super.key});
 
   @override
   State<NotificationSettingsScreen> createState() => _NotificationSettingsScreenState();
 }
 
 class _NotificationSettingsScreenState extends State<NotificationSettingsScreen> {
-  late bool daily;
-  late bool budget;
-  late bool loan;
+  Late bool daily;
+  Late bool budget;
+  Late bool loan;
   String selectedSound = 'Default';
 
   @override
-  void initState() {
-    super.initState();
-    daily = appSettings.dailyReminder;
-    budget = appSettings.budgetAlert;
-    loan = appSettings.loanAlert;
-    selectedSound = appSettings.notificationSound;
+  Void initState() {
+    Super.initState();
+    Daily = appSettings.dailyReminder;
+    Budget = appSettings.budgetAlert;
+    Loan = appSettings.loanAlert;
+    SelectedSound = appSettings.notificationSound;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Notification Settings')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          const Text('Manage App Alerts & Reminders', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 10),
+    Return Scaffold(
+      AppBar: AppBar(title: const Text('Notification Settings')),
+      Body: ListView(
+        Padding: const EdgeInsets.all(16),
+        Children: [
+          Const Text('Manage App Alerts & Reminders', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
+          Const SizedBox(height: 10),
           Card(
-            color: Theme.of(context).cardColor,
-            child: Column(
-              children: [
+            Color: Theme.of(context).cardColor,
+            Child: Column(
+              Children: [
                 SwitchListTile(
-                  title: const Text('Daily Transaction Reminder'),
-                  subtitle: const Text('Get reminded to record daily expenses'),
-                  value: daily,
-                  activeColor: const Color(0xFF10B981),
-                  onChanged: (val) => setState(() => daily = val),
+                  Title: const Text('Daily Transaction Reminder'),
+                  Subtitle: const Text('Get reminded to record daily expenses'),
+                  Value: daily,
+                  ActiveColor: const Color(0xFF10B981),
+                  OnChanged: (val) => setState(() => daily = val),
                 ),
                 SwitchListTile(
-                  title: const Text('Budget Limit Alert'),
-                  subtitle: const Text('Notify when expenses reach near budget limit'),
-                  value: budget,
-                  activeColor: const Color(0xFF10B981),
-                  onChanged: (val) => setState(() => budget = val),
+                  Title: const Text('Budget Limit Alert'),
+                  Subtitle: const Text('Notify when expenses reach near budget limit'),
+                  Value: budget,
+                  ActiveColor: const Color(0xFF10B981),
+                  OnChanged: (val) => setState(() => budget = val),
                 ),
                 SwitchListTile(
-                  title: const Text('Loan Payment Due Alert'),
-                  subtitle: const Text('Alert on upcoming loan settlement dates'),
-                  value: loan,
-                  activeColor: const Color(0xFF10B981),
-                  onChanged: (val) => setState(() => loan = val),
+                  Title: const Text('Loan Payment Due Alert'),
+                  Subtitle: const Text('Alert on upcoming loan settlement dates'),
+                  Value: loan,
+                  ActiveColor: const Color(0xFF10B981),
+                  OnChanged: (val) => setState(() => loan = val),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 20),
-          const Text('Notification Sound & Alert Tone', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
+          Const SizedBox(height: 20),
+          Const Text('Notification Sound & Alert Tone', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
+          Const SizedBox(height: 8),
           DropdownButtonFormField<String>(
-            value: selectedSound,
-            dropdownColor: Theme.of(context).cardColor,
-            decoration: const InputDecoration(border: OutlineInputBorder()),
-            items: ['Default', 'App Chime', 'Custom from Device Memory'].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
-            onChanged: (val) { if (val != null) setState(() => selectedSound = val); },
+            Value: selectedSound,
+            DropdownColor: Theme.of(context).cardColor,
+            Decoration: const InputDecoration(border: OutlineInputBorder()),
+            Items: ['Default', 'App Chime', 'Custom from Device Memory'].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+            OnChanged: (val) { if (val != null) setState(() => selectedSound = val); },
           ),
-          const SizedBox(height: 30),
+          Const SizedBox(height: 30),
           SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF10B981),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            Width: double.infinity,
+            Child: ElevatedButton(
+              Style: ElevatedButton.styleFrom(
+                BackgroundColor: const Color(0xFF10B981),
+                Padding: const EdgeInsets.symmetric(vertical: 16),
+                Shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              onPressed: () {
-                appSettings.toggleNotification('daily', daily);
-                appSettings.toggleNotification('budget', budget);
-                appSettings.toggleNotification('loan', loan);
-                appSettings.setNotificationSound(selectedSound);
+              OnPressed: () {
+                AppSettings.toggleNotification('daily', daily);
+                AppSettings.toggleNotification('budget', budget);
+                AppSettings.toggleNotification('loan', loan);
+                AppSettings.setNotificationSound(selectedSound);
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Notification settings updated successfully!')));
               },
-              child: const Text('Save Changes', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold)),
+              Child: const Text('Save Changes', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ),
         ],
@@ -3473,57 +3473,57 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
   }
 }
 
-// ----------------- 4. Profile & Settings Screen (Fix #12: Camera, Gallery & Avatars) -----------------
+// ----------------- Profile & Settings Screen -----------------
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  Const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final ImagePicker _picker = ImagePicker();
+  Final ImagePicker _picker = ImagePicker();
 
-  void _showProfileImagePicker() {
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => Wrap(
-        children: [
+  Void _showProfileImagePicker() {
+    ShowModalBottomSheet(
+      Context: context,
+      Builder: (ctx) => Wrap(
+        Children: [
           ListTile(
-            leading: const Icon(Icons.camera_alt, color: Color(0xFF10B981)),
-            title: const Text('Take Photo with Camera'),
-            onTap: () async {
+            Leading: const Icon(Icons.camera_alt, color: Color(0xFF10B981)),
+            Title: const Text('Take Photo with Camera'),
+            OnTap: () async {
               Navigator.pop(ctx);
-              final XFile? image = await _picker.pickImage(source: ImageSource.camera);
-              if (image != null) {
-                appSettings.updateProfile(
-                  name: appSettings.profileName,
-                  email: appSettings.profileEmail,
-                  gender: appSettings.profileGender,
-                  birthDate: appSettings.profileBirthDate,
-                  mobile: appSettings.profileMobile,
-                  imagePath: image.path,
+              Final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+              If (image != null) {
+                AppSettings.updateProfile(
+                  Name: appSettings.profileName,
+                  Email: appSettings.profileEmail,
+                  Gender: appSettings.profileGender,
+                  BirthDate: appSettings.profileBirthDate,
+                  Mobile: appSettings.profileMobile,
+                  ImagePath: image.path,
                 );
-                setState(() {});
+                SetState(() {});
               }
             },
           ),
           ListTile(
-            leading: const Icon(Icons.photo_library, color: Color(0xFF10B981)),
-            title: const Text('Choose from Gallery'),
-            onTap: () async {
+            Leading: const Icon(Icons.photo_library, color: Color(0xFF10B981)),
+            Title: const Text('Choose from Gallery'),
+            OnTap: () async {
               Navigator.pop(ctx);
-              final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-              if (image != null) {
-                appSettings.updateProfile(
-                  name: appSettings.profileName,
-                  email: appSettings.profileEmail,
-                  gender: appSettings.profileGender,
-                  birthDate: appSettings.profileBirthDate,
-                  mobile: appSettings.profileMobile,
-                  imagePath: image.path,
+              Final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+              If (image != null) {
+                AppSettings.updateProfile(
+                  Name: appSettings.profileName,
+                  Email: appSettings.profileEmail,
+                  Gender: appSettings.profileGender,
+                  BirthDate: appSettings.profileBirthDate,
+                  Mobile: appSettings.profileMobile,
+                  ImagePath: image.path,
                 );
-                setState(() {});
+                SetState(() {});
               }
             },
           ),
@@ -3532,50 +3532,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showEditProfileDialog(BuildContext context) {
-    final nameC = TextEditingController(text: appSettings.profileName);
-    final emailC = TextEditingController(text: appSettings.profileEmail);
-    final genderC = TextEditingController(text: appSettings.profileGender);
-    final birthDateC = TextEditingController(text: appSettings.profileBirthDate);
-    final mobileC = TextEditingController(text: appSettings.profileMobile);
+  Void _showEditProfileDialog(BuildContext context) {
+    Final nameC = TextEditingController(text: appSettings.profileName);
+    Final emailC = TextEditingController(text: appSettings.profileEmail);
+    Final genderC = TextEditingController(text: appSettings.profileGender);
+    Final birthDateC = TextEditingController(text: appSettings.profileBirthDate);
+    Final mobileC = TextEditingController(text: appSettings.profileMobile);
 
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Edit Profile'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+    ShowDialog(
+      Context: context,
+      Builder: (ctx) => AlertDialog(
+        Title: const Text('Edit Profile'),
+        Content: SingleChildScrollView(
+          Child: Column(
+            MainAxisSize: MainAxisSize.min,
+            Children: [
               TextField(controller: nameC, decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder())),
-              const SizedBox(height: 12),
+              Const SizedBox(height: 12),
               TextField(controller: emailC, decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder())),
-              const SizedBox(height: 12),
+              Const SizedBox(height: 12),
               TextField(controller: genderC, decoration: const InputDecoration(labelText: 'Gender', border: OutlineInputBorder())),
-              const SizedBox(height: 12),
+              Const SizedBox(height: 12),
               TextField(controller: birthDateC, decoration: const InputDecoration(labelText: 'Birth Date (DD-MM-YYYY)', border: OutlineInputBorder())),
-              const SizedBox(height: 12),
+              Const SizedBox(height: 12),
               TextField(controller: mobileC, keyboardType: TextInputType.phone, decoration: const InputDecoration(labelText: 'Mobile Number', border: OutlineInputBorder())),
             ],
           ),
         ),
-        actions: [
+        Actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
-            onPressed: () {
-              appSettings.updateProfile(
-                name: nameC.text,
-                email: emailC.text,
-                gender: genderC.text,
-                birthDate: birthDateC.text,
-                mobile: mobileC.text,
+            Style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
+            OnPressed: () {
+              AppSettings.updateProfile(
+                Name: nameC.text,
+                Email: emailC.text,
+                Gender: genderC.text,
+                BirthDate: birthDateC.text,
+                Mobile: mobileC.text,
               );
               Navigator.pop(ctx);
-              setState(() {});
+              SetState(() {});
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile updated successfully!')));
             },
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
+            Child: const Text('Save', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -3584,102 +3584,102 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Profile & Settings')),
-      drawer: const AppDrawer(),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
+    Return Scaffold(
+      AppBar: AppBar(title: const Text('Profile & Settings')),
+      Drawer: const AppDrawer(),
+      Body: ListView(
+        Padding: const EdgeInsets.all(16),
+        Children: [
           Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: const Color(0xFF10B981),
-              borderRadius: BorderRadius.circular(16),
+            Padding: const EdgeInsets.all(20),
+            Decoration: BoxDecoration(
+              Color: const Color(0xFF10B981),
+              BorderRadius: BorderRadius.circular(16),
             ),
-            child: Column(
-              children: [
+            Child: Column(
+              Children: [
                 Stack(
-                  children: [
+                  Children: [
                     CircleAvatar(
-                      radius: 35,
-                      backgroundColor: Colors.white,
-                      backgroundImage: appSettings.profileImagePath.isNotEmpty ? FileImage(File(appSettings.profileImagePath)) : null,
-                      child: appSettings.profileImagePath.isEmpty ? const Icon(Icons.person, size: 45, color: Color(0xFF10B981)) : null,
+                      Radius: 35,
+                      BackgroundColor: Colors.white,
+                      BackgroundImage: appSettings.profileImagePath.isNotEmpty ? FileImage(File(appSettings.profileImagePath)) : null,
+                      Child: appSettings.profileImagePath.isEmpty ? const Icon(Icons.person, size: 45, color: Color(0xFF10B981)) : null,
                     ),
                     Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: InkWell(
-                        onTap: _showProfileImagePicker,
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black),
-                          child: const Icon(Icons.edit, size: 14, color: Colors.white),
+                      Bottom: 0,
+                      Right: 0,
+                      Child: InkWell(
+                        OnTap: _showProfileImagePicker,
+                        Child: Container(
+                          Padding: const EdgeInsets.all(6),
+                          Decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black),
+                          Child: const Icon(Icons.edit, size: 14, color: Colors.white),
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                Const SizedBox(height: 12),
                 Text(appSettings.profileName, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 4),
+                Const SizedBox(height: 4),
                 Text(appSettings.profileEmail, style: const TextStyle(color: Colors.white70, fontSize: 13)),
-                const SizedBox(height: 8),
+                Const SizedBox(height: 8),
                 Text('Gender: ${appSettings.profileGender} | DOB: ${appSettings.profileBirthDate}', style: const TextStyle(color: Colors.white70, fontSize: 11)),
-                const SizedBox(height: 4),
+                Const SizedBox(height: 4),
                 Text('Mobile: ${appSettings.profileMobile}', style: const TextStyle(color: Colors.white70, fontSize: 11)),
-                const SizedBox(height: 14),
+                Const SizedBox(height: 14),
                 ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black26,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  Style: ElevatedButton.styleFrom(
+                    BackgroundColor: Colors.black26,
+                    ForegroundColor: Colors.white,
+                    Elevation: 0,
+                    Shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                   ),
-                  onPressed: () => _showEditProfileDialog(context),
-                  icon: const Icon(Icons.edit, size: 16),
-                  label: const Text('Edit Profile'),
+                  OnPressed: () => _showEditProfileDialog(context),
+                  Icon: const Icon(Icons.edit, size: 16),
+                  Label: const Text('Edit Profile'),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 20),
-          const Text('Account', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
+          Const SizedBox(height: 20),
+          Const Text('Account', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
+          Const SizedBox(height: 8),
           Card(
-            color: Theme.of(context).cardColor,
-            child: ListTile(
-              leading: const Icon(Icons.lock_outline, color: Color(0xFF10B981)),
-              title: const Text('Privacy & Security'),
-              trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PrivacySecurityScreen())),
+            Color: Theme.of(context).cardColor,
+            Child: ListTile(
+              Leading: const Icon(Icons.lock_outline, color: Color(0xFF10B981)),
+              Title: const Text('Privacy & Security'),
+              Trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+              OnTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PrivacySecurityScreen())),
             ),
           ),
-          const SizedBox(height: 16),
-          const Text('Preferences', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
+          Const SizedBox(height: 16),
+          Const Text('Preferences', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
+          Const SizedBox(height: 8),
           Card(
-            color: Theme.of(context).cardColor,
-            child: ListTile(
-              leading: const Icon(Icons.notifications_none, color: Color(0xFF10B981)),
-              title: const Text('Notification Settings'),
-              trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationSettingsScreen())),
+            Color: Theme.of(context).cardColor,
+            Child: ListTile(
+              Leading: const Icon(Icons.notifications_none, color: Color(0xFF10B981)),
+              Title: const Text('Notification Settings'),
+              Trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+              OnTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationSettingsScreen())),
             ),
           ),
-          const SizedBox(height: 16),
+          Const SizedBox(height: 16),
           Card(
-            color: Theme.of(context).cardColor,
-            child: ListTile(
-              leading: const Icon(Icons.logout, color: Colors.redAccent),
-              title: const Text('Sign Out', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
-              onTap: () {
+            Color: Theme.of(context).cardColor,
+            Child: ListTile(
+              Leading: const Icon(Icons.logout, color: Colors.redAccent),
+              Title: const Text('Sign Out', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+              OnTap: () {
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const PinLockScreen()));
               },
             ),
           ),
-          const SizedBox(height: 20),
-          const Center(child: Text('Version 1.0.0', style: TextStyle(color: Colors.grey, fontSize: 12))),
+          Const SizedBox(height: 20),
+          Const Center(child: Text('Version 1.0.0', style: TextStyle(color: Colors.grey, fontSize: 12))),
         ],
       ),
     );
@@ -3688,38 +3688,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 // ----------------- Main Navigation Container -----------------
 class MainHomeScreen extends StatefulWidget {
-  const MainHomeScreen({super.key});
+  Const MainHomeScreen({super.key});
 
   @override
   State<MainHomeScreen> createState() => _MainHomeScreenState();
 }
 
 class _MainHomeScreenState extends State<MainHomeScreen> {
-  int _currentIndex = 0;
+  Int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages = [
-      const HomeScreenContent(),
-      const LoanDebtScreen(),
-      const AllTransactionsScreen(), 
-      const ReportsScreen(),
-      const ProfileScreen(),
+    Final List<Widget> pages = [
+      Const HomeScreenContent(),
+      Const LoanDebtScreen(),
+      Const AllTransactionsScreen(), 
+      Const ReportsScreen(),
+      Const ProfileScreen(),
     ];
 
-    return Scaffold(
-      body: pages[_currentIndex],
-      bottomNavigationBar: AnimatedBuilder(
-        animation: appSettings,
-        builder: (context, child) {
-          return BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: (index) => setState(() => _currentIndex = index),
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: const Color(0xFF10B981),
-            unselectedItemColor: Colors.grey,
-            backgroundColor: const Color(0xFF1E293B),
-            items: [
+    Return Scaffold(
+      Body: pages[_currentIndex],
+      BottomNavigationBar: AnimatedBuilder(
+        Animation: appSettings,
+        Builder: (context, child) {
+          Return BottomNavigationBar(
+            CurrentIndex: _currentIndex,
+            OnTap: (index) => setState(() => _currentIndex = index),
+            Type: BottomNavigationBarType.fixed,
+            SelectedItemColor: const Color(0xFF10B981),
+            UnselectedItemColor: Colors.grey,
+            BackgroundColor: const Color(0xFF1E293B),
+            Items: [
               BottomNavigationBarItem(icon: const Icon(Icons.home), label: appSettings.translate('Account')),
               BottomNavigationBarItem(icon: const Icon(Icons.money), label: appSettings.translate('Loan')),
               BottomNavigationBarItem(icon: const Icon(Icons.list_alt), label: appSettings.translate('Transactions')),
