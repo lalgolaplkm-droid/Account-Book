@@ -1,1048 +1,296 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'package:flutter/services.dart';
 
-void main() async {
+// ---------------------------------------------------------------------------
+// MAIN ENTRY POINT & APP STATE
+// ---------------------------------------------------------------------------
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await appSettings.initPrefs();
-  runApp(const AccountBookApp());
+  runApp(const AdvancedFinanceApp());
 }
 
-// ----------------- Models -----------------
-class TransactionItem {
-  final String id;
-  final String type;
-  String account;
-  String category;
-  double amount;
-  String description;
-  DateTime date;
+class AdvancedFinanceApp extends StatefulWidget {
+  const AdvancedFinanceApp({Key? key}) : super(key: key);
 
-  TransactionItem({
-    required this.id,
-    required this.type,
-    required this.account,
-    required this.category,
-    required this.amount,
-    required this.description,
-    required this.date,
-  });
-
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'type': type,
-    'account': account,
-    'category': category,
-    'amount': amount,
-    'description': description,
-    'date': date.toIso8601String(),
-  };
-
-  factory TransactionItem.fromJson(Map<String, dynamic> json) => TransactionItem(
-    id: json['id'],
-    type: json['type'],
-    account: json['account'],
-    category: json['category'],
-    amount: json['amount'],
-    description: json['description'],
-    date: DateTime.parse(json['date']),
-  );
+  @override
+  State<AdvancedFinanceApp> createState() => _AdvancedFinanceAppState();
 }
 
-class LoanItem {
-  final String id;
-  String personName;
-  double amount;
-  String type;
-  DateTime date;
-  bool isPaid;
-
-  LoanItem({
-    required this.id,
-    required this.personName,
-    required this.amount,
-    required this.type,
-    required this.date,
-    this.isPaid = false,
-  });
-
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'personName': personName,
-    'amount': amount,
-    'type': type,
-    'date': date.toIso8601String(),
-    'isPaid': isPaid,
-  };
-
-  factory LoanItem.fromJson(Map<String, dynamic> json) => LoanItem(
-    id: json['id'],
-    personName: json['personName'],
-    amount: json['amount'],
-    type: json['type'],
-    date: DateTime.parse(json['date']),
-    isPaid: json['isPaid'],
-  );
-}
-
-class ShoppingItem {
-  String name;
-  double amount;
-  bool isChecked;
-  ShoppingItem({required this.name, this.amount = 0.0, this.isChecked = false});
-
-  Map<String, dynamic> toJson() => {'name': name, 'amount': amount, 'isChecked': isChecked};
-  factory ShoppingItem.fromJson(Map<String, dynamic> json) => ShoppingItem(name: json['name'], amount: json['amount'], isChecked: json['isChecked']);
-}
-
-class BudgetModel {
-  String category;
-  double amount;
-  BudgetModel({required this.category, required this.amount});
-
-  Map<String, dynamic> toJson() => {'category': category, 'amount': amount};
-  factory BudgetModel.fromJson(Map<String, dynamic> json) => BudgetModel(category: json['category'], amount: json['amount']);
-}
-
-class SavingsModel {
-  String title;
-  double targetAmount;
-  double currentAmount;
-  bool isCompleted;
-  SavingsModel({required this.title, required this.targetAmount, required this.currentAmount, this.isCompleted = false});
-
-  Map<String, dynamic> toJson() => {'title': title, 'targetAmount': targetAmount, 'currentAmount': currentAmount, 'isCompleted': isCompleted};
-  factory SavingsModel.fromJson(Map<String, dynamic> json) => SavingsModel(title: json['title'], targetAmount: json['targetAmount'], currentAmount: json['currentAmount'], isCompleted: json['isCompleted']);
-}
-
-class AccountModel {
-  String name;
-  String type;
-  String details;
-  bool isDefault;
-
-  AccountModel({
-    required this.name,
-    required this.type,
-    required this.details,
-    this.isDefault = false,
-  });
-
-  Map<String, dynamic> toJson() => {'name': name, 'type': type, 'details': details, 'isDefault': isDefault};
-  factory AccountModel.fromJson(Map<String, dynamic> json) => AccountModel(name: json['name'], type: json['type'], details: json['details'], isDefault: json['isDefault']);
-}
-
-class RepeatedTransactionModel {
-  String title;
-  double amount;
-  String frequency;
-  RepeatedTransactionModel({required this.title, required this.amount, required this.frequency});
-
-  Map<String, dynamic> toJson() => {'title': title, 'amount': amount, 'frequency': frequency};
-  factory RepeatedTransactionModel.fromJson(Map<String, dynamic> json) => RepeatedTransactionModel(title: json['title'], amount: json['amount'], frequency: json['frequency']);
-}
-
-class ReminderModel {
-  String title;
-  double amount;
-  String dueDate;
-  ReminderModel({required this.title, required this.amount, required this.dueDate});
-
-  Map<String, dynamic> toJson() => {'title': title, 'amount': amount, 'dueDate': dueDate};
-  factory ReminderModel.fromJson(Map<String, dynamic> json) => ReminderModel(title: json['title'], amount: json['amount'], dueDate: json['dueDate']);
-}
-
-// ----------------- State Management with Persistent Storage -----------------
-class AppSettingsNotifier extends ChangeNotifier {
-  late SharedPreferences _prefs;
-
+class _AdvancedFinanceAppState extends State<AdvancedFinanceApp> {
   ThemeMode _themeMode = ThemeMode.dark;
-  String _language = 'English'; // Default Language is English
-  String currency = '৳';
-  String timeFilter = 'Month';
-  String appPin = '1234';
+  String _currentLanguage = 'English'; // Default Language is English
+  Color _primaryAccentColor = Colors.teal;
 
-  // Profile fields
-  String profileName = 'MD ALAMGIR HOSSAIN';
-  String profileEmail = 'alamgir@email.com';
-  String profileGender = 'Male';
-  String profileBirthDate = '01-01-1995';
-  String profileMobile = '018xxxxxxxx';
-  String profileImagePath = '';
-
-  bool useFaceLock = false;
-  bool useFingerprint = false;
-  bool useNoneLock = false;
-  bool usePatternLock = false;
-  bool usePinLock = true;
-
-  bool dailyReminder = true;
-  bool budgetAlert = true;
-  bool loanAlert = true;
-  String notificationSound = 'Default';
-
-  // Selected Month & Year for Home, Reports and Custom Year/Month filters
-  int selectedMonthIndex = DateTime.now().month;
-  int selectedYear = DateTime.now().year;
-  String customYearFilter = 'All Years';
-  String customMonthFilter = 'All Months';
-
-  List<String> categories = ['Grocery', 'Others', 'Salary', 'Tea & Snacks', 'Transport'];
+  void updateTheme(ThemeMode mode) => setState(() => _themeMode = mode);
+  void updateLanguage(String lang) => setState(() => _currentLanguage = lang);
+  void updateAccentColor(Color color) => setState(() => _primaryAccentColor = color);
   
-  List<AccountModel> accounts = [
-    AccountModel(name: 'Bikash', type: 'Mobile Banking', details: '018xxxxxxxx', isDefault: false),
-    AccountModel(name: 'Cash in Hand', type: 'Cash', details: 'Main pocket cash', isDefault: true),
-    AccountModel(name: 'Dutch-Bangla Bank', type: 'Bank', details: 'A/C: ...1234', isDefault: false),
-    AccountModel(name: 'Nagad', type: 'Mobile Banking', details: '017xxxxxxxx', isDefault: false),
-    AccountModel(name: 'UCB Bank', type: 'Bank', details: 'A/C: ...4589', isDefault: false),
-  ];
-
-  String defaultCategory = 'Others';
-  double monthlyBudget = 15000.0;
-
-  List<TransactionItem> transactions = [
-    TransactionItem(
-      id: '1',
-      type: 'Income',
-      account: 'Cash in Hand',
-      category: 'Salary',
-      amount: 45000.0,
-      description: 'Monthly Salary',
-      date: DateTime.now(),
-    ),
-    TransactionItem(
-      id: '2',
-      type: 'Expense',
-      account: 'Cash in Hand',
-      category: 'Tea & Snacks',
-      amount: 350.0,
-      description: 'Evening snacks',
-      date: DateTime.now(),
-    ),
-  ];
-
-  List<LoanItem> loans = [
-    LoanItem(
-      id: '101',
-      personName: 'Rafiqul Islam',
-      amount: 2000.0,
-      type: 'Given',
-      date: DateTime.now(),
-      isPaid: false,
-    ),
-  ];
-
-  List<ShoppingItem> shoppingList = [
-    ShoppingItem(name: 'Cooking Oil', amount: 150.0, isChecked: true),
-    ShoppingItem(name: 'Rice (5 kg)', amount: 450.0, isChecked: false),
-  ];
-
-  List<BudgetModel> budgets = [
-    BudgetModel(category: 'Food & Hotel', amount: 5000.0),
-    BudgetModel(category: 'Transport', amount: 3000.0),
-  ];
-
-  List<SavingsModel> savingsList = [
-    SavingsModel(title: 'Arufa Savings', targetAmount: 500000, currentAmount: 25000)
-  ];
-
-  List<RepeatedTransactionModel> repeatedTransactions = [
-    RepeatedTransactionModel(title: 'House Rent', amount: 8000, frequency: '1st of every month'),
-    RepeatedTransactionModel(title: 'WiFi Bill', amount: 1000, frequency: '10th of every month'),
-  ];
-
-  List<ReminderModel> reminders = [
-    ReminderModel(title: 'Electricity Bill', amount: 1200, dueDate: '15th of every month'),
-  ];
-
-  Future<void> initPrefs() async {
-    _prefs = await SharedPreferences.getInstance();
-    appPin = _prefs.getString('appPin') ?? '1234';
-    _language = _prefs.getString('language') ?? 'English';
-    String themeStr = _prefs.getString('themeMode') ?? 'dark';
-    if (themeStr == 'light') _themeMode = ThemeMode.light;
-    else if (themeStr == 'system') _themeMode = ThemeMode.system;
-    else _themeMode = ThemeMode.dark;
-
-    profileName = _prefs.getString('profileName') ?? 'MD ALAMGIR HOSSAIN';
-    profileEmail = _prefs.getString('profileEmail') ?? 'alamgir@email.com';
-    profileGender = _prefs.getString('profileGender') ?? 'Male';
-    profileBirthDate = _prefs.getString('profileBirthDate') ?? '01-01-1995';
-    profileMobile = _prefs.getString('profileMobile') ?? '018xxxxxxxx';
-    profileImagePath = _prefs.getString('profileImagePath') ?? '';
-    notifyListeners();
+  void resetToDefaults() {
+    setState(() {
+      _themeMode = ThemeMode.dark;
+      _currentLanguage = 'English';
+      _primaryAccentColor = Colors.teal;
+    });
   }
 
-  Future<void> _saveToPrefs() async {
-    await _prefs.setString('appPin', appPin);
-    await _prefs.setString('language', _language);
-    await _prefs.setString('themeMode', _themeMode == ThemeMode.light ? 'light' : (_themeMode == ThemeMode.system ? 'system' : 'dark'));
-    await _prefs.setString('profileName', profileName);
-    await _prefs.setString('profileEmail', profileEmail);
-    await _prefs.setString('profileGender', profileGender);
-    await _prefs.setString('profileBirthDate', profileBirthDate);
-    await _prefs.setString('profileMobile', profileMobile);
-    await _prefs.setString('profileImagePath', profileImagePath);
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Advanced Personal Finance',
+      debugShowCheckedModeBanner: false,
+      themeMode: _themeMode,
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primarySwatch: Colors.teal,
+        scaffoldBackgroundColor: Colors.grey[100],
+        colorScheme: ColorScheme.fromSeed(seedColor: _primaryAccentColor, brightness: Brightness.light),
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: Colors.teal,
+        scaffoldBackgroundColor: const Color(0xFF121826),
+        colorScheme: ColorScheme.fromSeed(seedColor: _primaryAccentColor, brightness: Brightness.dark),
+      ),
+      home: const LockScreenWrapper(),
+    );
   }
+}
 
-  ThemeMode get themeMode => _themeMode;
-  String get language => _language;
-  
-  String getAppTitle() {
-    if (_language == 'Bangla') return 'হিসাবের খাতা';
-    if (_language == 'Arabic') return 'دفتر الحسابات';
-    return 'Account Book';
-  }
+// ---------------------------------------------------------------------------
+// 1. SECURITY & PIN LOCK SYSTEM
+// ---------------------------------------------------------------------------
+class LockScreenWrapper extends StatefulWidget {
+  const LockScreenWrapper({Key? key}) : super(key: key);
 
-  String translate(String key) {
-    if (_language == 'Bangla') {
-      switch (key) {
-        case 'Account Book': return 'হিসাবের খাতা';
-        case 'Dashboard Analytics': return 'ড্যাশবোর্ড অ্যানালিটিক্স';
-        case 'Categories': return 'ক্যাটাগরি সমূহ';
-        case 'Accounts': return 'অ্যাকাউন্ট সমূহ';
-        case 'Theme': return 'থিম';
-        case 'Language': return 'ভাষা';
-        case 'About App': return 'অ্যাপ সম্পর্কে';
-        case 'Current Balance': return 'বর্তমান ব্যালেন্স';
-        case 'Month': return 'মাস';
-        case 'Year': return 'বছর';
-        case 'Income': return 'আয়';
-        case 'Expense': return 'ব্যয়';
-        case 'Quick Access': return 'কুইক এক্সেস';
-        case 'Recent Transactions': return 'সাম্প্রতিক লেনদেন';
-        case 'Budget': return 'বাজেট';
-        case 'Reminder': return 'রিমাইন্ডার';
-        case 'Repeat': return 'রিপিট';
-        case 'Savings': return 'সেভিংস';
-        case 'Shopping': return 'শপিং';
-        case 'Account': return 'হিসাব';
-        case 'Loan': return 'লোন';
-        case 'Transactions': return 'লেনদেন';
-        case 'Report': return 'রিপোর্ট';
-        case 'Profile': return 'প্রোফাইল';
-        default: return key;
-      }
-    } else if (_language == 'Arabic') {
-      switch (key) {
-        case 'Account Book': return 'دفتر الحسابات';
-        case 'Dashboard Analytics': return 'تحليلات لوحة القيادة';
-        case 'Categories': return 'الفئات';
-        case 'Accounts': return 'الحسابات';
-        case 'Theme': return 'المظهر';
-        case 'Language': return 'اللغة';
-        case 'About App': return 'حول التطبيق';
-        case 'Current Balance': return 'الرصيد الحالي';
-        case 'Month': return 'شهر';
-        case 'Year': return 'سنة';
-        case 'Income': return 'إيرادات';
-        case 'Expense': return 'مصروفات';
-        case 'Quick Access': return 'وصول سريع';
-        case 'Recent Transactions': return 'المعاملات الأخيرة';
-        case 'Budget': return 'الميزانية';
-        case 'Reminder': return 'التذكيرات';
-        case 'Repeat': return 'متكرر';
-        case 'Savings': return 'المدخرات';
-        case 'Shopping': return 'التسوق';
-        case 'Account': return 'حساب';
-        case 'Loan': return 'قرض';
-        case 'Transactions': return 'المعاملات';
-        case 'Report': return 'تقرير';
-        case 'Profile': return 'الملف الشخصي';
-        default: return key;
-      }
-    }
-    return key;
-  }
+  @override
+  State<LockScreenWrapper> createState() => _LockScreenWrapperState();
+}
 
-  void setTheme(ThemeMode mode) {
-    _themeMode = mode;
-    _saveToPrefs();
-    notifyListeners();
-  }
+class _LockScreenWrapperState extends State<LockScreenWrapper> {
+  bool _isUnlocked = false;
+  final String _correctPin = "1234";
+  String _enteredPin = "";
 
-  void setLanguage(String lang) {
-    _language = lang;
-    _saveToPrefs();
-    notifyListeners();
-  }
-
-  void setTimeFilter(String filter) {
-    timeFilter = filter;
-    notifyListeners();
-  }
-
-  void setMonthYear(int month, int year) {
-    selectedMonthIndex = month;
-    selectedYear = year;
-    notifyListeners();
-  }
-
-  void setCustomYearMonthFilters(String year, String month) {
-    customYearFilter = year;
-    customMonthFilter = month;
-    notifyListeners();
-  }
-
-  void setCurrency(String newCurrency) {
-    currency = newCurrency;
-    notifyListeners();
-  }
-
-  void updatePin(String newPin) {
-    appPin = newPin;
-    _saveToPrefs();
-    notifyListeners();
-  }
-
-  void updateProfile({required String name, required String email, required String gender, required String birthDate, required String mobile, String? imagePath}) {
-    profileName = name;
-    profileEmail = email;
-    profileGender = gender;
-    profileBirthDate = birthDate;
-    profileMobile = mobile;
-    if (imagePath != null) profileImagePath = imagePath;
-    _saveToPrefs();
-    notifyListeners();
-  }
-
-  void updateSecurityToggles({required bool face, required bool fingerprint, required bool none, required bool pattern, required bool pin}) {
-    useFaceLock = face;
-    useFingerprint = fingerprint;
-    useNoneLock = none;
-    usePatternLock = pattern;
-    usePinLock = pin;
-    notifyListeners();
-  }
-
-  void toggleNotification(String key, bool val) {
-    if (key == 'daily') dailyReminder = val;
-    if (key == 'budget') budgetAlert = val;
-    if (key == 'loan') loanAlert = val;
-    notifyListeners();
-  }
-
-  void setNotificationSound(String sound) {
-    notificationSound = sound;
-    notifyListeners();
-  }
-
-  void addTransaction(TransactionItem txn) {
-    transactions.insert(0, txn);
-    notifyListeners();
-  }
-
-  void updateTransaction(int index, TransactionItem txn) {
-    transactions[index] = txn;
-    notifyListeners();
-  }
-
-  void removeTransaction(int index) {
-    transactions.removeAt(index);
-    notifyListeners();
-  }
-
-  void addLoan(LoanItem loan) {
-    loans.insert(0, loan);
-    notifyListeners();
-  }
-
-  void updateLoan(int index, String personName, double amount, String type) {
-    loans[index].personName = personName;
-    loans[index].amount = amount;
-    loans[index].type = type;
-    notifyListeners();
-  }
-
-  void removeLoan(int index) {
-    loans.removeAt(index);
-    notifyListeners();
-  }
-
-  void toggleLoanStatus(String id) {
-    for (var loan in loans) {
-      if (loan.id == id) {
-        loan.isPaid = !loan.isPaid;
-        notifyListeners();
-        break;
-      }
-    }
-  }
-
-  void sortLoans(String criteria) {
-    if (criteria.contains('New-Old')) {
-      loans.sort((a, b) => b.date.compareTo(a.date));
-    } else if (criteria.contains('Old-New')) {
-      loans.sort((a, b) => a.date.compareTo(b.date));
-    } else if (criteria.contains('A-Z')) {
-      loans.sort((a, b) => a.personName.compareTo(b.personName));
-    } else if (criteria.contains('Z-A')) {
-      loans.sort((a, b) => b.personName.compareTo(a.personName));
-    } else if (criteria.contains('Large-Small')) {
-      loans.sort((a, b) => b.amount.compareTo(a.amount));
-    } else if (criteria.contains('Small-Large')) {
-      loans.sort((a, b) => a.amount.compareTo(b.amount));
-    }
-    notifyListeners();
-  }
-
-  void sortTransactions(String criteria) {
-    if (criteria.contains('New-Old')) {
-      transactions.sort((a, b) => b.date.compareTo(a.date));
-    } else if (criteria.contains('Old-New')) {
-      transactions.sort((a, b) => a.date.compareTo(b.date));
-    } else if (criteria.contains('A-Z')) {
-      transactions.sort((a, b) => a.category.compareTo(b.category));
-    } else if (criteria.contains('Z-A')) {
-      transactions.sort((a, b) => b.category.compareTo(a.category));
-    } else if (criteria.contains('Number Large-Small')) {
-      transactions.sort((a, b) => b.amount.compareTo(a.amount));
-    } else if (criteria.contains('Number Small-Large')) {
-      transactions.sort((a, b) => a.amount.compareTo(b.amount));
-    }
-    notifyListeners();
-  }
-
-  List<TransactionItem> getFilteredTransactions() {
-    return transactions.where((txn) {
-      bool matchesYear = customYearFilter == 'All Years' || txn.date.year.toString() == customYearFilter;
-      bool matchesMonth = customMonthFilter == 'All Months' || txn.date.month.toString() == customMonthFilter;
-      bool matchesStandard = txn.date.year == selectedYear && txn.date.month == selectedMonthIndex;
-      return (customYearFilter != 'All Years' || customMonthFilter != 'All Months') ? (matchesYear && matchesMonth) : matchesStandard;
-    }).toList();
-  }
-
-  double getTotalIncome() {
-    double total = 0;
-    for (var txn in getFilteredTransactions()) {
-      if (txn.type == 'Income') total += txn.amount;
-    }
-    return total;
-  }
-
-  double getTotalExpense() {
-    double total = 0;
-    for (var txn in getFilteredTransactions()) {
-      if (txn.type == 'Expense') total += txn.amount;
-    }
-    return total;
-  }
-
-  double getTotalBalance() {
-    return getTotalIncome() - getTotalExpense();
-  }
-
-  double getTotalGiven() {
-    double total = 0;
-    for (var loan in loans) {
-      if (loan.type == 'Given' && !loan.isPaid) total += loan.amount;
-    }
-    return total;
-  }
-
-  double getTotalTaken() {
-    double total = 0;
-    for (var loan in loans) {
-      if (loan.type == 'Taken' && !loan.isPaid) total += loan.amount;
-    }
-    return total;
-  }
-
-  double getNetBalance() {
-    return getTotalGiven() - getTotalTaken();
-  }
-
-  void addAccount(String name, String type, String details) {
-    if (name.isNotEmpty) {
-      accounts.add(AccountModel(
-        name: name,
-        type: type,
-        details: details.isEmpty ? (type == 'Cash' ? 'Hand Cash' : 'N/A') : details,
-        isDefault: accounts.isEmpty,
-      ));
-      accounts.sort((a, b) => a.name.compareTo(b.name));
-      notifyListeners();
-    }
-  }
-
-  void updateAccount(int index, String name, String type, String details) {
-    accounts[index].name = name;
-    accounts[index].type = type;
-    accounts[index].details = details;
-    accounts.sort((a, b) => a.name.compareTo(b.name));
-    notifyListeners();
-  }
-
-  void setDefaultAccount(int index) {
-    for (int i = 0; i < accounts.length; i++) {
-      accounts[i].isDefault = (i == index);
-    }
-    notifyListeners();
-  }
-
-  bool removeAccount(int index) {
-    if (accounts.length > 1) {
-      bool wasDefault = accounts[index].isDefault;
-      String deletedAccName = accounts[index].name;
-      accounts.removeAt(index);
-      if (wasDefault) {
-        accounts[0].isDefault = true;
-      }
-      String defaultAccName = accounts.firstWhere((acc) => acc.isDefault, orElse: () => accounts[0]).name;
-      for (var txn in transactions) {
-        if (txn.account == deletedAccName) {
-          txn.account = defaultAccName;
+  void _verifyPin(String digit) {
+    setState(() {
+      if (_enteredPin.length < 4) {
+        _enteredPin += digit;
+        if (_enteredPin.length == 4) {
+          if (_enteredPin == _correctPin) {
+            _isUnlocked = true;
+          } else {
+            _enteredPin = "";
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Incorrect PIN! Try again.")),
+            );
+          }
         }
       }
-      accounts.sort((a, b) => a.name.compareTo(b.name));
-      notifyListeners();
-      return true;
-    }
-    return false;
+    });
   }
-
-  void addBudget(String category, double amount) {
-    budgets.add(BudgetModel(category: category, amount: amount));
-    budgets.sort((a, b) => a.category.compareTo(b.category));
-    notifyListeners();
-  }
-
-  void updateBudget(int index, String category, double amount) {
-    budgets[index] = BudgetModel(category: category, amount: amount);
-    budgets.sort((a, b) => a.category.compareTo(b.category));
-    notifyListeners();
-  }
-
-  void removeBudget(int index) {
-    budgets.removeAt(index);
-    notifyListeners();
-  }
-
-  void addSavings(String title, double target) {
-    savingsList.add(SavingsModel(title: title, targetAmount: target, currentAmount: 0));
-    savingsList.sort((a, b) => a.title.compareTo(b.title));
-    notifyListeners();
-  }
-
-  void updateSavings(int index, String title, double targetAmount) {
-    savingsList[index].title = title;
-    savingsList[index].targetAmount = targetAmount;
-    savingsList.sort((a, b) => a.title.compareTo(b.title));
-    notifyListeners();
-  }
-
-  void removeSavings(int index) {
-    savingsList.removeAt(index);
-    notifyListeners();
-  }
-
-  void addCategory(String cat) {
-    if (cat.isNotEmpty && !categories.contains(cat)) {
-      categories.add(cat);
-      categories.sort();
-      notifyListeners();
-    }
-  }
-
-  void updateCategory(int index, String newCat) {
-    if (newCat.isNotEmpty) {
-      categories[index] = newCat;
-      categories.sort();
-      notifyListeners();
-    }
-  }
-
-  void removeCategory(int index) {
-    if (categories.length > 1) {
-      categories.removeAt(index);
-      notifyListeners();
-    }
-  }
-
-  void addRepeatedTransaction(String title, double amount, String frequency) {
-    if (title.isNotEmpty) {
-      repeatedTransactions.add(RepeatedTransactionModel(title: title, amount: amount, frequency: frequency));
-      repeatedTransactions.sort((a, b) => a.title.compareTo(b.title));
-      notifyListeners();
-    }
-  }
-
-  void updateRepeatedTransaction(int index, String title, double amount, String frequency) {
-    repeatedTransactions[index] = RepeatedTransactionModel(title: title, amount: amount, frequency: frequency);
-    repeatedTransactions.sort((a, b) => a.title.compareTo(b.title));
-    notifyListeners();
-  }
-
-  void removeRepeatedTransaction(int index) {
-    repeatedTransactions.removeAt(index);
-    notifyListeners();
-  }
-
-  void addShoppingItem(String name, double amount) {
-    if (name.isNotEmpty) {
-      shoppingList.add(ShoppingItem(name: name, amount: amount));
-      shoppingList.sort((a, b) => a.name.compareTo(b.name));
-      notifyListeners();
-    }
-  }
-
-  void updateShoppingItem(int index, String name, double amount) {
-    if (name.isNotEmpty) {
-      shoppingList[index].name = name;
-      shoppingList[index].amount = amount;
-      shoppingList.sort((a, b) => a.name.compareTo(b.name));
-      notifyListeners();
-    }
-  }
-
-  void removeShoppingItem(int index) {
-    shoppingList.removeAt(index);
-    notifyListeners();
-  }
-
-  void toggleShoppingCheck(int index) {
-    shoppingList[index].isChecked = !shoppingList[index].isChecked;
-    if (shoppingList[index].isChecked && shoppingList[index].amount > 0) {
-      String defaultAcc = accounts.firstWhere((acc) => acc.isDefault, orElse: () => accounts[0]).name;
-      transactions.insert(0, TransactionItem(
-        id: DateTime.now().toString(),
-        type: 'Expense',
-        account: defaultAcc,
-        category: categories.first,
-        amount: shoppingList[index].amount,
-        description: 'Shopping: ${shoppingList[index].name}',
-        date: DateTime.now(),
-      ));
-    }
-    notifyListeners();
-  }
-
-  void addReminder(String title, double amount, String dueDate) {
-    if (title.isNotEmpty) {
-      reminders.add(ReminderModel(title: title, amount: amount, dueDate: dueDate));
-      reminders.sort((a, b) => a.title.compareTo(b.title));
-      notifyListeners();
-    }
-  }
-
-  void updateReminder(int index, String title, double amount, String dueDate) {
-    reminders[index] = ReminderModel(title: title, amount: amount, dueDate: dueDate);
-    reminders.sort((a, b) => a.title.compareTo(b.title));
-    notifyListeners();
-  }
-
-  void removeReminder(int index) {
-    reminders.removeAt(index);
-    notifyListeners();
-  }
-}
-
-final appSettings = AppSettingsNotifier();
-
-// ----------------- App Entry Point -----------------
-class AccountBookApp extends StatelessWidget {
-  const AccountBookApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: appSettings,
-      builder: (context, child) {
-        return MaterialApp(
-          title: appSettings.getAppTitle(),
-          debugShowCheckedModeBanner: false,
-          themeMode: appSettings.themeMode,
-          theme: ThemeData(
-            brightness: Brightness.light,
-            scaffoldBackgroundColor: const Color(0xFFF3F4F6),
-            primaryColor: const Color(0xFF38BDF8),
-            cardColor: Colors.white,
-            appBarTheme: const AppBarTheme(backgroundColor: Colors.white, foregroundColor: Colors.black),
-            dialogTheme: const DialogTheme(backgroundColor: Colors.white, surfaceTintColor: Colors.white),
-            bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.white, surfaceTintColor: Colors.white),
-          ),
-          darkTheme: ThemeData(
-            brightness: Brightness.dark,
-            scaffoldBackgroundColor: const Color(0xFF0F172A),
-            primaryColor: const Color(0xFF10B981),
-            cardColor: const Color(0xFF1E293B),
-            appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF1E293B), foregroundColor: Colors.white),
-            dialogTheme: const DialogTheme(backgroundColor: Color(0xFF1E293B), surfaceTintColor: Color(0xFF1E293B)),
-            bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Color(0xFF1E293B), surfaceTintColor: Color(0xFF1E293B)),
-          ),
-          home: const PinLockScreen(),
-        );
-      },
-    );
-  }
-}
-
-// ----------------- Standard Menus Helpers -----------------
-void showStandardDownloadMenu(BuildContext context, Offset offset) {
-  String lang = appSettings.language;
-  String previewText = lang == 'Bangla' ? 'প্রিভিউ' : (lang == 'Arabic' ? 'معاينة' : 'Preview');
-  String pdfText = lang == 'Bangla' ? 'পিডিএফ ডাউনলোড' : (lang == 'Arabic' ? 'تحميل كـ PDF' : 'Download as PDF');
-  String excelText = lang == 'Bangla' ? 'এক্সেল ডাউনলোড' : (lang == 'Arabic' ? 'تحميل كـ Excel' : 'Download as Excel');
-
-  showMenu(
-    context: context,
-    position: RelativeRect.fromLTRB(offset.dx, offset.dy + 40, 20, 0),
-    items: [
-      PopupMenuItem(
-        value: 'preview',
-        child: Row(
-          children: [
-            const Icon(Icons.visibility, color: Colors.blue, size: 20),
-            const SizedBox(width: 8),
-            Text(previewText),
-          ],
-        ),
-      ),
-      PopupMenuItem(
-        value: 'pdf',
-        child: Row(
-          children: [
-            const Icon(Icons.picture_as_pdf, color: Colors.red, size: 20),
-            const SizedBox(width: 8),
-            Text(pdfText),
-          ],
-        ),
-      ),
-      PopupMenuItem(
-        value: 'excel',
-        child: Row(
-          children: [
-            const Icon(Icons.table_chart, color: Colors.green, size: 20),
-            const SizedBox(width: 8),
-            Text(excelText),
-          ],
-        ),
-      ),
-    ],
-  ).then((value) {
-    if (value != null) {
-      if (value == 'preview') {
-        showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text(lang == 'Bangla' ? 'রিপোর্ট প্রিভিউ' : (lang == 'Arabic' ? 'معاينة التقرير' : 'Report Preview')),
-            content: Text(lang == 'Bangla' ? 'এখানে আপনার বর্তমান হিসাবের সংক্ষিপ্ত প্রিভিউ দেখানো হচ্ছে।' : (lang == 'Arabic' ? 'هذا معاينة موجزة لحسابك الحالي.' : 'Here is a preview of your financial summary.')),
-            actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK'))],
-          ),
-        );
-      } else {
-        String formatType = value.toUpperCase();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Report saved to device storage as $formatType successfully!')),
-        );
-      }
+    if (_isUnlocked) {
+      return const MainDashboardScreen();
     }
-  });
-}
-
-void showStandardSortMenu(BuildContext context, Offset offset, Function(String) onSelected) {
-  showMenu(
-    context: context,
-    position: RelativeRect.fromLTRB(offset.dx, offset.dy + 40, 20, 0),
-    items: const [
-      PopupMenuItem(value: 'Date New-Old', child: Text('Sort by Date (Newest to Oldest)')),
-      PopupMenuItem(value: 'Date Old-New', child: Text('Sort by Date (Oldest to Newest)')),
-      PopupMenuItem(value: 'Name A-Z', child: Text('Sort by Name (A to Z)')),
-      PopupMenuItem(value: 'Name Z-A', child: Text('Sort by Name (Z to A)')),
-      PopupMenuItem(value: 'Number Large-Small', child: Text('Sort by Number (Large to Small)')),
-      PopupMenuItem(value: 'Number Small-Large', child: Text('Sort by Number (Small to Large)')),
-    ],
-  ).then((value) {
-    if (value != null) {
-      onSelected(value);
-    }
-  });
-}
-
-void showLocalizedDeleteDialog({
-  required BuildContext context,
-  required bool isImportant,
-  required String itemName,
-  required VoidCallback onDeleteConfirmed,
-}) {
-  String lang = appSettings.language;
-  String title1 = lang == 'Bangla' ? 'নিশ্চিতকরণ' : (lang == 'Arabic' ? 'تأكيد' : 'Confirmation');
-  String msg1 = lang == 'Bangla' 
-      ? 'আপনি কি আসলেই "$itemName" ডিলিট করতে চান?' 
-      : (lang == 'Arabic' ? 'هل أنت متأكد أنك تريد حذف "$itemName"؟' : 'Are you sure you want to delete "$itemName"?');
-  
-  String warningMsg = lang == 'Bangla'
-      ? 'সতর্কতা: এটি অন্য কোনো রেকর্ডের সাথে জড়িত। ডিলিট করলে ডাটা প্রভাবিত হতে পারে। নিশ্চিত?'
-      : (lang == 'Arabic' ? 'تحذير: هذا مرتبط بسجل آخر. هل أنت متأكد؟' : 'Warning: This is linked with other records. Are you sure?');
-  
-  String yesText = lang == 'Bangla' ? 'হ্যাঁ' : (lang == 'Arabic' ? 'نعم' : 'Yes');
-  String noText = lang == 'Bangla' ? 'না' : (lang == 'Arabic' ? 'لا' : 'No');
-
-  if (!isImportant) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(title1),
-        content: Text(msg1),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(noText)),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () {
-              Navigator.pop(ctx);
-              onDeleteConfirmed();
-            },
-            child: Text(yesText, style: const TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  } else {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(title1),
-        content: Text(warningMsg),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(noText)),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-            onPressed: () {
-              Navigator.pop(ctx);
-              showDialog(
-                context: context,
-                builder: (ctx2) => AlertDialog(
-                  title: Text(title1),
-                  content: Text(msg1),
-                  actions: [
-                    TextButton(onPressed: () => Navigator.pop(ctx2), child: Text(noText)),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                      onPressed: () {
-                        Navigator.pop(ctx2);
-                        onDeleteConfirmed();
-                      },
-                      child: Text(yesText, style: const TextStyle(color: Colors.white)),
-                    ),
-                  ],
-                ),
-              );
-            },
-            child: Text(yesText, style: const TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ----------------- Dashboard Analytics Screen -----------------
-class DashboardAnalyticsScreen extends StatelessWidget {
-  const DashboardAnalyticsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    String curr = appSettings.currency;
-    double income = appSettings.getTotalIncome();
-    double expense = appSettings.getTotalExpense();
-    double balance = appSettings.getTotalBalance();
-    double totalGiven = appSettings.getTotalGiven();
-    double totalTaken = appSettings.getTotalTaken();
 
     return Scaffold(
-      appBar: AppBar(title: Text(appSettings.translate('Dashboard Analytics'))),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.lock_outline, size: 64, color: Colors.teal),
+              const SizedBox(height: 20),
+              const Text("Enter Security PIN", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(4, (index) {
+                  return Container(
+                    margin: const EdgeInsets.all(8),
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: index < _enteredPin.length ? Colors.teal : Colors.grey,
+                    ),
+                  );
+                }),
+              ),
+              const SizedBox(height: 30),
+              SizedBox(
+                width: 250,
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    childAspectRatio: 1.5,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                  ),
+                  itemCount: 9,
+                  itemBuilder: (context, index) {
+                    String digit = (index + 1).toString();
+                    return ElevatedButton(
+                      onPressed: () => _verifyPin(digit),
+                      child: Text(digit, style: const TextStyle(fontSize: 20)),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () => _verifyPin("0"),
+                child: const Text("0", style: TextStyle(fontSize: 20)),
+              ),
+              TextButton(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("PIN successfully updated!")),
+                  );
+                },
+                child: const Text("Forgot PIN?"),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 2. MAIN DASHBOARD & NAVIGATION BAR
+// ---------------------------------------------------------------------------
+class MainDashboardScreen extends StatefulWidget {
+  const MainDashboardScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MainDashboardScreen> createState() => _MainDashboardScreenState();
+}
+
+class _MainDashboardScreenState extends State<MainDashboardScreen> {
+  int _currentIndex = 0;
+
+  final List<Widget> _screens = [
+    const HomeScreen(),
+    const LoanScreen(),
+    const TransactionsScreen(),
+    const ReportScreen(),
+    const ProfileSettingsScreen(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _screens[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.teal,
+        unselectedItemColor: Colors.grey,
+        onTap: (index) => setState(() => _currentIndex = index),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.money), label: 'Loan'),
+          BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Transactions'),
+          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Report'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 3. HOME SCREEN WITH QUICK CHIPS & CUSTOM YEARS/MONTHS FILTER
+// ---------------------------------------------------------------------------
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Account Book"),
+        actions: [
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.notifications),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationScreen()));
+                },
+              ),
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
+                  constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                  child: const Text('3', style: TextStyle(color: Colors.white, fontSize: 10), textAlign: TextAlign.center),
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+      drawer: const AppDrawer(),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Financial Overview Summary', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
-              child: Column(
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Total Balance', style: TextStyle(color: Colors.grey)),
-                      Text('$balance$curr', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: balance >= 0 ? const Color(0xFF10B981) : Colors.redAccent)),
-                    ],
-                  ),
-                  const Divider(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Total Income', style: TextStyle(color: Colors.grey)),
-                      Text('$income$curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Total Expense', style: TextStyle(color: Colors.grey)),
-                      Text('$expense$curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
-                    ],
-                  ),
+                  ChoiceChip(label: const Text('This Month'), selected: true, onSelected: (val) {}),
+                  const SizedBox(width: 8),
+                  ChoiceChip(label: const Text('This Year'), selected: false, onSelected: (val) {}),
+                  const SizedBox(width: 8),
+                  ChoiceChip(label: const Text('Custom Months'), selected: false, onSelected: (val) {}),
+                  const SizedBox(width: 8),
+                  ChoiceChip(label: const Text('Custom Years'), selected: false, onSelected: (val) {}),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-            const Text('Loan & Debt Overview', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
+            const SizedBox(height: 20),
             Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
-              child: Column(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.teal.shade800,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Total Loan Given', style: TextStyle(color: Colors.grey)),
-                      Text('$totalGiven$curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Total Loan Taken', style: TextStyle(color: Colors.grey)),
-                      Text('$totalTaken$curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
-                    ],
-                  ),
+                  Text("Current Balance", style: TextStyle(color: Colors.white70)),
+                  SizedBox(height: 8),
+                  Text("৳ 44,650.0", style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
                 ],
               ),
+            ),
+            const SizedBox(height: 20),
+            const Text("Quick Access / Tools", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _quickIcon(context, Icons.calculate, "Calculator", const GeneralCalculatorScreen()),
+                _quickIcon(context, Icons.pie_chart, "Financial Tools", const FinancialCalculatorsHub()),
+                _quickIcon(context, Icons.track_changes, "Goals", const GoalsScreen()),
+              ],
             ),
           ],
         ),
       ),
     );
   }
-}
 
-// ----------------- App Drawer Widget -----------------
-class AppDrawer extends StatelessWidget {
-  const AppDrawer({super.key});
-
-  void _showThemeDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (ctx, setStateDialog) {
-            return AlertDialog(
-              title: Text(appSettings.translate('Theme')),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  RadioListTile<ThemeMode>(
-                    title: const Text('Dark'),
-                    value: ThemeMode.dark,
-                    groupValue: appSettings.themeMode,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) {
-                      if (val != null) {
-                        appSettings.setTheme(val
+  Widget _quickIcon(BuildContext context, IconData icon, String label
