@@ -18,7 +18,7 @@ class AdvancedFinanceApp extends StatefulWidget {
 
 class _AdvancedFinanceAppState extends State<AdvancedFinanceApp> {
   ThemeMode _themeMode = ThemeMode.dark;
-  String _currentLanguage = 'English'; // Default Language is English
+  String _currentLanguage = 'English';
   Color _primaryAccentColor = Colors.teal;
 
   void updateTheme(ThemeMode mode) => setState(() => _themeMode = mode);
@@ -362,6 +362,7 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
+  // Correctly typed list to prevent build errors
   final List> notifications = [
     {"title": "Balance Alert", "body": "Your default account 'Cash In Hand' balance is low.", "isRead": false},
     {"title": "Loan Payment Due", "body": "Tomorrow is the settlement date for Rafiqul Islam.", "isRead": true},
@@ -574,7 +575,7 @@ class ReportScreen extends StatelessWidget { const ReportScreen({Key? key}) : su
 class GoalsScreen extends StatelessWidget { const GoalsScreen({Key? key}) : super(key: key); @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text("Financial Goals Screen"))); }
 class EmiCalculatorScreen extends StatelessWidget { const EmiCalculatorScreen({Key? key}) : super(key: key); @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text("EMI Calculator"))); }
 class InterestCalculatorScreen extends StatelessWidget { const InterestCalculatorScreen({Key? key}) : super(key: key); @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text("Interest Calculator"))); }
-class TaxCalculatorScreen extends StatelessWidget { const TaxCalculatorScreen({Key? key}) : super(key: key); @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text("Tax Calculator"))); }
+class TaxCalculatorScreen extends StatelessWidget { const TaxCalculatorScreen({Key? key}) : super(key: key); @override Widget build(BuildContext context) => const Scaffold(body: Text("Tax Calculator"))); }
 
 // ---------------------------------------------------------------------------
 // 7. PROFILE, SETTINGS & THEME CUSTOMIZATION
