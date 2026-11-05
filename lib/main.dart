@@ -153,13 +153,6 @@ class ReminderModel {
   factory ReminderModel.fromJson(Map<String, dynamic> json) => ReminderModel(title: json['title'], amount: json['amount'], dueDate: json['dueDate']);
 }
 
-class NotificationItem {
-  String title;
-  String body;
-  bool isRead;
-  NotificationItem({required this.title, required this.body, this.isRead = false});
-}
-
 // ----------------- State Management with Persistent Storage -----------------
 class AppSettingsNotifier extends ChangeNotifier {
   late SharedPreferences _prefs;
@@ -170,7 +163,8 @@ class AppSettingsNotifier extends ChangeNotifier {
   String timeFilter = 'Month';
   String appPin = '1234';
 
-  String profileName = 'MD ALAMGIR HOSSAIN';
+  // Profile fields
+  String profileName = 'মোহাম্মদ আলমগীর হোসেন';
   String profileEmail = 'alamgir@email.com';
   String profileGender = 'Male';
   String profileBirthDate = '01-01-1995';
@@ -188,10 +182,9 @@ class AppSettingsNotifier extends ChangeNotifier {
   bool loanAlert = true;
   String notificationSound = 'Default';
 
+  // Selected Month & Year for Home and Reports
   int selectedMonthIndex = DateTime.now().month;
   int selectedYear = DateTime.now().year;
-
-  String activeTimeFilterMode = 'This Month';
 
   List<String> categories = ['Grocery', 'Others', 'Salary', 'Tea & Snacks', 'Transport'];
   
@@ -226,31 +219,6 @@ class AppSettingsNotifier extends ChangeNotifier {
       date: DateTime.now(),
     ),
   ];
-
-  List<NotificationItem> notifications = [
-    NotificationItem(title: "Balance Alert", body: "Your default account balance is within normal limits.", isRead: false),
-    NotificationItem(title: "Loan Payment Due", body: "Upcoming settlement date reminder for loans.", isRead: true),
-    NotificationItem(title: "Budget Limit Alert", body: "Expenses have reached near your monthly budget limit.", isRead: false),
-  ];
-
-  void markAllNotificationsRead() {
-    for (var n in notifications) {
-      n.isRead = true;
-    }
-    notifyListeners();
-  }
-
-  void markAllNotificationsUnread() {
-    for (var n in notifications) {
-      n.isRead = false;
-    }
-    notifyListeners();
-  }
-
-  void clearAllNotifications() {
-    notifications.clear();
-    notifyListeners();
-  }
 
   List<LoanItem> loans = [
     LoanItem(
@@ -295,7 +263,7 @@ class AppSettingsNotifier extends ChangeNotifier {
     else if (themeStr == 'system') _themeMode = ThemeMode.system;
     else _themeMode = ThemeMode.dark;
 
-    profileName = _prefs.getString('profileName') ?? 'MD ALAMGIR HOSSAIN';
+    profileName = _prefs.getString('profileName') ?? 'মোহাম্মদ আলমগীর হোসেন';
     profileEmail = _prefs.getString('profileEmail') ?? 'alamgir@email.com';
     profileGender = _prefs.getString('profileGender') ?? 'Male';
     profileBirthDate = _prefs.getString('profileBirthDate') ?? '01-01-1995';
@@ -334,3 +302,204 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Accounts': return 'অ্যাকাউন্ট সমূহ';
         case 'Theme': return 'থিম';
         case 'Language': return 'ভাষা';
+        case 'About App': return 'অ্যাপ সম্পর্কে';
+        case 'Current Balance': return 'বর্তমান ব্যালেন্স';
+        case 'Month': return 'মাস';
+        case 'Year': return 'বছর';
+        case 'Income': return 'আয়';
+        case 'Expense': return 'ব্যয়';
+        case 'Quick Access': return 'কুইক এক্সেস';
+        case 'Recent Transactions': return 'সাম্প্রতিক লেনদেন';
+        case 'Budget': return 'বাজেট';
+        case 'Reminder': return 'রিমাইন্ডার';
+        case 'Repeat': return 'রিপিট';
+        case 'Savings': return 'সেভিংস';
+        case 'Shopping': return 'শপিং';
+        case 'Account': return 'হিসাব';
+        case 'Loan': return 'লোন';
+        case 'Transactions': return 'লেনদেন';
+        case 'Report': return 'রিপোর্ট';
+        case 'Profile': return 'প্রোফাইল';
+        case 'Grocery': return 'মুদি বাজার';
+        case 'Others': return 'অন্যান্য';
+        case 'Salary': return 'বেতন';
+        case 'Tea & Snacks': return 'চা ও নাস্তা';
+        case 'Transport': return 'যাতায়াত';
+        case 'Food & Hotel': return 'খাবার ও হোটেল';
+        case 'Bikash': return 'বিকাশ';
+        case 'Cash in Hand': return 'হাতে নগদ টাকা';
+        case 'Dutch-Bangla Bank': return 'ডাচ-বাংলা ব্যাংক';
+        case 'Nagad': return 'নগদ';
+        case 'UCB Bank': return 'ইউসিবি ব্যাংক';
+        case 'Mobile Banking': return 'মোবাইল ব্যাংকিং';
+        case 'Cash': return 'নগদ';
+        case 'Bank': return 'ব্যাংক';
+        default: return key;
+      }
+    } else if (_language == 'Arabic') {
+      switch (key) {
+        case 'Account Book': return 'دفتر الحسابات';
+        case 'Dashboard Analytics': return 'تحليلات لوحة القيادة';
+        case 'Categories': return 'الفئات';
+        case 'Accounts': return 'الحسابات';
+        case 'Theme': return 'المظهر';
+        case 'Language': return 'اللغة';
+        case 'About App': return 'حول التطبيق';
+        case 'Current Balance': return 'الرصيد الحالي';
+        case 'Month': return 'شهر';
+        case 'Year': return 'سنة';
+        case 'Income': return 'إيرادات';
+        case 'Expense': return 'مصروفات';
+        case 'Quick Access': return 'وصول سريع';
+        case 'Recent Transactions': return 'المعاملات الأخيرة';
+        case 'Budget': return 'الميزانية';
+        case 'Reminder': return 'التذكيرات';
+        case 'Repeat': return 'متكرر';
+        case 'Savings': return 'المدخرات';
+        case 'Shopping': return 'التسوق';
+        case 'Account': return 'حساب';
+        case 'Loan': return 'قرض';
+        case 'Transactions': return 'المعاملات';
+        case 'Report': return 'تقرير';
+        case 'Profile': return 'الملف الشخصي';
+        case 'Grocery': return 'بقالة';
+        case 'Others': return 'أخرى';
+        case 'Salary': return 'راتب';
+        case 'Tea & Snacks': return 'شاي ووجبات خفيفة';
+        case 'Transport': return 'مواصلات';
+        case 'Food & Hotel': return 'طعام وفنادق';
+        case 'Bikash': return 'ب বিকাশ';
+        case 'Cash in Hand': return 'نقداً في اليد';
+        case 'Dutch-Bangla Bank': return 'بنك دتش بنگلا';
+        case 'Nagad': return 'نقد';
+        case 'UCB Bank': return 'بنك UCB';
+        case 'Mobile Banking': return 'خدمات مصرفية عبر الهاتف المحمول';
+        case 'Cash': return 'نقدي';
+        case 'Bank': return 'بنك';
+        default: return key;
+      }
+    }
+    return key;
+  }
+
+  void setTheme(ThemeMode mode) {
+    _themeMode = mode;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  void setLanguage(String lang) {
+    _language = lang;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  void setTimeFilter(String filter) {
+    timeFilter = filter;
+    notifyListeners();
+  }
+
+  void setMonthYear(int month, int year) {
+    selectedMonthIndex = month;
+    selectedYear = year;
+    notifyListeners();
+  }
+
+  void setCurrency(String newCurrency) {
+    currency = newCurrency;
+    notifyListeners();
+  }
+
+  void updatePin(String newPin) {
+    appPin = newPin;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  void updateProfile({required String name, required String email, required String gender, required String birthDate, required String mobile, String? imagePath}) {
+    profileName = name;
+    profileEmail = email;
+    profileGender = gender;
+    profileBirthDate = birthDate;
+    profileMobile = mobile;
+    if (imagePath != null) profileImagePath = imagePath;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  void updateSecurityToggles({required bool face, required bool fingerprint, required bool none, required bool pattern, required bool pin}) {
+    useFaceLock = face;
+    useFingerprint = fingerprint;
+    useNoneLock = none;
+    usePatternLock = pattern;
+    usePinLock = pin;
+    notifyListeners();
+  }
+
+  void toggleNotification(String key, bool val) {
+    if (key == 'daily') dailyReminder = val;
+    if (key == 'budget') budgetAlert = val;
+    if (key == 'loan') loanAlert = val;
+    notifyListeners();
+  }
+
+  void setNotificationSound(String sound) {
+    notificationSound = sound;
+    notifyListeners();
+  }
+
+  void addTransaction(TransactionItem txn) {
+    transactions.insert(0, txn);
+    notifyListeners();
+  }
+
+  void updateTransaction(int index, TransactionItem txn) {
+    transactions[index] = txn;
+    notifyListeners();
+  }
+
+  void removeTransaction(int index) {
+    transactions.removeAt(index);
+    notifyListeners();
+  }
+
+  void addLoan(LoanItem loan) {
+    loans.insert(0, loan);
+    notifyListeners();
+  }
+
+  void updateLoan(int index, String personName, double amount, String type) {
+    loans[index].personName = personName;
+    loans[index].amount = amount;
+    loans[index].type = type;
+    notifyListeners();
+  }
+
+  void removeLoan(int index) {
+    loans.removeAt(index);
+    notifyListeners();
+  }
+
+  void toggleLoanStatus(String id) {
+    for (var loan in loans) {
+      if (loan.id == id) {
+        loan.isPaid = !loan.isPaid;
+        notifyListeners();
+        break;
+      }
+    }
+  }
+
+  void sortLoans(String criteria) {
+    if (criteria.contains('New-Old')) {
+      loans.sort((a, b) => b.date.compareTo(a.date));
+    } else if (criteria.contains('Old-New')) {
+      loans.sort((a, b) => a.date.compareTo(b.date));
+    } else if (criteria.contains('A-Z')) {
+      loans.sort((a, b) => a.personName.compareTo(b.personName));
+    } else if (criteria.contains('Z-A')) {
+      loans.sort((a, b) => b.personName.compareTo(a.personName));
+    } else if (criteria.contains('Large-Small')) {
+      loans.sort((a, b) => b.amount.compareTo(a.amount));
+    } else if (criteria.contains('Small-Large')) {
+      loans.
