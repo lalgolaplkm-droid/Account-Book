@@ -51,7 +51,7 @@ class _AccountBookAppState extends State<AccountBookApp> {
   }
 }
 
-// লক স্ক্রিন ও পিন অথেন্টিকেশন
+// ১. লক স্ক্রিন ও পিন অথেন্টিকেশন
 class LockScreen extends StatefulWidget {
   const LockScreen({Key? key}) : super(key: key);
 
@@ -105,7 +105,6 @@ class _LockScreenState extends State<LockScreen> {
                 style: const TextStyle(fontSize: 24, letterSpacing: 4),
               ),
               const SizedBox(height: 32),
-              // কিপ্যাড লেআউট
               for (var row in [
                 ["1", "2", "3"],
                 ["4", "5", "6"],
@@ -136,7 +135,7 @@ class _LockScreenState extends State<LockScreen> {
   }
 }
 
-// মূল হোম স্ক্রিন ড্যাশবোর্ড
+// ২. মূল হোম স্ক্রিন ড্যাশবোর্ড ও ট্যাব ম্যানেজমেন্ট
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -191,9 +190,7 @@ class HomeTab extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications),
-            onPressed: () {
-              // নোটিফিকেশন স্ক্রিন বা পপআপ কল করা যেতে পারে
-            },
+            onPressed: () {},
           ),
         ],
       ),
@@ -253,3 +250,4 @@ class ProfileTab extends StatelessWidget {
   const ProfileTab({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) => const Scaffold(body: Center(child: Text("প্রোফাইল ও সেটিংস")));
+}
