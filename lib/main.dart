@@ -859,4 +859,767 @@ void showLocalizedDeleteDialog({
 
   showDialog(
     context: context,
-    builder:
+    builder: (ctx) => AlertDialog(
+      title: Text(title1),
+      content: Text(isImportant ? warningMsg : msg1),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(noText)),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+          onPressed: () {
+            Navigator.pop(ctx);
+            onDeleteConfirmed();
+          },
+          child: Text(yesText, style: const TextStyle(color: Colors.white)),
+        ),
+      ],
+    ),
+  );
+}
+
+// ----------------- Financial Calculators Hub -----------------
+class FinancialCalculatorsHub extends StatelessWidget {
+  const FinancialCalculatorsHub({super.key});
+
+  Widget _calcTile(BuildContext context, String title, Widget screen) {
+    return Card(
+      color: Theme.of(context).cardColor,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ListTile(
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => screen)),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Financial Calculators")),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          _calcTile(context, "General Calculator", const GeneralCalculatorScreen()),
+          _calcTile(context, "EMI Calculator", const EmiCalculatorScreen()),
+          _calcTile(context, "Interest Calculator", const InterestCalculatorScreen()),
+          _calcTile(context, "SIP Calculator", const SipCalculatorScreen()),
+          _calcTile(context, "Tax Calculator", const TaxCalculatorScreen()),
+        ],
+      ),
+    );
+  }
+}
+
+class GeneralCalculatorScreen extends StatefulWidget {
+  const GeneralCalculatorScreen({super.key});
+  @override
+  State<GeneralCalculatorScreen> createState() => _GeneralCalculatorScreenState();
+}
+
+class _GeneralCalculatorScreenState extends State<GeneralCalculatorScreen> {
+  String _output = "0";
+  
+  void _buttonPressed(String val) {
+    setState(() {
+      if (_output == "0") {
+        _output = val;
+      } else {
+        _output += val;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("General Calculator")),
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              alignment: Alignment.bottomRight,
+              padding: const EdgeInsets.all(24),
+              child: Text(_output, style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold)),
+            ),
+          ),
+          // Left side minus (-), Right side plus (+)
+          Row(children: [_btn("-"), _btn("7"), _btn("8"), _btn("9"), _btn("+")]),
+          Row(children: [_btn("-"), _btn("4"), _btn("5"), _btn("6"), _btn("+")]),
+          Row(children: [_btn("0"), _btn("C"), _btn("=")]),
+        ],
+      ),
+    );
+  }
+
+  Widget _btn(String label) {
+    return Expanded(
+      child: OutlinedButton(
+        onPressed: () {
+          if (label == "C") {
+            setState(() => _output = "0");
+          } else {
+            _buttonPressed(label);
+          }
+        },
+        child: Text(label, style: const TextStyle(fontSize: 24)),
+      ),
+    );
+  }
+}
+
+class SipCalculatorScreen extends StatelessWidget {
+  const SipCalculatorScreen({super.key});
+  @override
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('SIP Calculator')), body: const Center(child: Text('SIP Calculator Module')));
+}
+
+class EmiCalculatorScreen extends StatelessWidget {
+  const EmiCalculatorScreen({super.key});
+  @override
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('EMI Calculator')), body: const Center(child: Text('EMI Calculator Module')));
+}
+
+class InterestCalculatorScreen extends StatelessWidget {
+  const InterestCalculatorScreen({super.key});
+  @override
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Interest Calculator')), body: const Center(child: Text('Interest Calculator Module')));
+}
+
+class TaxCalculatorScreen extends StatelessWidget {
+  const TaxCalculatorScreen({super.key});
+  @override
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Tax Calculator')), body: const Center(child: Text('Tax Calculator Module')));
+}
+
+class GoalsScreen extends StatelessWidget {
+  const GoalsScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Financial Goals')),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: appSettings.savingsList.length,
+        itemBuilder: (context, index) {
+          final goal = appSettings.savingsList[index];
+          return Card(
+            color: Theme.of(context).cardColor,
+            margin: const EdgeInsets.only(bottom: 12),
+            child: ListTile(
+              leading: const Icon(Icons.track_changes, color: Color(0xFF10B981)),
+              title: Text(goal.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Text('Target: ${goal.targetAmount} | Saved: ${goal.currentAmount}'),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// ----------------- Dashboard Analytics Screen -----------------
+class DashboardAnalyticsScreen extends StatelessWidget {
+  const DashboardAnalyticsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    String curr = appSettings.currency;
+    double income = appSettings.getTotalIncome();
+    double expense = appSettings.getTotalExpense();
+    double balance = appSettings.getTotalBalance();
+
+    return Scaffold(
+      appBar: AppBar(title: Text(appSettings.translate('Dashboard Analytics'))),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Financial Overview Summary', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Total Balance', style: TextStyle(color: Colors.grey)),
+                      Text('$balance $curr', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: balance >= 0 ? const Color(0xFF10B981) : Colors.redAccent)),
+                    ],
+                  ),
+                  const Divider(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Total Income', style: TextStyle(color: Colors.grey)),
+                      Text('$income $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Total Expense', style: TextStyle(color: Colors.grey)),
+                      Text('$expense $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ----------------- App Drawer Widget (Alphabetically Sorted Languages) -----------------
+class AppDrawer extends StatelessWidget {
+  const AppDrawer({super.key});
+
+  void _showThemeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setStateDialog) {
+            return AlertDialog(
+              title: Text(appSettings.translate('Theme')),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RadioListTile<ThemeMode>(
+                    title: const Text('Dark'),
+                    value: ThemeMode.dark,
+                    groupValue: appSettings.themeMode,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setTheme(val);
+                        setStateDialog(() {});
+                      }
+                    },
+                  ),
+                  RadioListTile<ThemeMode>(
+                    title: const Text('Light'),
+                    value: ThemeMode.light,
+                    groupValue: appSettings.themeMode,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setTheme(val);
+                        setStateDialog(() {});
+                      }
+                    },
+                  ),
+                  RadioListTile<ThemeMode>(
+                    title: const Text('System Default'),
+                    value: ThemeMode.system,
+                    groupValue: appSettings.themeMode,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setTheme(val);
+                        setStateDialog(() {});
+                      }
+                    },
+                  ),
+                ],
+              ),
+              actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close'))],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setStateDialog) {
+            return AlertDialog(
+              title: Text(appSettings.translate('Language')),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Alphabetically sorted language items
+                  RadioListTile<String>(
+                    title: const Text('Arabic (العربية)'),
+                    value: 'Arabic',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage(val);
+                        setStateDialog(() {});
+                      }
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: const Text('Bangla (বাংলা)'),
+                    value: 'Bangla',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage(val);
+                        setStateDialog(() {});
+                      }
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: const Text('English'),
+                    value: 'English',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage(val);
+                        setStateDialog(() {});
+                      }
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: const Text('System Default'),
+                    value: 'System Default',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage('English');
+                        setStateDialog(() {});
+                      }
+                    },
+                  ),
+                ],
+              ),
+              actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close'))],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          UserAccountsDrawerHeader(
+            decoration: const BoxDecoration(color: Color(0xFF10B981)),
+            accountName: Text(appSettings.profileName, style: const TextStyle(fontWeight: FontWeight.bold)),
+            accountEmail: Text(appSettings.profileEmail),
+            currentAccountPicture: CircleAvatar(
+              backgroundColor: Colors.white,
+              backgroundImage: appSettings.profileImagePath.isNotEmpty ? FileImage(File(appSettings.profileImagePath)) : null,
+              child: appSettings.profileImagePath.isEmpty ? const Icon(Icons.person, size: 40, color: Color(0xFF10B981)) : null,
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.dashboard),
+            title: Text(appSettings.translate('Dashboard Analytics')),
+            onTap: () { Navigator.pop(context); Navigator.push(context, MaterialPageRoute(builder: (context) => const DashboardAnalyticsScreen())); },
+          ),
+          ListTile(
+            leading: const Icon(Icons.track_changes),
+            title: Text(appSettings.translate('Goals')),
+            onTap: () { Navigator.pop(context); Navigator.push(context, MaterialPageRoute(builder: (context) => const GoalsScreen())); },
+          ),
+          ListTile(
+            leading: const Icon(Icons.calculate),
+            title: Text(appSettings.translate('Financial Calculators')),
+            onTap: () { Navigator.pop(context); Navigator.push(context, MaterialPageRoute(builder: (context) => const FinancialCalculatorsHub())); },
+          ),
+          ListTile(
+            leading: const Icon(Icons.category),
+            title: Text(appSettings.translate('Categories')),
+            onTap: () { Navigator.pop(context); Navigator.push(context, MaterialPageRoute(builder: (context) => const CategoriesScreen())); },
+          ),
+          ListTile(
+            leading: const Icon(Icons.account_balance),
+            title: Text(appSettings.translate('Accounts')),
+            onTap: () { Navigator.pop(context); Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountsScreen())); },
+          ),
+          ListTile(
+            leading: const Icon(Icons.settings),
+            title: Text(appSettings.translate('Settings')),
+            onTap: () { Navigator.pop(context); Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen())); },
+          ),
+          ListTile(
+            leading: const Icon(Icons.palette),
+            title: Text(appSettings.translate('Theme')),
+            onTap: () { Navigator.pop(context); _showThemeDialog(context); },
+          ),
+          ListTile(
+            leading: const Icon(Icons.language),
+            title: Text(appSettings.translate('Language')),
+            onTap: () { Navigator.pop(context); _showLanguageDialog(context); },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ----------------- Quick Access & Sub Screens -----------------
+class AccountsScreen extends StatefulWidget {
+  const AccountsScreen({super.key});
+  @override
+  State<AccountsScreen> createState() => _AccountsScreenState();
+}
+class _AccountsScreenState extends State<AccountsScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(appSettings.translate('Accounts'))),
+      body: ListView.builder(
+        itemCount: appSettings.accounts.length,
+        itemBuilder: (context, index) {
+          final acc = appSettings.accounts[index];
+          return Card(
+            margin: const EdgeInsets.all(8),
+            child: ListTile(
+              title: Text(acc.name),
+              subtitle: Text(acc.type),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class BudgetScreen extends StatelessWidget {
+  const BudgetScreen({super.key});
+  @override
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Budget')), body: const Center(child: Text('Budget Module')));
+}
+
+class CategoriesScreen extends StatelessWidget {
+  const CategoriesScreen({super.key});
+  @override
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Categories')), body: const Center(child: Text('Categories Module')));
+}
+
+class FundShoppingScreen extends StatelessWidget {
+  const FundShoppingScreen({super.key});
+  @override
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Shopping')), body: const Center(child: Text('Shopping Module')));
+}
+
+class RemindersScreen extends StatelessWidget {
+  const RemindersScreen({super.key});
+  @override
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Reminder')), body: const Center(child: Text('Reminder Module')));
+}
+
+class RepeatedTransactionsScreen extends StatelessWidget {
+  const RepeatedTransactionsScreen({super.key});
+  @override
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Repeat')), body: const Center(child: Text('Repeat Module')));
+}
+
+class SavingsScreen extends StatelessWidget {
+  const SavingsScreen({super.key});
+  @override
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Savings')), body: const Center(child: Text('Savings Module')));
+}
+
+// ----------------- Pin & Main Container -----------------
+class PinLockScreen extends StatefulWidget {
+  const PinLockScreen({super.key});
+  @override
+  State<PinLockScreen> createState() => _PinLockScreenState();
+}
+
+class _PinLockScreenState extends State<PinLockScreen> {
+  final TextEditingController _pinController = TextEditingController();
+
+  void _verifyPin(BuildContext context) {
+    if (_pinController.text == appSettings.appPin || appSettings.useNoneLock) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainHomeScreen()));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Wrong PIN!')));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF0F172A),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.lock_rounded, size: 70, color: Color(0xFF10B981)),
+              const SizedBox(height: 24),
+              const Text('Enter Your PIN', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
+              const SizedBox(height: 40),
+              TextField(
+                controller: _pinController,
+                keyboardType: TextInputType.number,
+                maxLength: 4,
+                obscureText: true,
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(counterText: '', border: OutlineInputBorder()),
+                onChanged: (val) { if (val.length == 4) _verifyPin(context); },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ----------------- Home Screen Content -----------------
+class HomeScreenContent extends StatelessWidget {
+  const HomeScreenContent({super.key});
+
+  Widget _buildQuickAccessIcon(BuildContext context, IconData icon, String label, Widget targetScreen) {
+    return InkWell(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => targetScreen)),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(14)),
+            child: Icon(icon, color: const Color(0xFF10B981), size: 22),
+          ),
+          const SizedBox(height: 4),
+          Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String curr = appSettings.currency;
+    return Scaffold(
+      appBar: AppBar(title: Text(appSettings.getAppTitle(), style: const TextStyle(fontWeight: FontWeight.bold))),
+      drawer: const AppDrawer(),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(16)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(appSettings.translate('Current Balance'), style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                  const SizedBox(height: 8),
+                  Text('${appSettings.getTotalBalance()} $curr', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(appSettings.translate('Quick Access'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildQuickAccessIcon(context, Icons.account_balance_wallet, appSettings.translate('Account'), const AccountsScreen()),
+                _buildQuickAccessIcon(context, Icons.track_changes, appSettings.translate('Budget'), const BudgetScreen()),
+                _buildQuickAccessIcon(context, Icons.category, appSettings.translate('Categories'), const CategoriesScreen()),
+                _buildQuickAccessIcon(context, Icons.savings, appSettings.translate('Savings'), const SavingsScreen()),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ----------------- Profile & Settings Screen -----------------
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final ImagePicker _picker = ImagePicker();
+
+  void _showEditProfileDialog(BuildContext context) {
+    final nameC = TextEditingController(text: appSettings.profileName);
+    final emailC = TextEditingController(text: appSettings.profileEmail);
+    String selectedGender = appSettings.profileGender;
+    final birthDateC = TextEditingController(text: appSettings.profileBirthDate);
+    final mobileC = TextEditingController(text: appSettings.profileMobile);
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setStateDialog) => AlertDialog(
+          title: const Text('Edit Profile'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(controller: nameC, decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder())),
+                const SizedBox(height: 12),
+                TextField(controller: emailC, decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder())),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  value: selectedGender,
+                  decoration: const InputDecoration(labelText: 'Gender', border: OutlineInputBorder()),
+                  items: ['Male', 'Female', 'Other'].map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
+                  onChanged: (val) { if (val != null) setStateDialog(() => selectedGender = val); },
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: birthDateC,
+                  decoration: const InputDecoration(labelText: 'Birth Date (DD-MM-YYYY)', border: OutlineInputBorder()),
+                  onTap: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime(1995, 1, 1),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                    );
+                    if (pickedDate != null) {
+                      birthDateC.text = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                    }
+                  },
+                ),
+                const SizedBox(height: 12),
+                TextField(controller: mobileC, keyboardType: TextInputType.phone, decoration: const InputDecoration(labelText: 'Mobile Number', border: OutlineInputBorder())),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
+              onPressed: () {
+                appSettings.updateProfile(name: nameC.text, email: emailC.text, gender: selectedGender, birthDate: birthDateC.text, mobile: mobileC.text);
+                Navigator.pop(ctx);
+                setState(() {});
+              },
+              child: const Text('Save', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Profile & Settings')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(color: const Color(0xFF10B981), borderRadius: BorderRadius.circular(16)),
+            child: Column(
+              children: [
+                CircleAvatar(
+                  radius: 35,
+                  backgroundColor: Colors.white,
+                  backgroundImage: appSettings.profileImagePath.isNotEmpty ? FileImage(File(appSettings.profileImagePath)) : null,
+                  child: appSettings.profileImagePath.isEmpty ? const Icon(Icons.person, size: 45, color: Color(0xFF10B981)) : null,
+                ),
+                const SizedBox(height: 12),
+                Text(appSettings.profileName, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                Text(appSettings.profileEmail, style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                const SizedBox(height: 14),
+                ElevatedButton.icon(
+                  onPressed: () => _showEditProfileDialog(context),
+                  icon: const Icon(Icons.edit, size: 16),
+                  label: const Text('Edit Profile'),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.notifications_none, color: Color(0xFF10B981)),
+              title: const Text('Notification Settings'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Notification Sound'),
+                    content: DropdownButtonFormField<String>(
+                      value: appSettings.notificationSound,
+                      items: ['Default', 'App Chime', 'Custom from Device Memory'].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+                      onChanged: (val) { if (val != null) appSettings.setNotificationSound(val); },
+                    ),
+                    actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close'))],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ----------------- Main Navigation Container -----------------
+class MainHomeScreen extends StatefulWidget {
+  const MainHomeScreen({super.key});
+  @override
+  State<MainHomeScreen> createState() => _MainHomeScreenState();
+}
+
+class _MainHomeScreenState extends State<MainHomeScreen> {
+  int _currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      const HomeScreenContent(),
+      const Scaffold(body: Center(child: Text('Loan Screen'))),
+      const Scaffold(body: Center(child: Text('Transactions Screen'))),
+      const Scaffold(body: Center(child: Text('Reports Screen'))),
+      const ProfileScreen(),
+    ];
+
+    return Scaffold(
+      body: pages[_currentIndex],
+      bottomNavigationBar: AnimatedBuilder(
+        animation: appSettings,
+        builder: (context, child) {
+          return BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: (index) => setState(() => _currentIndex = index),
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: const Color(0xFF10B981),
+            unselectedItemColor: Colors.grey,
+            backgroundColor: Theme.of(context).cardColor,
+            items: [
+              BottomNavigationBarItem(icon: const Icon(Icons.home), label: appSettings.translate('Account')),
+              BottomNavigationBarItem(icon: const Icon(Icons.money), label: appSettings.translate('Loan')),
+              BottomNavigationBarItem(icon: const Icon(Icons.list_alt), label: appSettings.translate('Transactions')),
+              BottomNavigationBarItem(icon: const Icon(Icons.bar_chart), label: appSettings.translate('Report')),
+              BottomNavigationBarItem(icon: const Icon(Icons.person), label: appSettings.translate('Profile')),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
