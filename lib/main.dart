@@ -943,10 +943,9 @@ class _GeneralCalculatorScreenState extends State<GeneralCalculatorScreen> {
               child: Text(_output, style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold)),
             ),
           ),
-          // Left side minus (-), Right side plus (+)
-          Row(children: [_btn("-"), _btn("7"), _btn("8"), _btn("9"), _btn("+")]),
-          Row(children: [_btn("-"), _btn("4"), _btn("5"), _btn("6"), _btn("+")]),
-          Row(children: [_btn("0"), _btn("C"), _btn("=")]),
+          Row(children: [_btn("-"), _btn("7"), _btn("8"), _btn("9"), _btn("/")]),
+          Row(children: [_btn("+"), _btn("4"), _btn("5"), _btn("6"), _btn("*")]),
+          Row(children: [_btn("0"), _btn("C"), _btn("="), _btn("-")]),
         ],
       ),
     );
