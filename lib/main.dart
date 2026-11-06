@@ -352,6 +352,14 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Loan & Debt Overview': return 'ঋণ ও দেনার বিবরণী';
         case 'Total Loan Given': return 'মোট প্রদত্ত লোন';
         case 'Total Loan Taken': return 'মোট গৃহীত লোন';
+        case 'Start Date': return 'শুরুর তারিখ';
+        case 'End Date': return 'শেষ তারিখ';
+        case 'Loan & Debt': return 'লোন ও দেনা';
+        case 'Search (note, category)...': return 'অনুসন্ধান (নোট, ক্যাটাগরি)...';
+        case 'MD ALAMGIR HOSSAIN': return 'এম ডি আলমগীর হোসেন';
+        case 'Reports & Analysis': return 'রিপোর্ট ও বিশ্লেষণ';
+        case 'Monthly Budget Overview': return 'মাসিক বাজেট সারসংক্ষেপ';
+        case 'Expense Categories': return 'ব্যয়ের ক্যাটাগরি';
         default: return key;
       }
     } else if (_language == 'Arabic') {
@@ -411,6 +419,14 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Loan & Debt Overview': return 'نظرة عامة على القروض والديون';
         case 'Total Loan Given': return 'إجمالي القروض الممنوحة';
         case 'Total Loan Taken': return 'إجمالي القروض المستلمة';
+        case 'Start Date': return 'تاريخ البدء';
+        case 'End Date': return 'تاريخ الانتهاء';
+        case 'Loan & Debt': return 'القروض والديون';
+        case 'Search (note, category)...': return 'بحث (ملاحظة، فئة)...';
+        case 'MD ALAMGIR HOSSAIN': return 'إم دي عالمجير حسين';
+        case 'Reports & Analysis': return 'التقارير والتحليلات';
+        case 'Monthly Budget Overview': return 'نظرة عامة على الميزانية الشهرية';
+        case 'Expense Categories': return 'فئات المصروفات';
         default: return key;
       }
     }
@@ -1041,7 +1057,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
                     },
                   ),
                   RadioListTile<String>(
-                    title: const Text('English (Default)'),
+                    title: const Text('English'),
                     value: 'English',
                     groupValue: appSettings.language,
                     activeColor: const Color(0xFF10B981),
@@ -1053,10 +1069,23 @@ class _PinLockScreenState extends State<PinLockScreen> {
                       }
                     },
                   ),
+                  RadioListTile<String>(
+                    title: const Text('System Default'),
+                    value: 'System',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage('System');
+                        setStateDialog(() {});
+                        setState(() {});
+                      }
+                    },
+                  ),
                 ],
               ),
               actions: [
-                TextButton(onPressed: () => Navigator.pop(ctx), child: Text(appSettings.language == 'Bangla' ? 'বন্ধ করুন' : 'Close')),
+                TextButton(onPressed: () => Navigator.pop(ctx), child: Text(appSettings.language == 'Bangla' ? 'বন্ধ করুন' : (appSettings.language == 'Arabic' ? 'إغلاق' : 'Close'))),
               ],
             );
           },
@@ -1254,7 +1283,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
                             const Icon(Icons.language, color: Color(0xFF38BDF8), size: 20),
                             const SizedBox(width: 8),
                             Text(
-                              appSettings.language == 'Bangla' ? 'ভাষা পরিবর্তন' : 'Change Language',
+                              appSettings.language == 'Bangla' ? 'ভাষা পরিবর্তন' : (appSettings.language == 'Arabic' ? 'تغيير اللغة' : 'Change Language'),
                               style: const TextStyle(color: Colors.white70, fontSize: 13),
                             ),
                           ],
@@ -1282,19 +1311,6 @@ class DashboardAnalyticsScreen extends StatefulWidget {
 }
 
 class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
-  void _pickCustomDateRange(BuildContext context) async {
-    DateTimeRange? picked = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime(1990),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null) {
-      appSettings.setCustomDateRange(picked.start, picked.end);
-      appSettings.setTimeFilter('Custom Range');
-      setState(() {});
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
@@ -1355,7 +1371,10 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                       label: Text(appSettings.translate('Custom Range')),
                       selected: appSettings.timeFilter == 'Custom Range',
                       selectedColor: const Color(0xFF10B981),
-                      onSelected: (val) => _pickCustomDateRange(context),
+                      onSelected: (val) {
+                        appSettings.setTimeFilter('Custom Range');
+                        setState(() {});
+                      },
                     ),
                   ],
                 ),
@@ -1392,6 +1411,56 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                   decoration: const InputDecoration(labelText: 'Select Year', border: OutlineInputBorder()),
                   items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString()))).toList(),
                   onChanged: (val) { if (val != null) { appSettings.setMonthYear(appSettings.selectedMonthIndex, val); setState(() {}); } },
+                ),
+              if (appSettings.timeFilter == 'Custom Range')
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: appSettings.customStartDate ?? DateTime.now(),
+                            firstDate: DateTime(1990),
+                            lastDate: DateTime(2100),
+                          );
+                          if (picked != null) {
+                            appSettings.setCustomDateRange(picked, appSettings.customEndDate ?? picked);
+                            setState(() {});
+                          }
+                        },
+                        child: AbsorbPointer(
+                          child: TextField(
+                            controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.customStartDate.toString().substring(0, 10) : appSettings.translate('Start Date')),
+                            decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: appSettings.customEndDate ?? DateTime.now(),
+                            firstDate: DateTime(1990),
+                            lastDate: DateTime(2100),
+                          );
+                          if (picked != null) {
+                            appSettings.setCustomDateRange(appSettings.customStartDate ?? picked, picked);
+                            setState(() {});
+                          }
+                        },
+                        child: AbsorbPointer(
+                          child: TextField(
+                            controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.customEndDate.toString().substring(0, 10) : appSettings.translate('End Date')),
+                            decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               const SizedBox(height: 16),
               Text(appSettings.translate('Financial Overview Summary'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -1724,13 +1793,25 @@ class AppDrawer extends StatelessWidget {
                     },
                   ),
                   RadioListTile<String>(
-                    title: const Text('English (Default)'),
+                    title: const Text('English'),
                     value: 'English',
                     groupValue: appSettings.language,
                     activeColor: const Color(0xFF10B981),
                     onChanged: (val) {
                       if (val != null) {
                         appSettings.setLanguage(val);
+                        setStateDialog(() {});
+                      }
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: const Text('System Default'),
+                    value: 'System',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage('System');
                         setStateDialog(() {});
                       }
                     },
@@ -1757,7 +1838,7 @@ class AppDrawer extends StatelessWidget {
           children: [
             UserAccountsDrawerHeader(
               decoration: const BoxDecoration(color: Color(0xFF10B981)),
-              accountName: Text(appSettings.profileName, style: const TextStyle(fontWeight: FontWeight.bold)),
+              accountName: Text(appSettings.translate(appSettings.profileName), style: const TextStyle(fontWeight: FontWeight.bold)),
               accountEmail: Text(appSettings.profileEmail),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
@@ -2920,8 +3001,8 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           },
                           child: AbsorbPointer(
                             child: TextField(
-                              controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.customStartDate.toString().substring(0, 10) : 'Start Date'),
-                              decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Start Date', suffixIcon: Icon(Icons.calendar_today, size: 18)),
+                              controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.customStartDate.toString().substring(0, 10) : appSettings.translate('Start Date')),
+                              decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
                             ),
                           ),
                         ),
@@ -2943,8 +3024,8 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           },
                           child: AbsorbPointer(
                             child: TextField(
-                              controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.customEndDate.toString().substring(0, 10) : 'End Date'),
-                              decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'End Date', suffixIcon: Icon(Icons.calendar_today, size: 18)),
+                              controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.customEndDate.toString().substring(0, 10) : appSettings.translate('End Date')),
+                              decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
                             ),
                           ),
                         ),
@@ -3141,7 +3222,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
       animation: appSettings,
       builder: (context, _) => Scaffold(
         appBar: AppBar(
-          title: const Text('Loan & Debt'),
+          title: Text(appSettings.translate('Loan & Debt')),
           actions: [
             Builder(
               builder: (ctx) => IconButton(
@@ -3184,7 +3265,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                 ),
                 child: Column(
                   children: [
-                    const Text('Net Balance', style: TextStyle(color: Colors.grey, fontSize: 14)),
+                    Text(appSettings.translate('Net Balance'), style: const TextStyle(color: Colors.grey, fontSize: 14)),
                     const SizedBox(height: 6),
                     Text('${appSettings.getNetBalance()} $curr', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)),
                     const Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Divider(color: Colors.grey)),
@@ -3193,7 +3274,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                       children: [
                         Column(
                           children: [
-                            const Row(children: [Icon(Icons.arrow_downward, size: 14, color: Colors.green), SizedBox(width: 4), Text('Given', style: TextStyle(color: Colors.green, fontWeight: FontWeight.w600))]),
+                            Row(children: [const Icon(Icons.arrow_downward, size: 14, color: Colors.green), const SizedBox(width: 4), Text(appSettings.translate('Given'), style: const TextStyle(color: Colors.green, fontWeight: FontWeight.w600))]),
                             const SizedBox(height: 4),
                             Text('${appSettings.getTotalGiven()} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
                           ],
@@ -3201,7 +3282,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                         Container(height: 30, width: 1, color: Colors.grey),
                         Column(
                           children: [
-                            const Row(children: [Icon(Icons.arrow_upward, size: 14, color: Colors.redAccent), SizedBox(width: 4), Text('Taken', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w600))]),
+                            Row(children: [const Icon(Icons.arrow_upward, size: 14, color: Colors.redAccent), const SizedBox(width: 4), Text(appSettings.translate('Taken'), style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w600))]),
                             const SizedBox(height: 4),
                             Text('${appSettings.getTotalTaken()} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.redAccent)),
                           ],
@@ -3218,7 +3299,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                   return Padding(
                     padding: const EdgeInsets.only(right: 8.0),
                     child: ChoiceChip(
-                      label: Text(filter),
+                      label: Text(appSettings.translate(filter)),
                       selected: isSelected,
                       selectedColor: const Color(0xFF10B981),
                       backgroundColor: Theme.of(context).cardColor,
@@ -3229,14 +3310,14 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                 }).toList(),
               ),
               const SizedBox(height: 16),
-              const Align(
+              Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Loan List', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                child: Text(appSettings.translate('Loan List'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               ),
               const SizedBox(height: 10),
               Expanded(
                 child: filteredLoans.isEmpty
-                    ? const Center(child: Text('No loans found', style: TextStyle(color: Colors.grey)))
+                    ? Center(child: Text(appSettings.translate('No loans found'), style: const TextStyle(color: Colors.grey)))
                     : ListView.builder(
                         itemCount: filteredLoans.length,
                         itemBuilder: (context, index) {
@@ -3251,7 +3332,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                                 child: Icon(isGiven ? Icons.arrow_upward : Icons.arrow_downward, color: isGiven ? Colors.green : Colors.red),
                               ),
                               title: Text(appSettings.translate(loan.personName), style: TextStyle(fontWeight: FontWeight.bold, decoration: loan.isPaid ? TextDecoration.lineThrough : null)),
-                              subtitle: Text('${loan.type} - ${loan.date.toString().substring(0, 10)}'),
+                              subtitle: Text('${appSettings.translate(loan.type)} - ${loan.date.toString().substring(0, 10)}'),
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -3461,7 +3542,7 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
       animation: appSettings,
       builder: (context, _) => Scaffold(
         appBar: AppBar(
-          title: const Text('All Transactions'),
+          title: Text(appSettings.translate('All Transactions')),
           actions: [
             Builder(
               builder: (ctx) => IconButton(
@@ -3501,7 +3582,7 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                     child: TextField(
                       onChanged: (val) => setState(() => searchQuery = val),
                       decoration: InputDecoration(
-                        hintText: 'Search (note, category)...',
+                        hintText: appSettings.translate('Search (note, category)...'),
                         prefixIcon: const Icon(Icons.search, color: Colors.grey),
                         filled: true,
                         fillColor: Theme.of(context).cardColor,
@@ -3596,18 +3677,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
   bool isSortedAscending = true;
   String currentFilterMode = 'This Month';
 
-  void _pickCustomDateRange(BuildContext context) async {
-    DateTimeRange? picked = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime(1990),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null) {
-      appSettings.setCustomDateRange(picked.start, picked.end);
-      setState(() => currentFilterMode = 'Custom Range');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
@@ -3637,7 +3706,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
       animation: appSettings,
       builder: (context, _) => Scaffold(
         appBar: AppBar(
-          title: const Text('Reports & Analysis'),
+          title: Text(appSettings.translate('Reports & Analysis')),
           actions: [
             Builder(
               builder: (ctx) => IconButton(
@@ -3677,7 +3746,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 child: Row(
                   children: [
                     ChoiceChip(
-                      label: const Text('This Month'),
+                      label: Text(appSettings.translate('This Month')),
                       selected: currentFilterMode == 'This Month',
                       selectedColor: const Color(0xFF10B981),
                       onSelected: (val) {
@@ -3690,24 +3759,27 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     ),
                     const SizedBox(width: 8),
                     ChoiceChip(
-                      label: const Text('Custom Months'),
+                      label: Text(appSettings.translate('Custom Months')),
                       selected: currentFilterMode == 'Custom Months',
                       selectedColor: const Color(0xFF10B981),
                       onSelected: (val) => setState(() => currentFilterMode = 'Custom Months'),
                     ),
                     const SizedBox(width: 8),
                     ChoiceChip(
-                      label: const Text('Custom Years'),
+                      label: Text(appSettings.translate('Custom Years')),
                       selected: currentFilterMode == 'Custom Years',
                       selectedColor: const Color(0xFF10B981),
                       onSelected: (val) => setState(() => currentFilterMode = 'Custom Years'),
                     ),
                     const SizedBox(width: 8),
                     ChoiceChip(
-                      label: const Text('Custom Range (Date Picker)'),
+                      label: Text(appSettings.translate('Custom Range')),
                       selected: currentFilterMode == 'Custom Range',
                       selectedColor: const Color(0xFF10B981),
-                      onSelected: (val) => _pickCustomDateRange(context),
+                      onSelected: (val) => setState(() {
+                        currentFilterMode = 'Custom Range';
+                        appSettings.setTimeFilter('Custom Range');
+                      }),
                     ),
                   ],
                 ),
@@ -3745,6 +3817,56 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString()))).toList(),
                   onChanged: (val) { if (val != null) setState(() => appSettings.setMonthYear(appSettings.selectedMonthIndex, val)); },
                 ),
+              if (currentFilterMode == 'Custom Range')
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: appSettings.customStartDate ?? DateTime.now(),
+                            firstDate: DateTime(1990),
+                            lastDate: DateTime(2100),
+                          );
+                          if (picked != null) {
+                            appSettings.setCustomDateRange(picked, appSettings.customEndDate ?? picked);
+                            setState(() {});
+                          }
+                        },
+                        child: AbsorbPointer(
+                          child: TextField(
+                            controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.customStartDate.toString().substring(0, 10) : appSettings.translate('Start Date')),
+                            decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: appSettings.customEndDate ?? DateTime.now(),
+                            firstDate: DateTime(1990),
+                            lastDate: DateTime(2100),
+                          );
+                          if (picked != null) {
+                            appSettings.setCustomDateRange(appSettings.customStartDate ?? picked, picked);
+                            setState(() {});
+                          }
+                        },
+                        child: AbsorbPointer(
+                          child: TextField(
+                            controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.customEndDate.toString().substring(0, 10) : appSettings.translate('End Date')),
+                            decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.all(16),
@@ -3752,7 +3874,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Monthly Budget Overview', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    Text(appSettings.translate('Monthly Budget Overview'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                     const SizedBox(height: 8),
                     Text('Budget: $budget $curr | Spent: $expense $curr', style: const TextStyle(color: Colors.grey, fontSize: 13)),
                     const SizedBox(height: 8),
@@ -3772,7 +3894,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Expense Categories', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text(appSettings.translate('Expense Categories'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   TextButton.icon(
                     onPressed: () => setState(() => isSortedAscending = !isSortedAscending),
                     icon: const Icon(Icons.sort, size: 16, color: Color(0xFF10B981)),
@@ -3793,7 +3915,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                           color: Theme.of(context).cardColor,
                           margin: const EdgeInsets.only(bottom: 8),
                           child: ListTile(
-                            leading: CircleAvatar(backgroundColor: Colors.red.withOpacity(0.2), child: const Icon(Icons.category, color: Colors.redAccent)),
+                            leading: const CircleAvatar(backgroundColor: Colors.red100, child: Icon(Icons.category, color: Colors.redAccent)),
                             title: Text(appSettings.translate(catEntry.key), style: const TextStyle(fontWeight: FontWeight.bold)),
                             trailing: Text('${catEntry.value} $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
                           ),
@@ -4222,7 +4344,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  Text(appSettings.profileName, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(appSettings.translate(appSettings.profileName), style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
                   Text(appSettings.profileEmail, style: const TextStyle(color: Colors.white70, fontSize: 13)),
                   const SizedBox(height: 8),
@@ -4280,55 +4402,3 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            const Center(child: Text('Version 1.0.0', style: TextStyle(color: Colors.grey, fontSize: 12))),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ----------------- Main Navigation Container -----------------
-class MainHomeScreen extends StatefulWidget {
-  const MainHomeScreen({super.key});
-
-  @override
-  State<MainHomeScreen> createState() => _MainHomeScreenState();
-}
-
-class _MainHomeScreenState extends State<MainHomeScreen> {
-  int _currentIndex = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    final List<Widget> pages = [
-      const HomeScreenContent(),
-      const LoanDebtScreen(),
-      const AllTransactionsScreen(), 
-      const ReportsScreen(),
-      const ProfileScreen(),
-    ];
-
-    return AnimatedBuilder(
-      animation: appSettings,
-      builder: (context, _) => Scaffold(
-        body: pages[_currentIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) => setState(() => _currentIndex = index),
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFF10B981),
-          unselectedItemColor: Colors.grey,
-          backgroundColor: Theme.of(context).cardColor,
-          items: [
-            BottomNavigationBarItem(icon: const Icon(Icons.home), label: appSettings.translate('Account')),
-            BottomNavigationBarItem(icon: const Icon(Icons.money), label: appSettings.translate('Loan')),
-            BottomNavigationBarItem(icon: const Icon(Icons.list_alt), label: appSettings.translate('Transactions')),
-            BottomNavigationBarItem(icon: const Icon(Icons.bar_chart), label: appSettings.translate('Report')),
-            BottomNavigationBarItem(icon: const Icon(Icons.person), label: appSettings.translate('Profile')),
-          ],
-        ),
-      ),
-    );
-  }
-}
