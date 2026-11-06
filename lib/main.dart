@@ -146,3 +146,349 @@ class ReminderModel {
   Map<String, dynamic> toJson() => {'title': title, 'amount': amount, 'dueDate': dueDate};
   factory ReminderModel.fromJson(Map<String, dynamic> json) => ReminderModel(title: json['title'], amount: json['amount'], dueDate: json['dueDate']);
 }
+// ----------------- State Management with Persistent Storage -----------------
+class AppSettingsNotifier extends ChangeNotifier {
+  late SharedPreferences _prefs;
+
+  ThemeMode _themeMode = ThemeMode.dark;
+  String _language = 'English'; 
+  String currency = '৳';
+  String timeFilter = 'Month';
+  String appPin = '1234';
+
+  String profileName = 'MD ALAMGIR HOSSAIN';
+  String profileEmail = 'alamgir@email.com';
+  String profileGender = 'Male';
+  String profileBirthDate = '01-01-1995';
+  String profileMobile = '018xxxxxxxx';
+  String profileImagePath = '';
+
+  bool useFaceLock = false;
+  bool useFingerprint = false;
+  bool useNoneLock = false;
+  bool usePatternLock = false;
+  bool usePinLock = true;
+
+  bool dailyReminder = true;
+  bool budgetAlert = true;
+  bool loanAlert = true;
+  String notificationSound = 'Default';
+
+  int selectedMonthIndex = DateTime.now().month;
+  int selectedYear = DateTime.now().year;
+
+  DateTime? customStartDate;
+  DateTime? customEndDate;
+
+  List<String> categories = ['Grocery', 'Others', 'Salary', 'Tea & Snacks', 'Transport'];
+  
+  List<AccountModel> accounts = [
+    AccountModel(name: 'Bikash', type: 'Mobile Banking', details: '018xxxxxxxx', isDefault: false),
+    AccountModel(name: 'Cash in Hand', type: 'Cash', details: 'Main pocket cash', isDefault: true),
+    AccountModel(name: 'Dutch-Bangla Bank', type: 'Bank', details: 'A/C: ...1234', isDefault: false),
+    AccountModel(name: 'Nagad', type: 'Mobile Banking', details: '017xxxxxxxx', isDefault: false),
+    AccountModel(name: 'UCB Bank', type: 'Bank', details: 'A/C: ...4589', isDefault: false),
+  ];
+
+  String defaultCategory = 'Others';
+  double monthlyBudget = 15000.0;
+
+  List<TransactionItem> transactions = [
+    TransactionItem(
+      id: '1',
+      type: 'Income',
+      account: 'Cash in Hand',
+      category: 'Salary',
+      amount: 45000.0,
+      description: 'Monthly Salary',
+      date: DateTime.now(),
+    ),
+    TransactionItem(
+      id: '2',
+      type: 'Expense',
+      account: 'Cash in Hand',
+      category: 'Tea & Snacks',
+      amount: 350.0,
+      description: 'Evening snacks',
+      date: DateTime.now(),
+    ),
+  ];
+
+  List<LoanItem> loans = [
+    LoanItem(
+      id: '101',
+      personName: 'Rafiqul Islam',
+      amount: 2000.0,
+      type: 'Given',
+      date: DateTime.now(),
+      isPaid: false,
+    ),
+  ];
+
+  List<ShoppingItem> shoppingList = [
+    ShoppingItem(name: 'Cooking Oil', amount: 150.0, isChecked: true),
+    ShoppingItem(name: 'Rice (5 kg)', amount: 450.0, isChecked: false),
+  ];
+
+  List<BudgetModel> budgets = [
+    BudgetModel(category: 'Food & Hotel', amount: 5000.0),
+    BudgetModel(category: 'Transport', amount: 3000.0),
+  ];
+
+  List<SavingsModel> savingsList = [
+    SavingsModel(title: 'Arufa Savings', targetAmount: 500000, currentAmount: 25000)
+  ];
+
+  List<RepeatedTransactionModel> repeatedTransactions = [
+    RepeatedTransactionModel(title: 'House Rent', amount: 8000, frequency: '1st of every month'),
+    RepeatedTransactionModel(title: 'WiFi Bill', amount: 1000, frequency: '10th of every month'),
+  ];
+
+  List<ReminderModel> reminders = [
+    ReminderModel(title: 'Electricity Bill', amount: 1200, dueDate: '15th of every month'),
+  ];
+
+  Future<void> initPrefs() async {
+    _prefs = await SharedPreferences.getInstance();
+    appPin = _prefs.getString('appPin') ?? '1234';
+    _language = _prefs.getString('language') ?? 'English';
+    String themeStr = _prefs.getString('themeMode') ?? 'dark';
+    if (themeStr == 'light') _themeMode = ThemeMode.light;
+    else if (themeStr == 'system') _themeMode = ThemeMode.system;
+    else _themeMode = ThemeMode.dark;
+
+    profileName = _prefs.getString('profileName') ?? 'MD ALAMGIR HOSSAIN';
+    profileEmail = _prefs.getString('profileEmail') ?? 'alamgir@email.com';
+    profileGender = _prefs.getString('profileGender') ?? 'Male';
+    profileBirthDate = _prefs.getString('profileBirthDate') ?? '01-01-1995';
+    profileMobile = _prefs.getString('profileMobile') ?? '018xxxxxxxx';
+    profileImagePath = _prefs.getString('profileImagePath') ?? '';
+    notifyListeners();
+  }
+
+  Future<void> _saveToPrefs() async {
+    await _prefs.setString('appPin', appPin);
+    await _prefs.setString('language', _language);
+    await _prefs.setString('themeMode', _themeMode == ThemeMode.light ? 'light' : (_themeMode == ThemeMode.system ? 'system' : 'dark'));
+    await _prefs.setString('profileName', profileName);
+    await _prefs.setString('profileEmail', profileEmail);
+    await _prefs.setString('profileGender', profileGender);
+    await _prefs.setString('profileBirthDate', profileBirthDate);
+    await _prefs.setString('profileMobile', profileMobile);
+    await _prefs.setString('profileImagePath', profileImagePath);
+  }
+
+  ThemeMode get themeMode => _themeMode;
+  String get language => _language;
+  
+  String getAppTitle() {
+    if (_language == 'Bangla') return 'হিসাব বই';
+    if (_language == 'Arabic') return 'دفتر الحسابات';
+    return 'Account Book';
+  }
+
+  String translate(String key) {
+    if (_language == 'Bangla') {
+      switch (key) {
+        case 'Account Book': return 'হিসাব বই';
+        case 'Dashboard Analytics': return 'ড্যাশবোর্ড অ্যানালিটিক্স';
+        case 'Categories': return 'ক্যাটাগরি সমূহ';
+        case 'Accounts': return 'অ্যাকাউন্ট সমূহ';
+        case 'Theme': return 'থিম';
+        case 'Language': return 'ভাষা';
+        case 'About App': return 'অ্যাপ সম্পর্কে';
+        case 'Current Balance': return 'বর্তমান ব্যালেন্স';
+        case 'Month': return 'মাস';
+        case 'Year': return 'বছর';
+        case 'Income': return 'আয়';
+        case 'Expense': return 'ব্যয়';
+        case 'Quick Access': return 'কুইক এক্সেস';
+        case 'Recent Transactions': return 'সাম্প্রতিক লেনদেন';
+        case 'Budget': return 'বাজেট';
+        case 'Reminder': return 'রিমাইন্ডার';
+        case 'Repeat': return 'রিপিট';
+        case 'Savings': return 'সেভিংস';
+        case 'Shopping': return 'শপিং';
+        case 'Account': return 'হিসাব';
+        case 'Loan': return 'লোন';
+        case 'Transactions': return 'লেনদেন';
+        case 'Report': return 'রিপোর্ট';
+        case 'Profile': return 'প্রোফাইল';
+        case 'Grocery': return 'মুদি বাজার';
+        case 'Others': return 'অন্যান্য';
+        case 'Salary': return 'বেতন';
+        case 'Tea & Snacks': return 'চা ও নাস্তা';
+        case 'Transport': return 'যাতায়াত';
+        case 'Food & Hotel': return 'খাবার ও হোটেল';
+        case 'Bikash': return 'বিকাশ';
+        case 'Cash in Hand': return 'হাতে নগদ টাকা';
+        case 'Dutch-Bangla Bank': return 'ডাচ-বাংলা ব্যাংক';
+        case 'Nagad': return 'নগদ';
+        case 'UCB Bank': return 'ইউসিবি ব্যাংক';
+        case 'Mobile Banking': return 'মোবাইল ব্যাংকিং';
+        case 'Cash': return 'নগদ';
+        case 'Bank': return 'ব্যাংক';
+        case 'Settings': return 'সেটিংস';
+        case 'Goals': return 'লক্ষ্য';
+        case 'Calculators': return 'ক্যালকুলেটর হাব';
+        default: return key;
+      }
+    } else if (_language == 'Arabic') {
+      switch (key) {
+        case 'Account Book': return 'دفتر الحسابات';
+        case 'Dashboard Analytics': return 'تحليلات لوحة القيادة';
+        case 'Categories': return 'الفئات';
+        case 'Accounts': return 'الحسابات';
+        case 'Theme': return 'المظهر';
+        case 'Language': return 'اللغة';
+        case 'About App': return 'حول التطبيق';
+        case 'Current Balance': return 'الرصيد الحالي';
+        case 'Month': return 'شهر';
+        case 'Year': return 'سنة';
+        case 'Income': return 'إيرادات';
+        case 'Expense': return 'مصروفات';
+        default: return key;
+      }
+    }
+    return key;
+  }
+
+  void setTheme(ThemeMode mode) {
+    _themeMode = mode;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  void setLanguage(String lang) {
+    _language = lang;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  void setMonthYear(int month, int year) {
+    selectedMonthIndex = month;
+    selectedYear = year;
+    notifyListeners();
+  }
+
+  void updatePin(String newPin) {
+    appPin = newPin;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  void updateProfile({required String name, required String email, required String gender, required String birthDate, required String mobile, String? imagePath}) {
+    profileName = name;
+    profileEmail = email;
+    profileGender = gender;
+    profileBirthDate = birthDate;
+    profileMobile = mobile;
+    if (imagePath != null) profileImagePath = imagePath;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  void updateSecurityToggles({required bool face, required bool fingerprint, required bool none, required bool pattern, required bool pin}) {
+    useFaceLock = face;
+    useFingerprint = fingerprint;
+    useNoneLock = none;
+    usePatternLock = pattern;
+    usePinLock = pin;
+    notifyListeners();
+  }
+
+  void addTransaction(TransactionItem txn) {
+    transactions.insert(0, txn);
+    notifyListeners();
+  }
+
+  void removeTransaction(int index) {
+    transactions.removeAt(index);
+    notifyListeners();
+  }
+
+  void addLoan(LoanItem loan) {
+    loans.insert(0, loan);
+    notifyListeners();
+  }
+
+  void removeLoan(int index) {
+    loans.removeAt(index);
+    notifyListeners();
+  }
+
+  void toggleLoanStatus(String id) {
+    for (var loan in loans) {
+      if (loan.id == id) {
+        loan.isPaid = !loan.isPaid;
+        notifyListeners();
+        break;
+      }
+    }
+  }
+
+  List<TransactionItem> getFilteredTransactions() {
+    return transactions.where((txn) {
+      return txn.date.year == selectedYear && txn.date.month == selectedMonthIndex;
+    }).toList();
+  }
+
+  double getTotalIncome() {
+    double total = 0;
+    for (var txn in getFilteredTransactions()) {
+      if (txn.type == 'Income') total += txn.amount;
+    }
+    return total;
+  }
+
+  double getTotalExpense() {
+    double total = 0;
+    for (var txn in getFilteredTransactions()) {
+      if (txn.type == 'Expense') total += txn.amount;
+    }
+    return total;
+  }
+
+  double getTotalBalance() {
+    return getTotalIncome() - getTotalExpense();
+  }
+
+  double getTotalGiven() {
+    double total = 0;
+    for (var loan in loans) {
+      if (loan.type == 'Given' && !loan.isPaid) total += loan.amount;
+    }
+    return total;
+  }
+
+  double getTotalTaken() {
+    double total = 0;
+    for (var loan in loans) {
+      if (loan.type == 'Taken' && !loan.isPaid) total += loan.amount;
+    }
+    return total;
+  }
+
+  double getNetBalance() {
+    return getTotalGiven() - getTotalTaken();
+  }
+
+  void addAccount(String name, String type, String details) {
+    if (name.isNotEmpty) {
+      accounts.add(AccountModel(name: name, type: type, details: details, isDefault: false));
+      notifyListeners();
+    }
+  }
+
+  void addBudget(String category, double amount) {
+    budgets.add(BudgetModel(category: category, amount: amount));
+    notifyListeners();
+  }
+
+  void addSavings(String title, double target) {
+    savingsList.add(SavingsModel(title: title, targetAmount: target, currentAmount: 0));
+    notifyListeners();
+  }
+}
+
+final appSettings = AppSettingsNotifier();
