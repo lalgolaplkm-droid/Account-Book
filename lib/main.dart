@@ -242,7 +242,7 @@ late SharedPreferences _prefs;
 ​ThemeMode _themeMode = ThemeMode.dark;
 String _language = 'English'; // English, Bangla, Arabic
 String currency = '৳';
-String timeFilter = 'This Month'; // This Month, Custom Months, Custom Years, Custom Range
+String timeFilter = 'This Month';
 String appPin = '1234';
 ​// Profile fields
 String profileName = 'MD ALAMGIR HOSSAIN';
@@ -359,8 +359,7 @@ profileGender = _prefs.getString('profileGender') ?? 'Male';
 profileBirthDate = _prefs.getString('profileBirthDate') ?? '01-01-1995';
 profileMobile = _prefs.getString('profileMobile') ?? '018xxxxxxxx';
 profileImagePath = _prefs.getString('profileImagePath') ?? '';
-​// Sort Categories and Accounts Alphabetically by default
-categories.sort();
+​categories.sort();
 sortAccountsSequence();
 notifyListeners();
 }
@@ -396,8 +395,7 @@ if (_language == 'Bangla') return 'হিসাবের খাতা';
 if (_language == 'Arabic') return 'دفتر الحسابات';
 return 'Account Book';
 }
-​// Real-Time Global Translation Engine
-String translate(String key) {
+​String translate(String key) {
 if (_language == 'Bangla') {
 switch (key) {
 case 'Account Book': return 'হিসাবের খাতা';
@@ -567,8 +565,7 @@ usePinLock = false;
 }
 notifyListeners();
 }
-​// Notification Operations
-void markAllNotificationsAsRead() {
+​void markAllNotificationsAsRead() {
 for (var n in notifications) {
 n.isRead = true;
 }
@@ -582,10 +579,8 @@ notifyListeners();
 notifications.removeWhere((n) => n.id == id);
 notifyListeners();
 }
-​// Transactions & Financial Logic
-void addTransaction(TransactionItem txn) {
+​void addTransaction(TransactionItem txn) {
 transactions.insert(0, txn);
-// Update corresponding account balance
 for (var acc in accounts) {
 if (acc.name == txn.account) {
 if (txn.type == 'Income') {
@@ -694,8 +689,7 @@ if (txn.type == 'Expense') total += txn.amount;
 }
 return total;
 }
-​// Real-Time Total Current Balance across all accounts
-double getTotalBalance() {
+​double getTotalBalance() {
 double total = 0;
 for (var acc in accounts) {
 total += acc.balance;
@@ -904,8 +898,7 @@ home: const PinLockScreen(),
 );
 }
 }
-​// Global Export Helper
-void showStandardDownloadMenu(BuildContext context, Offset offset) {
+​void showStandardDownloadMenu(BuildContext context, Offset offset) {
 String lang = appSettings.language;
 String previewText = lang == 'Bangla' ? 'প্রিভিউ' : (lang == 'Arabic' ? 'معاينة' : 'Preview');
 String pdfText = lang == 'Bangla' ? 'পিডিএফ ডাউনলোড' : (lang == 'Arabic' ? 'تحميل كـ PDF' : 'Download as PDF');
@@ -1216,7 +1209,6 @@ padding: const EdgeInsets.all(16.0),
 child: Column(
 crossAxisAlignment: CrossAxisAlignment.start,
 children: [
-// Current Balance Card (Real-Time across all accounts, NO month/date filter)
 Container(
 padding: const EdgeInsets.all(20),
 decoration: BoxDecoration(
@@ -1615,8 +1607,6 @@ State<CalculatorsHubScreen> createState() => _CalculatorsHubScreenState();
 int calcIndex = 0;
 String display = '0';
 double loanAmount = 100000;
-double interestRate = 10;
-double tenure = 12;
 ​@override
 Widget build(BuildContext context) {
 return Scaffold(
@@ -1779,7 +1769,7 @@ child: const Icon(Icons.add, color: Colors.white),
 }
 }
 ​// ==========================================
-// 10. BUDGET & CATEGORIES
+// 10. BUDGET, CATEGORIES, SHOPPING
 // ==========================================
 ​class BudgetScreen extends StatelessWidget {
 const BudgetScreen({super.key});
@@ -1817,7 +1807,7 @@ body: const Center(child: Text('Shopping items persistence')),
 }
 }
 ​// ==========================================
-// 11. PROFILE & APP DRAWER
+// 11. PROFILE & SECURITY
 // ==========================================
 ​class AppDrawer extends StatelessWidget {
 const AppDrawer({super.key});
