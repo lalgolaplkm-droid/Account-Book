@@ -158,12 +158,11 @@ class AppSettingsNotifier extends ChangeNotifier {
   late SharedPreferences _prefs;
 
   ThemeMode _themeMode = ThemeMode.dark;
-  String _language = 'English'; // Default Language strictly English
+  String _language = 'English'; 
   String currency = '৳';
   String timeFilter = 'Month';
   String appPin = '1234';
 
-  // Profile fields
   String profileName = 'MD ALAMGIR HOSSAIN';
   String profileEmail = 'alamgir@email.com';
   String profileGender = 'Male';
@@ -182,11 +181,9 @@ class AppSettingsNotifier extends ChangeNotifier {
   bool loanAlert = true;
   String notificationSound = 'Default';
 
-  // Selected Month & Year for Home and Reports
   int selectedMonthIndex = DateTime.now().month;
   int selectedYear = DateTime.now().year;
 
-  // Custom Date Range for Reports/Filtering
   DateTime? customStartDate;
   DateTime? customEndDate;
 
@@ -615,7 +612,7 @@ class AppSettingsNotifier extends ChangeNotifier {
 
   void updateBudget(int index, String category, double amount) {
     budgets[index] = BudgetModel(category: category, amount: amount);
-    budgets.sort((b1, b2) => b1.category.compareTo(b2.category));
+    budgets.sort((a, b) => a.category.compareTo(b.category));
     notifyListeners();
   }
 
@@ -760,7 +757,7 @@ class AccountBookApp extends StatelessWidget {
   }
 }
 
-// ----------------- Standard Menus & Helpers -----------------
+// ----------------- Standard Helpers & Menus -----------------
 void showStandardDownloadMenu(BuildContext context, Offset offset) {
   String lang = appSettings.language;
   String previewText = lang == 'Bangla' ? 'প্রিভিউ' : 'Preview';
@@ -777,7 +774,7 @@ void showStandardDownloadMenu(BuildContext context, Offset offset) {
     ],
   ).then((value) {
     if (value != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Report saved as $value successfully!')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Report saved successfully!')));
     }
   });
 }
@@ -808,7 +805,7 @@ void showLocalizedDeleteDialog({
   String lang = appSettings.language;
   String title1 = lang == 'Bangla' ? 'নিশ্চিতকরণ' : 'Confirmation';
   String msg1 = lang == 'Bangla' ? 'আপনি কি আসলেই "$itemName" ডিলিট করতে চান?' : 'Are you sure you want to delete "$itemName"?';
-  
+
   showDialog(
     context: context,
     builder: (ctx) => AlertDialog(
@@ -829,7 +826,7 @@ void showLocalizedDeleteDialog({
   );
 }
 
-// ----------------- App Drawer Widget -----------------
+// ----------------- App Drawer -----------------
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
@@ -907,10 +904,10 @@ class AppDrawer extends StatelessWidget {
     );
   }
 }
-// ----------------- Pin & Main Container -----------------
+
+// ----------------- Pin & Lock Screen -----------------
 class PinLockScreen extends StatefulWidget {
   const PinLockScreen({super.key});
-
   @override
   State<PinLockScreen> createState() => _PinLockScreenState();
 }
@@ -920,103 +917,10 @@ class _PinLockScreenState extends State<PinLockScreen> {
 
   void _verifyPin(BuildContext context) {
     if (_pinController.text == appSettings.appPin || appSettings.useNoneLock) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MainHomeScreen()),
-      );
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainHomeScreen()));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Wrong PIN!')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Wrong PIN!')));
     }
-  }
-
-  void _showForgotPinDialog(BuildContext context) {
-    final TextEditingController identifierController = TextEditingController();
-    final TextEditingController newPinController = TextEditingController();
-    final TextEditingController confirmPinController = TextEditingController();
-    bool obscureNewPin = true;
-    bool obscureConfirmPin = true;
-
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (ctx, setStateDialog) {
-            return AlertDialog(
-              title: const Text('Forgot PIN'),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('Enter your registered Email, Birth Date (DD-MM-YYYY), or Mobile Number to verify your identity.', style: TextStyle(fontSize: 13, color: Colors.grey)),
-                    const SizedBox(height: 16),
-                    TextField(controller: identifierController, decoration: const InputDecoration(labelText: 'Email / Birth Date / Mobile', border: OutlineInputBorder())),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: newPinController,
-                      keyboardType: TextInputType.number,
-                      maxLength: 4,
-                      obscureText: obscureNewPin,
-                      decoration: InputDecoration(
-                        labelText: 'New 4-Digit PIN',
-                        border: const OutlineInputBorder(),
-                        counterText: '',
-                        suffixIcon: IconButton(
-                          icon: Icon(obscureNewPin ? Icons.visibility_off : Icons.visibility),
-                          onPressed: () => setStateDialog(() => obscureNewPin = !obscureNewPin),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: confirmPinController,
-                      keyboardType: TextInputType.number,
-                      maxLength: 4,
-                      obscureText: obscureConfirmPin,
-                      decoration: InputDecoration(
-                        labelText: 'Re-Type 4-Digit PIN',
-                        border: const OutlineInputBorder(),
-                        counterText: '',
-                        suffixIcon: IconButton(
-                          icon: Icon(obscureConfirmPin ? Icons.visibility_off : Icons.visibility),
-                          onPressed: () => setStateDialog(() => obscureConfirmPin = !obscureConfirmPin),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-                ElevatedButton(
-                  onPressed: () {
-                    String input = identifierController.text.trim();
-                    bool isValidUser = input == appSettings.profileEmail || input == appSettings.profileBirthDate || input == appSettings.profileMobile;
-
-                    if (!isValidUser) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error: Information does not match!'), backgroundColor: Colors.red));
-                      return;
-                    }
-
-                    if (newPinController.text.length != 4 || newPinController.text != confirmPinController.text) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error: PIN must be 4 digits and match!'), backgroundColor: Colors.red));
-                      return;
-                    }
-
-                    appSettings.updatePin(newPinController.text);
-                    Navigator.pop(ctx);
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('PIN successfully updated')));
-                    setState(() {});
-                  },
-                  child: const Text('Reset'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
   }
 
   @override
@@ -1081,11 +985,6 @@ class _PinLockScreenState extends State<PinLockScreen> {
                   child: const Text('Unlock', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
               ),
-              const SizedBox(height: 20),
-              TextButton(
-                onPressed: () => _showForgotPinDialog(context),
-                child: const Text('Forgot PIN?', style: TextStyle(color: Color(0xFF38BDF8), fontSize: 14, fontWeight: FontWeight.w500)),
-              ),
             ],
           ),
         ),
@@ -1098,199 +997,63 @@ class _PinLockScreenState extends State<PinLockScreen> {
 class HomeScreenContent extends StatelessWidget {
   const HomeScreenContent({super.key});
 
-  void _showAddTransactionDialog(BuildContext context) {
-    String transactionType = 'Expense';
-    String selectedCategory = appSettings.categories[0];
-    String selectedAccount = appSettings.accounts.firstWhere((acc) => acc.isDefault, orElse: () => appSettings.accounts[0]).name;
-    
-    final TextEditingController amountController = TextEditingController();
-    final TextEditingController descController = TextEditingController();
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (ctx, setStateModal) {
-            return Padding(
-              padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Add New Transaction', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: transactionType == 'Income' ? Colors.green : const Color(0xFF1E293B)),
-                            onPressed: () => setStateModal(() => transactionType = 'Income'),
-                            child: const Text('Cash In'),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: transactionType == 'Expense' ? Colors.red : const Color(0xFF1E293B)),
-                            onPressed: () => setStateModal(() => transactionType = 'Expense'),
-                            child: const Text('Cash Out'),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    DropdownButtonFormField<String>(
-                      value: selectedAccount,
-                      dropdownColor: Theme.of(context).cardColor,
-                      decoration: const InputDecoration(labelText: 'Account', border: OutlineInputBorder()),
-                      items: appSettings.accounts.map((acc) => DropdownMenuItem(value: acc.name, child: Text(appSettings.translate(acc.name)))).toList(),
-                      onChanged: (val) { if (val != null) setStateModal(() => selectedAccount = val); },
-                    ),
-                    const SizedBox(height: 12),
-                    DropdownButtonFormField<String>(
-                      value: selectedCategory,
-                      dropdownColor: Theme.of(context).cardColor,
-                      decoration: const InputDecoration(labelText: 'Category', border: OutlineInputBorder()),
-                      items: appSettings.categories.map((cat) => DropdownMenuItem(value: cat, child: Text(appSettings.translate(cat)))).toList(),
-                      onChanged: (val) { if (val != null) setStateModal(() => selectedCategory = val); },
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(controller: amountController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Amount', border: OutlineInputBorder())),
-                    const SizedBox(height: 12),
-                    TextField(controller: descController, decoration: const InputDecoration(labelText: 'Description', border: OutlineInputBorder())),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
-                        onPressed: () {
-                          if (amountController.text.isNotEmpty) {
-                            double amount = double.tryParse(amountController.text) ?? 0.0;
-                            appSettings.addTransaction(TransactionItem(
-                              id: DateTime.now().toString(),
-                              type: transactionType,
-                              account: selectedAccount,
-                              category: selectedCategory,
-                              amount: amount,
-                              description: descController.text,
-                              date: DateTime.now(),
-                            ));
-                            Navigator.pop(ctx);
-                          }
-                        },
-                        child: const Text('Save', style: TextStyle(fontSize: 16)),
-                      ),
-                    ),
-                  ],
-                ),
+  @override
+  Widget build(BuildContext context) {
+    String curr = appSettings.currency;
+    return Scaffold(
+      appBar: AppBar(title: Text(appSettings.getAppTitle(), style: const TextStyle(fontWeight: FontWeight.bold))),
+      drawer: const AppDrawer(),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(16)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(appSettings.translate('Current Balance'), style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                  const SizedBox(height: 8),
+                  Text('${appSettings.getTotalBalance()} $curr', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                ],
               ),
-            );
-          },
-        );
-      },
+            ),
+          ],
+        ),
+      ),
     );
   }
+}
 
-  Widget _buildQuickAccessIcon(BuildContext context, IconData icon, String label, Widget targetScreen) {
-    return InkWell(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => targetScreen)),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(14)),
-            child: Icon(icon, color: const Color(0xFF10B981), size: 22),
-          ),
-          const SizedBox(height: 4),
-          Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+// ----------------- Main Navigation Container -----------------
+class MainHomeScreen extends StatefulWidget {
+  const MainHomeScreen({super.key});
+  @override
+  State<MainHomeScreen> createState() => _MainHomeScreenState();
+}
+
+class _MainHomeScreenState extends State<MainHomeScreen> {
+  int _currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      const HomeScreenContent(),
+    ];
+
+    return Scaffold(
+      body: pages[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) => setState(() => _currentIndex = index),
+        selectedItemColor: const Color(0xFF10B981),
+        unselectedItemColor: Colors.grey,
+        items: [
+          BottomNavigationBarItem(icon: const Icon(Icons.home), label: appSettings.translate('Account Book')),
         ],
       ),
     );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    String curr = appSettings.currency;
-
-    return AnimatedBuilder(
-      animation: appSettings,
-      builder: (context, child) {
-        return Scaffold(
-          appBar: AppBar(title: Text(appSettings.getAppTitle(), style: const TextStyle(fontWeight: FontWeight.bold))),
-          drawer: const AppDrawer(),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(18),
-                  decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(16)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(appSettings.translate('Current Balance'), style: const TextStyle(color: Colors.grey, fontSize: 13)),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text('${appSettings.getTotalBalance()}$curr', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-                      const Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Divider(color: Colors.grey)),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(appSettings.translate('Income'), style: const TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
-                                  const SizedBox(height: 4),
-                                  Text('${appSettings.getTotalIncome()}$curr', style: const TextStyle(color: Colors.green, fontSize: 15, fontWeight: FontWeight.bold)),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(color: Colors.red.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(appSettings.translate('Expense'), style: const TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.w600)),
-                                  const SizedBox(height: 4),
-                                  Text('${appSettings.getTotalExpense()}$curr', style: const TextStyle(color: Colors.redAccent, fontSize: 15, fontWeight: FontWeight.bold)),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Text(appSettings.translate('Quick Access'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildQuickAccessIcon(context, Icons.account_balance_wallet, appSettings.translate('Account'), const AccountsScreen()),
-                    _buildQuickAccessIcon(context, Icons.track_changes, appSettings.translate('Budget'), const BudgetScreen()),
-                    _buildQuickAccessIcon(context, Icons.category, appSettings.translate('Categories'), const CategoriesScreen()),
-                    _buildQuickAccessIcon(context, Icons.notifications_active, appSettings.translate('Reminder'), const RemindersScreen()),
-                    _buildQuickAccessIcon(context, Icons.repeat, appSettings.translate('Repeat'), const RepeatedTransactionsScreen()),
-                    _buildQuickAccessIcon(context, Icons.savings, appSettings.translate('Savings'), const SavingsScreen()),
-                    _buildQuickAccessIcon(context, Icons.shopping_cart, appSettings.translate('Shopping'), const FundShoppingScreen()),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                Text(appSettings.translate('Recent Transactions'), style: const TextStyle(
+}
