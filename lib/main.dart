@@ -3973,4 +3973,197 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       context: context,
                       initialDate: DateTime(1995, 1, 1),
                       firstDate: DateTime(1900),
-                      lastDate: DateTime.now
+                      lastDate: DateTime.now(),
+                    );
+                    if (pickedDate != null) {
+                      setStateDialog(() {
+                        birthDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                      });
+                    }
+                  },
+                  child: AbsorbPointer(
+                    child: TextField(
+                      controller: TextEditingController(text: birthDate),
+                      decoration: const InputDecoration(labelText: 'Birth Date (DD-MM-YYYY)', border: OutlineInputBorder(), suffixIcon: Icon(Icons.calendar_today)),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(controller: mobileC, keyboardType: TextInputType.phone, decoration: const InputDecoration(labelText: 'Mobile Number', border: OutlineInputBorder())),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+            ElevatedButton(
+              onPressed: () {
+                appSettings.updateProfile(
+                  name: nameC.text,
+                  email: emailC.text,
+                  gender: selectedGender,
+                  birthDate: birthDate,
+                  mobile: mobileC.text,
+                );
+                Navigator.pop(ctx);
+                setState(() {});
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile updated successfully!')));
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: appSettings,
+      builder: (context, _) => Scaffold(
+        appBar: AppBar(title: const Text('Profile & Settings')),
+        drawer: const AppDrawer(),
+        body: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: const Color(0xFF10B981),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 35,
+                        backgroundColor: Colors.white,
+                        backgroundImage: appSettings.profileImagePath.isNotEmpty ? FileImage(File(appSettings.profileImagePath)) : null,
+                        child: appSettings.profileImagePath.isEmpty ? const Icon(Icons.person, size: 45, color: Color(0xFF10B981)) : null,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: InkWell(
+                          onTap: _showProfileImagePicker,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black),
+                            child: const Icon(Icons.edit, size: 14, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(appSettings.profileName, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
+                  Text(appSettings.profileEmail, style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                  const SizedBox(height: 8),
+                  Text('Gender: ${appSettings.profileGender} | DOB: ${appSettings.profileBirthDate}', style: const TextStyle(color: Colors.white70, fontSize: 11)),
+                  const SizedBox(height: 4),
+                  Text('Mobile: ${appSettings.profileMobile}', style: const TextStyle(color: Colors.white70, fontSize: 11)),
+                  const SizedBox(height: 14),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black26,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    ),
+                    onPressed: () => _showEditProfileDialog(context),
+                    icon: const Icon(Icons.edit, size: 16),
+                    label: const Text('Edit Profile'),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text('Account', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Card(
+              color: Theme.of(context).cardColor,
+              child: ListTile(
+                leading: const Icon(Icons.lock_outline, color: Color(0xFF10B981)),
+                title: const Text('Privacy & Security'),
+                trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PrivacySecurityScreen())),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text('Preferences', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Card(
+              color: Theme.of(context).cardColor,
+              child: ListTile(
+                leading: const Icon(Icons.notifications_none, color: Color(0xFF10B981)),
+                title: const Text('Notification Settings'),
+                trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationSettingsScreen())),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Card(
+              color: Theme.of(context).cardColor,
+              child: ListTile(
+                leading: const Icon(Icons.logout, color: Colors.redAccent),
+                title: const Text('Sign Out', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                onTap: () {
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const PinLockScreen()));
+                },
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Center(child: Text('Version 1.0.0', style: TextStyle(color: Colors.grey, fontSize: 12))),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ----------------- Main Navigation Container -----------------
+class MainHomeScreen extends StatefulWidget {
+  const MainHomeScreen({super.key});
+
+  @override
+  State<MainHomeScreen> createState() => _MainHomeScreenState();
+}
+
+class _MainHomeScreenState extends State<MainHomeScreen> {
+  int _currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      const HomeScreenContent(),
+      const LoanDebtScreen(),
+      const AllTransactionsScreen(), 
+      const ReportsScreen(),
+      const ProfileScreen(),
+    ];
+
+    return AnimatedBuilder(
+      animation: appSettings,
+      builder: (context, _) => Scaffold(
+        body: pages[_currentIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (index) => setState(() => _currentIndex = index),
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: const Color(0xFF10B981),
+          unselectedItemColor: Colors.grey,
+          backgroundColor: Theme.of(context).cardColor,
+          items: [
+            BottomNavigationBarItem(icon: const Icon(Icons.home), label: appSettings.translate('Account')),
+            BottomNavigationBarItem(icon: const Icon(Icons.money), label: appSettings.translate('Loan')),
+            BottomNavigationBarItem(icon: const Icon(Icons.list_alt), label: appSettings.translate('Transactions')),
+            BottomNavigationBarItem(icon: const Icon(Icons.bar_chart), label: appSettings.translate('Report')),
+            BottomNavigationBarItem(icon: const Icon(Icons.person), label: appSettings.translate('Profile')),
+          ],
+        ),
+      ),
+    );
+  }
+}
