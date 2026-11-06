@@ -1296,3 +1296,339 @@ Text('Email: ${appSettings.profileEmail}', style: const TextStyle(fontSize: 16))
 );
 }
 }
+import 'package:flutter/material.dart';
+​// ==========================================
+// 10. ADVANCED REPORTS & ANALYTICS SCREEN
+// ==========================================
+​class ReportsAnalyticsScreen extends StatefulWidget {
+const ReportsAnalyticsScreen({super.key});
+​@override
+State<ReportsAnalyticsScreen> createState() => _ReportsAnalyticsScreenState();
+}
+​class _ReportsAnalyticsScreenState extends State<ReportsAnalyticsScreen> {
+String selectedRange = 'This Month';
+String reportType = 'Overview';
+​@override
+Widget build(BuildContext context) {
+String curr = appSettings.currency;
+​return AnimatedBuilder(
+animation: appSettings,
+builder: (context, _) {
+double income = appSettings.getTotalIncome();
+double expense = appSettings.getTotalExpense();
+double netSavings = income - expense;
+​return Scaffold(
+appBar: AppBar(
+title: Text(appSettings.translate('Report')),
+actions: [
+Builder(
+builder: (ctx) => IconButton(
+icon: const Icon(Icons.picture_as_pdf, color: Colors.redAccent),
+onPressed: () => showStandardDownloadMenu(
+context,
+(ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero),
+),
+),
+),
+],
+),
+body: SingleChildScrollView(
+padding: const EdgeInsets.all(16.0),
+child: Column(
+crossAxisAlignment: CrossAxisAlignment.start,
+children: [
+// Date Filter Selector
+Row(
+mainAxisAlignment: MainAxisAlignment.spaceBetween,
+children: [
+DropdownButton<String>(
+value: selectedRange,
+items: ['Today', 'This Week', 'This Month', 'This Year', 'Custom Range']
+.map((r) => DropdownMenuItem(value: r, child: Text(r)))
+.toList(),
+onChanged: (val) {
+if (val != null) setState(() => selectedRange = val);
+},
+),
+ElevatedButton.icon(
+icon: const Icon(Icons.tune, size: 18),
+label: const Text('Filter'),
+onPressed: () {},
+),
+],
+),
+const SizedBox(height: 16),
+​// Summary Analytics Card
+Container(
+padding: const EdgeInsets.all(18),
+decoration: BoxDecoration(
+color: Theme.of(context).cardColor,
+borderRadius: BorderRadius.circular(16),
+border: Border.all(color: const Color(0xFF10B981).withOpacity(0.3)),
+),
+child: Column(
+children: [
+Row(
+mainAxisAlignment: MainAxisAlignment.spaceBetween,
+children: [
+const Text('Net Cashflow', style: TextStyle(color: Colors.grey)),
+Text('netSavingscurr',
+style: TextStyle(
+fontSize: 20,
+fontWeight: FontWeight.bold,
+color: netSavings >= 0 ? Colors.green : Colors.red,
+)),
+],
+),
+const Divider(height: 20),
+Row(
+mainAxisAlignment: MainAxisAlignment.spaceAround,
+children: [
+Column(
+children: [
+const Text('Total Inflow', style: TextStyle(fontSize: 12, color: Colors.grey)),
+const SizedBox(height: 4),
+Text('+ incomecurr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+],
+),
+Column(
+children: [
+const Text('Total Outflow', style: TextStyle(fontSize: 12, color: Colors.grey)),
+const SizedBox(height: 4),
+Text('- expensecurr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
+],
+),
+],
+),
+],
+),
+),
+const SizedBox(height: 24),
+​// Category Breakdowns
+const Text('Expense Breakdown by Category', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+const SizedBox(height: 12),
+appSettings.categories.isEmpty
+? const Text('No category data available')
+: ListView.builder(
+shrinkWrap: true,
+physics: const NeverScrollableScrollPhysics(),
+itemCount: appSettings.categories.length,
+itemBuilder: (context, index) {
+final cat = appSettings.categories[index];
+double catTotal = 0;
+for (var t in appSettings.transactions) {
+if (t.category == cat && t.type == 'Expense') catTotal += t.amount;
+}
+double percentage = expense > 0 ? (catTotal / expense) : 0.0;
+​return Padding(
+padding: const EdgeInsets.only(bottom: 12.0),
+child: Column(
+crossAxisAlignment: CrossAxisAlignment.start,
+children: [
+Row(
+mainAxisAlignment: MainAxisAlignment.spaceBetween,
+children: [
+Text(appSettings.translate(cat), style: const TextStyle(fontWeight: FontWeight.w500)),
+Text('$catTotal curr ({(percentage * 100).toStringAsFixed(1)}%)',
+style: const TextStyle(color: Colors.grey, fontSize: 13)),
+],
+),
+const SizedBox(height: 6),
+LinearProgressIndicator(
+value: percentage,
+backgroundColor: Colors.grey.withOpacity(0.2),
+color: const Color(0xFF10B981),
+minHeight: 8,
+borderRadius: BorderRadius.circular(4),
+),
+],
+),
+);
+},
+),
+],
+),
+),
+);
+},
+);
+}
+}
+​// ==========================================
+// 11. REPEATED TRANSACTIONS & SCHEDULER
+// ==========================================
+​class RepeatedTransactionsScreen extends StatefulWidget {
+const RepeatedTransactionsScreen({super.key});
+​@override
+State<RepeatedTransactionsScreen> createState() => _RepeatedTransactionsScreenState();
+}
+​class _RepeatedTransactionsScreenState extends State<RepeatedTransactionsScreen> {
+void _showAddEditRepeatedDialog({int? index, RepeatedTransactionModel? item}) {
+final titleC = TextEditingController(text: item?.title ?? '');
+final amountC = TextEditingController(text: item != null ? item.amount.toString() : '');
+String freq = item?.frequency ?? '1st of every month';
+​showDialog(
+context: context,
+builder: (ctx) => AlertDialog(
+title: Text(index == null ? 'Add Auto Recurring Item' : 'Edit Recurring Item'),
+content: Column(
+mainAxisSize: MainAxisSize.min,
+children: [
+TextField(controller: titleC, decoration: const InputDecoration(labelText: 'Title (e.g. Rent, Internet)', border: OutlineInputBorder())),
+const SizedBox(height: 10),
+TextField(controller: amountC, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Fixed Amount', border: OutlineInputBorder())),
+const SizedBox(height: 10),
+DropdownButtonFormField<String>(
+value: freq,
+decoration: const InputDecoration(labelText: 'Frequency', border: OutlineInputBorder()),
+items: ['Daily', 'Weekly', '1st of every month', '10th of every month', 'Yearly']
+.map((f) => DropdownMenuItem(value: f, child: Text(f)))
+.toList(),
+onChanged: (val) { if (val != null) freq = val; },
+),
+],
+),
+actions: [
+TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+ElevatedButton(
+onPressed: () {
+if (titleC.text.isNotEmpty && amountC.text.isNotEmpty) {
+double amt = double.tryParse(amountC.text) ?? 0.0;
+if (index == null) {
+appSettings.repeatedTransactions.add(
+RepeatedTransactionModel(title: titleC.text, amount: amt, frequency: freq),
+);
+} else {
+appSettings.repeatedTransactions[index] =
+RepeatedTransactionModel(title: titleC.text, amount: amt, frequency: freq);
+}
+appSettings.notifyListeners();
+Navigator.pop(ctx);
+setState(() {});
+}
+},
+child: const Text('Save'),
+),
+],
+),
+);
+}
+​@override
+Widget build(BuildContext context) {
+return AnimatedBuilder(
+animation: appSettings,
+builder: (context, _) => Scaffold(
+appBar: AppBar(title: const Text('Recurring Expenses & Bills')),
+body: ListView.builder(
+padding: const EdgeInsets.all(12),
+itemCount: appSettings.repeatedTransactions.length,
+itemBuilder: (context, index) {
+final item = appSettings.repeatedTransactions[index];
+return Card(
+margin: const EdgeInsets.only(bottom: 8),
+child: ListTile(
+leading: const Icon(Icons.repeat, color: Color(0xFF10B981)),
+title: Text(item.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+subtitle: Text('Frequency: {item.frequency}'),
+trailing: Row(
+mainAxisSize: MainAxisSize.min,
+children: [
+Text('{item.amount}${appSettings.currency}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
+IconButton(
+icon: const Icon(Icons.delete_outline, color: Colors.red),
+onPressed: () {
+appSettings.repeatedTransactions.removeAt(index);
+appSettings.notifyListeners();
+setState(() {});
+},
+),
+],
+),
+),
+);
+},
+),
+floatingActionButton: FloatingActionButton(
+backgroundColor: const Color(0xFF10B981),
+onPressed: () => _showAddEditRepeatedDialog(),
+child: const Icon(Icons.add, color: Colors.white),
+),
+),
+);
+}
+}
+​// ==========================================
+// 12. REMINDERS & BILL TRACKER
+// ==========================================
+​class RemindersScreen extends StatefulWidget {
+const RemindersScreen({super.key});
+​@override
+State<RemindersScreen> createState() => _RemindersScreenState();
+}
+​class _RemindersScreenState extends State<RemindersScreen> {
+void _showAddReminderDialog() {
+final titleC = TextEditingController();
+final amountC = TextEditingController();
+final dateC = TextEditingController(text: '15th of every month');
+​showDialog(
+context: context,
+builder: (ctx) => AlertDialog(
+title: const Text('Add Bill Reminder'),
+content: Column(
+mainAxisSize: MainAxisSize.min,
+children: [
+TextField(controller: titleC, decoration: const InputDecoration(labelText: 'Bill Name', border: OutlineInputBorder())),
+const SizedBox(height: 10),
+TextField(controller: amountC, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Expected Amount', border: OutlineInputBorder())),
+const SizedBox(height: 10),
+TextField(controller: dateC, decoration: const InputDecoration(labelText: 'Due Date Note', border: OutlineInputBorder())),
+],
+),
+actions: [
+TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+ElevatedButton(
+onPressed: () {
+if (titleC.text.isNotEmpty) {
+double amt = double.tryParse(amountC.text) ?? 0.0;
+appSettings.addReminder(titleC.text, amt, dateC.text);
+Navigator.pop(ctx);
+setState(() {});
+}
+},
+child: const Text('Save Reminder'),
+),
+],
+),
+);
+}
+​@override
+Widget build(BuildContext context) {
+return AnimatedBuilder(
+animation: appSettings,
+builder: (context, _) => Scaffold(
+appBar: AppBar(title: const Text('Bill Reminders')),
+body: ListView.builder(
+padding: const EdgeInsets.all(12),
+itemCount: appSettings.reminders.length,
+itemBuilder: (context, index) {
+final r = appSettings.reminders[index];
+return Card(
+margin: const EdgeInsets.only(bottom: 8),
+child: ListTile(
+leading: const Icon(Icons.notifications_active, color: Colors.orange),
+title: Text(r.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+subtitle: Text('Due: {r.dueDate}'),
+trailing: Text('{r.amount}${appSettings.currency}', style: const TextStyle(fontWeight: FontWeight.bold)),
+),
+);
+},
+),
+floatingActionButton: FloatingActionButton(
+backgroundColor: const Color(0xFF10B981),
+onPressed: () => _showAddReminderDialog(),
+child: const Icon(Icons.add, color: Colors.white),
+),
+),
+);
+}
+}
