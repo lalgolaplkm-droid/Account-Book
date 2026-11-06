@@ -4140,7 +4140,7 @@ const HomeScreenContent(),
 const LoanDebtScreen(),
 const AllTransactionsScreen(),
 const ReportsScreen(),
-const profilescreen(),
+const ProfileScreen(),
 ];
 ​return AnimatedBuilder(
 animation: appSettings,
