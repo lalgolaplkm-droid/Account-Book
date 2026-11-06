@@ -3,6 +3,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await appSettings.initPrefs();
+  runApp(const AccountBookApp());
+}
+
 // ----------------- Models -----------------
 class TransactionItem {
   final String id;
@@ -146,6 +152,7 @@ class ReminderModel {
   Map<String, dynamic> toJson() => {'title': title, 'amount': amount, 'dueDate': dueDate};
   factory ReminderModel.fromJson(Map<String, dynamic> json) => ReminderModel(title: json['title'], amount: json['amount'], dueDate: json['dueDate']);
 }
+
 // ----------------- State Management with Persistent Storage -----------------
 class AppSettingsNotifier extends ChangeNotifier {
   late SharedPreferences _prefs;
@@ -177,9 +184,6 @@ class AppSettingsNotifier extends ChangeNotifier {
   int selectedMonthIndex = DateTime.now().month;
   int selectedYear = DateTime.now().year;
 
-  DateTime? customStartDate;
-  DateTime? customEndDate;
-
   List<String> categories = ['Grocery', 'Others', 'Salary', 'Tea & Snacks', 'Transport'];
   
   List<AccountModel> accounts = [
@@ -190,7 +194,6 @@ class AppSettingsNotifier extends ChangeNotifier {
     AccountModel(name: 'UCB Bank', type: 'Bank', details: 'A/C: ...4589', isDefault: false),
   ];
 
-  String defaultCategory = 'Others';
   double monthlyBudget = 15000.0;
 
   List<TransactionItem> transactions = [
@@ -201,15 +204,6 @@ class AppSettingsNotifier extends ChangeNotifier {
       category: 'Salary',
       amount: 45000.0,
       description: 'Monthly Salary',
-      date: DateTime.now(),
-    ),
-    TransactionItem(
-      id: '2',
-      type: 'Expense',
-      account: 'Cash in Hand',
-      category: 'Tea & Snacks',
-      amount: 350.0,
-      description: 'Evening snacks',
       date: DateTime.now(),
     ),
   ];
@@ -227,12 +221,10 @@ class AppSettingsNotifier extends ChangeNotifier {
 
   List<ShoppingItem> shoppingList = [
     ShoppingItem(name: 'Cooking Oil', amount: 150.0, isChecked: true),
-    ShoppingItem(name: 'Rice (5 kg)', amount: 450.0, isChecked: false),
   ];
 
   List<BudgetModel> budgets = [
     BudgetModel(category: 'Food & Hotel', amount: 5000.0),
-    BudgetModel(category: 'Transport', amount: 3000.0),
   ];
 
   List<SavingsModel> savingsList = [
@@ -241,7 +233,6 @@ class AppSettingsNotifier extends ChangeNotifier {
 
   List<RepeatedTransactionModel> repeatedTransactions = [
     RepeatedTransactionModel(title: 'House Rent', amount: 8000, frequency: '1st of every month'),
-    RepeatedTransactionModel(title: 'WiFi Bill', amount: 1000, frequency: '10th of every month'),
   ];
 
   List<ReminderModel> reminders = [
@@ -298,39 +289,13 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Language': return 'ভাষা';
         case 'About App': return 'অ্যাপ সম্পর্কে';
         case 'Current Balance': return 'বর্তমান ব্যালেন্স';
-        case 'Month': return 'মাস';
-        case 'Year': return 'বছর';
         case 'Income': return 'আয়';
         case 'Expense': return 'ব্যয়';
-        case 'Quick Access': return 'কুইক এক্সেস';
-        case 'Recent Transactions': return 'সাম্প্রতিক লেনদেন';
-        case 'Budget': return 'বাজেট';
-        case 'Reminder': return 'রিমাইন্ডার';
-        case 'Repeat': return 'রিপিট';
-        case 'Savings': return 'সেভিংস';
-        case 'Shopping': return 'শপিং';
         case 'Account': return 'হিসাব';
         case 'Loan': return 'লোন';
         case 'Transactions': return 'লেনদেন';
         case 'Report': return 'রিপোর্ট';
         case 'Profile': return 'প্রোফাইল';
-        case 'Grocery': return 'মুদি বাজার';
-        case 'Others': return 'অন্যান্য';
-        case 'Salary': return 'বেতন';
-        case 'Tea & Snacks': return 'চা ও নাস্তা';
-        case 'Transport': return 'যাতায়াত';
-        case 'Food & Hotel': return 'খাবার ও হোটেল';
-        case 'Bikash': return 'বিকাশ';
-        case 'Cash in Hand': return 'হাতে নগদ টাকা';
-        case 'Dutch-Bangla Bank': return 'ডাচ-বাংলা ব্যাংক';
-        case 'Nagad': return 'নগদ';
-        case 'UCB Bank': return 'ইউসিবি ব্যাংক';
-        case 'Mobile Banking': return 'মোবাইল ব্যাংকিং';
-        case 'Cash': return 'নগদ';
-        case 'Bank': return 'ব্যাংক';
-        case 'Settings': return 'সেটিংস';
-        case 'Goals': return 'লক্ষ্য';
-        case 'Calculators': return 'ক্যালকুলেটর হাব';
         default: return key;
       }
     } else if (_language == 'Arabic') {
@@ -341,10 +306,6 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Accounts': return 'الحسابات';
         case 'Theme': return 'المظهر';
         case 'Language': return 'اللغة';
-        case 'About App': return 'حول التطبيق';
-        case 'Current Balance': return 'الرصيد الحالي';
-        case 'Month': return 'شهر';
-        case 'Year': return 'سنة';
         case 'Income': return 'إيرادات';
         case 'Expense': return 'مصروفات';
         default: return key;
@@ -362,12 +323,6 @@ class AppSettingsNotifier extends ChangeNotifier {
   void setLanguage(String lang) {
     _language = lang;
     _saveToPrefs();
-    notifyListeners();
-  }
-
-  void setMonthYear(int month, int year) {
-    selectedMonthIndex = month;
-    selectedYear = year;
     notifyListeners();
   }
 
@@ -397,45 +352,9 @@ class AppSettingsNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addTransaction(TransactionItem txn) {
-    transactions.insert(0, txn);
-    notifyListeners();
-  }
-
-  void removeTransaction(int index) {
-    transactions.removeAt(index);
-    notifyListeners();
-  }
-
-  void addLoan(LoanItem loan) {
-    loans.insert(0, loan);
-    notifyListeners();
-  }
-
-  void removeLoan(int index) {
-    loans.removeAt(index);
-    notifyListeners();
-  }
-
-  void toggleLoanStatus(String id) {
-    for (var loan in loans) {
-      if (loan.id == id) {
-        loan.isPaid = !loan.isPaid;
-        notifyListeners();
-        break;
-      }
-    }
-  }
-
-  List<TransactionItem> getFilteredTransactions() {
-    return transactions.where((txn) {
-      return txn.date.year == selectedYear && txn.date.month == selectedMonthIndex;
-    }).toList();
-  }
-
   double getTotalIncome() {
     double total = 0;
-    for (var txn in getFilteredTransactions()) {
+    for (var txn in transactions) {
       if (txn.type == 'Income') total += txn.amount;
     }
     return total;
@@ -443,55 +362,17 @@ class AppSettingsNotifier extends ChangeNotifier {
 
   double getTotalExpense() {
     double total = 0;
-    for (var txn in getFilteredTransactions()) {
+    for (var txn in transactions) {
       if (txn.type == 'Expense') total += txn.amount;
     }
     return total;
   }
 
-  double getTotalBalance() {
-    return getTotalIncome() - getTotalExpense();
-  }
-
-  double getTotalGiven() {
-    double total = 0;
-    for (var loan in loans) {
-      if (loan.type == 'Given' && !loan.isPaid) total += loan.amount;
-    }
-    return total;
-  }
-
-  double getTotalTaken() {
-    double total = 0;
-    for (var loan in loans) {
-      if (loan.type == 'Taken' && !loan.isPaid) total += loan.amount;
-    }
-    return total;
-  }
-
-  double getNetBalance() {
-    return getTotalGiven() - getTotalTaken();
-  }
-
-  void addAccount(String name, String type, String details) {
-    if (name.isNotEmpty) {
-      accounts.add(AccountModel(name: name, type: type, details: details, isDefault: false));
-      notifyListeners();
-    }
-  }
-
-  void addBudget(String category, double amount) {
-    budgets.add(BudgetModel(category: category, amount: amount));
-    notifyListeners();
-  }
-
-  void addSavings(String title, double target) {
-    savingsList.add(SavingsModel(title: title, targetAmount: target, currentAmount: 0));
-    notifyListeners();
-  }
+  double getTotalBalance() => getTotalIncome() - getTotalExpense();
 }
 
 final appSettings = AppSettingsNotifier();
+
 // ----------------- App Entry Point -----------------
 class AccountBookApp extends StatelessWidget {
   const AccountBookApp({super.key});
@@ -511,11 +392,6 @@ class AccountBookApp extends StatelessWidget {
             primaryColor: const Color(0xFF38BDF8),
             cardColor: Colors.white,
             appBarTheme: const AppBarTheme(backgroundColor: Colors.white, foregroundColor: Colors.black),
-            dialogTheme: const DialogTheme(backgroundColor: Colors.white, surfaceTintColor: Colors.white),
-            bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.white, surfaceTintColor: Colors.white),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), foregroundColor: Colors.white),
-            ),
           ),
           darkTheme: ThemeData(
             brightness: Brightness.dark,
@@ -523,11 +399,6 @@ class AccountBookApp extends StatelessWidget {
             primaryColor: const Color(0xFF10B981),
             cardColor: const Color(0xFF1E293B),
             appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF1E293B), foregroundColor: Colors.white),
-            dialogTheme: const DialogTheme(backgroundColor: Color(0xFF1E293B), surfaceTintColor: Color(0xFF1E293B)),
-            bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Color(0xFF1E293B), surfaceTintColor: Color(0xFF1E293B)),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), foregroundColor: Colors.white),
-            ),
           ),
           home: const PinLockScreen(),
         );
@@ -536,7 +407,7 @@ class AccountBookApp extends StatelessWidget {
   }
 }
 
-// ----------------- Pin & Lock Screen with Language Switcher -----------------
+// ----------------- Pin & Lock Screen with Language Selector -----------------
 class PinLockScreen extends StatefulWidget {
   const PinLockScreen({super.key});
 
@@ -572,7 +443,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   RadioListTile<String>(
-                    title: const Text('English'),
+                    title: const Text('English (Default)'),
                     value: 'English',
                     groupValue: appSettings.language,
                     activeColor: const Color(0xFF10B981),
@@ -624,7 +495,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
             actions: [
               IconButton(
                 icon: const Icon(Icons.language, color: Colors.white),
-                tooltip: 'Change Language',
+                tooltip: 'Language',
                 onPressed: () => _showLockScreenLanguageDialog(context),
               ),
             ],
@@ -698,6 +569,327 @@ class _PinLockScreenState extends State<PinLockScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+// ----------------- Profile Screen with Camera, Gallery & Avatar Selector -----------------
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final ImagePicker _picker = ImagePicker();
+
+  void _showProfileImagePicker() {
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => Wrap(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.camera_alt, color: Color(0xFF10B981)),
+            title: const Text('Take Photo with Camera'),
+            onTap: () async {
+              Navigator.pop(ctx);
+              final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+              if (image != null) {
+                appSettings.updateProfile(
+                  name: appSettings.profileName,
+                  email: appSettings.profileEmail,
+                  gender: appSettings.profileGender,
+                  birthDate: appSettings.profileBirthDate,
+                  mobile: appSettings.profileMobile,
+                  imagePath: image.path,
+                );
+                setState(() {});
+              }
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.photo_library, color: Color(0xFF10B981)),
+            title: const Text('Choose from Gallery'),
+            onTap: () async {
+              Navigator.pop(ctx);
+              final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+              if (image != null) {
+                appSettings.updateProfile(
+                  name: appSettings.profileName,
+                  email: appSettings.profileEmail,
+                  gender: appSettings.profileGender,
+                  birthDate: appSettings.profileBirthDate,
+                  mobile: appSettings.profileMobile,
+                  imagePath: image.path,
+                );
+                setState(() {});
+              }
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.face, color: Color(0xFF10B981)),
+            title: const Text('Choose from Avatar List'),
+            onTap: () {
+              Navigator.pop(ctx);
+              _showAvatarListDialog();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAvatarListDialog() {
+    List<String> avatars = [
+      'https://cdn-icons-png.flaticon.com/512/147/147144.png',
+      'https://cdn-icons-png.flaticon.com/512/147/147142.png',
+      'https://cdn-icons-png.flaticon.com/512/147/147140.png',
+    ];
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Select Avatar'),
+        content: SizedBox(
+          width: 200,
+          height: 100,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: avatars.map((url) => Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                onTap: () {
+                  appSettings.updateProfile(
+                    name: appSettings.profileName,
+                    email: appSettings.profileEmail,
+                    gender: appSettings.profileGender,
+                    birthDate: appSettings.profileBirthDate,
+                    mobile: appSettings.profileMobile,
+                    imagePath: url,
+                  );
+                  Navigator.pop(ctx);
+                  setState(() {});
+                },
+                child: CircleAvatar(backgroundImage: NetworkImage(url), radius: 30),
+              ),
+            )).toList(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: appSettings,
+      builder: (context, _) => Scaffold(
+        appBar: AppBar(title: const Text('Profile & Settings')),
+        body: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(color: const Color(0xFF10B981), borderRadius: BorderRadius.circular(16)),
+              child: Column(
+                children: [
+                  Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 35,
+                        backgroundColor: Colors.white,
+                        backgroundImage: appSettings.profileImagePath.isNotEmpty 
+                            ? (appSettings.profileImagePath.startsWith('http') ? NetworkImage(appSettings.profileImagePath) as ImageProvider : FileImage(File(appSettings.profileImagePath))) 
+                            : null,
+                        child: appSettings.profileImagePath.isEmpty ? const Icon(Icons.person, size: 45, color: Color(0xFF10B981)) : null,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: InkWell(
+                          onTap: _showProfileImagePicker,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black),
+                            child: const Icon(Icons.edit, size: 14, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(appSettings.profileName, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Card(
+              color: Theme.of(context).cardColor,
+              child: ListTile(
+                leading: const Icon(Icons.lock_outline, color: Color(0xFF10B981)),
+                title: const Text('Privacy & Security'),
+                trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PrivacySecurityScreen())),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ----------------- Privacy & Security Screen (Functional Locks) -----------------
+class PrivacySecurityScreen extends StatefulWidget {
+  const PrivacySecurityScreen({super.key});
+
+  @override
+  State<PrivacySecurityScreen> createState() => _PrivacySecurityScreenState();
+}
+
+class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
+  late TextEditingController _pinController;
+  bool _faceLock = false;
+  bool _fingerprint = false;
+  bool _noneLock = false;
+  bool _patternLock = false;
+  bool _pinLock = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _pinController = TextEditingController(text: appSettings.appPin);
+    _faceLock = appSettings.useFaceLock;
+    _fingerprint = appSettings.useFingerprint;
+    _noneLock = appSettings.useNoneLock;
+    _patternLock = appSettings.usePatternLock;
+    _pinLock = appSettings.usePinLock;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: appSettings,
+      builder: (context, _) => Scaffold(
+        appBar: AppBar(title: const Text('Privacy & Security')),
+        body: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            Card(
+              color: Theme.of(context).cardColor,
+              child: Column(
+                children: [
+                  SwitchListTile(
+                    title: const Text('Face Unlock'),
+                    value: _faceLock,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) => setState(() { _faceLock = val; if (val) _noneLock = false; }),
+                  ),
+                  SwitchListTile(
+                    title: const Text('Fingerprint Sensor'),
+                    value: _fingerprint,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) => setState(() { _fingerprint = val; if (val) _noneLock = false; }),
+                  ),
+                  SwitchListTile(
+                    title: const Text('None (No Lock)'),
+                    value: _noneLock,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) => setState(() {
+                      _noneLock = val;
+                      if (val) { _faceLock = false; _fingerprint = false; _patternLock = false; _pinLock = false; }
+                    }),
+                  ),
+                  SwitchListTile(
+                    title: const Text('Pattern Lock'),
+                    value: _patternLock,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) => setState(() { _patternLock = val; if (val) _noneLock = false; }),
+                  ),
+                  SwitchListTile(
+                    title: const Text('PIN Code Lock'),
+                    value: _pinLock,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) => setState(() { _pinLock = val; if (val) _noneLock = false; }),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            if (_pinLock) ...[
+              TextField(
+                controller: _pinController,
+                keyboardType: TextInputType.number,
+                maxLength: 4,
+                decoration: const InputDecoration(labelText: '4-Digit PIN', border: OutlineInputBorder()),
+              ),
+            ],
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {
+                if (_pinController.text.length == 4 || _noneLock || !_pinLock) {
+                  if (_pinLock) appSettings.updatePin(_pinController.text);
+                  appSettings.updateSecurityToggles(
+                    face: _faceLock,
+                    fingerprint: _fingerprint,
+                    none: _noneLock,
+                    pattern: _patternLock,
+                    pin: _pinLock,
+                  );
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Security updated successfully!')));
+                }
+              },
+              child: const Text('Save Changes'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ----------------- Main Navigation Container -----------------
+class MainHomeScreen extends StatefulWidget {
+  const MainHomeScreen({super.key});
+
+  @override
+  State<MainHomeScreen> createState() => _MainHomeScreenState();
+}
+
+class _MainHomeScreenState extends State<MainHomeScreen> {
+  int _currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      Scaffold(appBar: AppBar(title: Text(appSettings.getAppTitle())), body: Center(child: Text('Balance: ${appSettings.getTotalBalance()} ${appSettings.currency}'))),
+      const Scaffold(body: Center(child: Text('Loan Module'))),
+      const Scaffold(body: Center(child: Text('Transactions Module'))),
+      const Scaffold(body: Center(child: Text('Reports Module'))),
+      const ProfileScreen(),
+    ];
+
+    return AnimatedBuilder(
+      animation: appSettings,
+      builder: (context, _) => Scaffold(
+        body: pages[_currentIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (index) => setState(() => _currentIndex = index),
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: const Color(0xFF10B981),
+          unselectedItemColor: Colors.grey,
+          backgroundColor: Theme.of(context).cardColor,
+          items: [
+            BottomNavigationBarItem(icon: const Icon(Icons.home), label: appSettings.translate('Account')),
+            BottomNavigationBarItem(icon: const Icon(Icons.money), label: appSettings.translate('Loan')),
+            BottomNavigationBarItem(icon: const Icon(Icons.list_alt), label: appSettings.translate('Transactions')),
+            BottomNavigationBarItem(icon: const Icon(Icons.bar_chart), label: appSettings.translate('Report')),
+            BottomNavigationBarItem(icon: const Icon(Icons.person), label: appSettings.translate('Profile')),
+          ],
+        ),
+      ),
     );
   }
 }
