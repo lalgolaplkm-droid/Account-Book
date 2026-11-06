@@ -557,3 +557,742 @@ child: const Text('Unlock App', style: TextStyle(color: Colors.white, fontSize: 
 );
 }
 }
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+​// ==========================================
+// 5. MAIN NAVIGATION & HOME DASHBOARD
+// ==========================================
+​class MainHomeScreen extends StatefulWidget {
+const MainHomeScreen({super.key});
+​@override
+State<MainHomeScreen> createState() => _MainHomeScreenState();
+}
+​class _MainHomeScreenState extends State<MainHomeScreen> {
+int _currentIndex = 0;
+​final List<Widget> _pages = [
+const HomeScreenContent(),
+const LoanDebtScreen(),
+const AccountsScreen(),
+const ProfileScreen(),
+];
+​@override
+Widget build(BuildContext context) {
+return AnimatedBuilder(
+animation: appSettings,
+builder: (context, _) {
+return Scaffold(
+body: _pages[_currentIndex],
+bottomNavigationBar: BottomNavigationBar(
+currentIndex: _currentIndex,
+onTap: (index) => setState(() => _currentIndex = index),
+type: BottomNavigationBarType.fixed,
+selectedItemColor: const Color(0xFF10B981),
+unselectedItemColor: Colors.grey,
+backgroundColor: Theme.of(context).cardColor,
+items: [
+BottomNavigationBarItem(
+icon: const Icon(Icons.home),
+label: appSettings.translate('Account Book'),
+),
+BottomNavigationBarItem(
+icon: const Icon(Icons.money),
+label: appSettings.translate('Loan'),
+),
+BottomNavigationBarItem(
+icon: const Icon(Icons.account_balance_wallet),
+label: appSettings.translate('Accounts'),
+),
+BottomNavigationBarItem(
+icon: const Icon(Icons.person),
+label: appSettings.translate('Profile'),
+),
+],
+),
+);
+},
+);
+}
+}
+​class HomeScreenContent extends StatelessWidget {
+const HomeScreenContent({super.key});
+​void _showAddTransactionDialog(BuildContext context) {
+String transactionType = 'Expense';
+String selectedCategory = appSettings.categories.first;
+String selectedAccount = appSettings.accounts.firstWhere((acc) => acc.isDefault, orElse: () => appSettings.accounts[0]).name;
+​final TextEditingController amountController = TextEditingController();
+final TextEditingController descController = TextEditingController();
+​showModalBottomSheet(
+context: context,
+isScrollControlled: true,
+shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+builder: (ctx) {
+return StatefulBuilder(
+builder: (ctx, setStateModal) {
+return Padding(
+padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
+child: SingleChildScrollView(
+child: Column(
+mainAxisSize: MainAxisSize.min,
+crossAxisAlignment: CrossAxisAlignment.start,
+children: [
+const Text('Add New Transaction', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+const SizedBox(height: 16),
+Row(
+children: [
+Expanded(
+child: ElevatedButton(
+style: ElevatedButton.styleFrom(backgroundColor: transactionType == 'Income' ? Colors.green : const Color(0xFF1E293B)),
+onPressed: () => setStateModal(() => transactionType = 'Income'),
+child: const Text('Income (Cash In)'),
+),
+),
+const SizedBox(width: 10),
+Expanded(
+child: ElevatedButton(
+style: ElevatedButton.styleFrom(backgroundColor: transactionType == 'Expense' ? Colors.red : const Color(0xFF1E293B)),
+onPressed: () => setStateModal(() => transactionType = 'Expense'),
+child: const Text('Expense (Cash Out)'),
+),
+),
+],
+),
+const SizedBox(height: 16),
+DropdownButtonFormField<String>(
+value: selectedAccount,
+dropdownColor: Theme.of(context).cardColor,
+decoration: const InputDecoration(labelText: 'Account', border: OutlineInputBorder()),
+items: appSettings.accounts.map((acc) => DropdownMenuItem(value: acc.name, child: Text(appSettings.translate(acc.name)))).toList(),
+onChanged: (val) { if (val != null) setStateModal(() => selectedAccount = val); },
+),
+const SizedBox(height: 12),
+DropdownButtonFormField<String>(
+value: selectedCategory,
+dropdownColor: Theme.of(context).cardColor,
+decoration: const InputDecoration(labelText: 'Category', border: OutlineInputBorder()),
+items: appSettings.categories.map((cat) => DropdownMenuItem(value: cat, child: Text(appSettings.translate(cat)))).toList(),
+onChanged: (val) { if (val != null) setStateModal(() => selectedCategory = val); },
+),
+const SizedBox(height: 12),
+TextField(controller: amountController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Amount', border: OutlineInputBorder())),
+const SizedBox(height: 12),
+TextField(controller: descController, decoration: const InputDecoration(labelText: 'Description / Note', border: OutlineInputBorder())),
+const SizedBox(height: 20),
+SizedBox(
+width: double.infinity,
+child: ElevatedButton(
+style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+onPressed: () {
+if (amountController.text.isNotEmpty) {
+double amount = double.tryParse(amountController.text) ?? 0.0;
+appSettings.addTransaction(TransactionItem(
+id: DateTime.now().toString(),
+type: transactionType,
+account: selectedAccount,
+category: selectedCategory,
+amount: amount,
+description: descController.text,
+date: DateTime.now(),
+));
+Navigator.pop(ctx);
+}
+},
+child: const Text('Save Transaction', style: TextStyle(fontSize: 16)),
+),
+),
+],
+),
+),
+);
+},
+);
+},
+);
+}
+​Widget _quickIcon(BuildContext context, IconData icon, String label, Widget screen) {
+return Padding(
+padding: const EdgeInsets.only(right: 16.0),
+child: InkWell(
+onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => screen)),
+child: Column(
+children: [
+Container(
+padding: const EdgeInsets.all(14),
+decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(14)),
+child: Icon(icon, color: const Color(0xFF10B981), size: 24),
+),
+const SizedBox(height: 6),
+Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+],
+),
+),
+);
+}
+​@override
+Widget build(BuildContext context) {
+String curr = appSettings.currency;
+​return AnimatedBuilder(
+animation: appSettings,
+builder: (context, child) {
+return Scaffold(
+appBar: AppBar(
+title: Text(appSettings.getAppTitle(), style: const TextStyle(fontWeight: FontWeight.bold)),
+actions: [
+IconButton(
+icon: const Icon(Icons.notifications_none),
+onPressed: () {
+Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationCenterScreen()));
+},
+),
+],
+),
+drawer: const AppDrawer(),
+body: SingleChildScrollView(
+padding: const EdgeInsets.all(16.0),
+child: Column(
+crossAxisAlignment: CrossAxisAlignment.start,
+children: [
+Container(
+padding: const EdgeInsets.all(20),
+decoration: BoxDecoration(
+color: Theme.of(context).cardColor,
+borderRadius: BorderRadius.circular(16),
+boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+),
+child: Column(
+crossAxisAlignment: CrossAxisAlignment.start,
+children: [
+Text(appSettings.translate('Current Balance'), style: const TextStyle(color: Colors.grey, fontSize: 13)),
+const SizedBox(height: 6),
+Text('{appSettings.getTotalBalance()}$curr', style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+const Divider(height: 24),
+Row(
+children: [
+Expanded(
+child: Container(
+padding: const EdgeInsets.all(12),
+decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+child: Column(
+crossAxisAlignment: CrossAxisAlignment.start,
+children: [
+Text(appSettings.translate('Income'), style: const TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold)),
+const SizedBox(height: 4),
+Text('${appSettings.getTotalIncome()}$curr', style: const TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.bold)),
+],
+),
+),
+),
+const SizedBox(width: 12),
+Expanded(
+child: Container(
+padding: const EdgeInsets.all(12),
+decoration: BoxDecoration(color: Colors.red.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+child: Column(
+crossAxisAlignment: CrossAxisAlignment.start,
+children: [
+Text(appSettings.translate('Expense'), style: const TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.bold)),
+const SizedBox(height: 4),
+Text('${appSettings.getTotalExpense()}$curr', style: const TextStyle(color: Colors.redAccent, fontSize: 16, fontWeight: FontWeight.bold)),
+],
+),
+),
+),
+],
+),
+],
+),
+),
+const SizedBox(height: 24),
+Text(appSettings.translate('Quick Access'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+const SizedBox(height: 12),
+SingleChildScrollView(
+scrollDirection: Axis.horizontal,
+child: Row(
+children: [
+_quickIcon(context, Icons.account_balance_wallet, appSettings.translate('Account'), const AccountsScreen()),
+_quickIcon(context, Icons.track_changes, appSettings.translate('Budget'), const BudgetScreen()),
+_quickIcon(context, Icons.category, appSettings.translate('Categories'), const CategoriesScreen()),
+_quickIcon(context, Icons.shopping_cart, appSettings.translate('Shopping'), const FundShoppingScreen()),
+_quickIcon(context, Icons.calculate, appSettings.translate('Calculators'), const CalculatorsHubScreen()),
+],
+),
+),
+const SizedBox(height: 24),
+Text(appSettings.translate('Recent Transactions'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+const SizedBox(height: 12),
+appSettings.transactions.isEmpty
+? const Center(child: Padding(padding: EdgeInsets.all(20), child: Text('No transactions available')))
+: ListView.builder(
+shrinkWrap: true,
+physics: const NeverScrollableScrollPhysics(),
+itemCount: appSettings.transactions.length > 5 ? 5 : appSettings.transactions.length,
+itemBuilder: (context, index) {
+final txn = appSettings.transactions[index];
+bool isIncome = txn.type == 'Income';
+return Card(
+margin: const EdgeInsets.only(bottom: 8),
+child: ListTile(
+leading: CircleAvatar(
+backgroundColor: (isIncome ? Colors.green : Colors.red).withOpacity(0.15),
+child: Icon(isIncome ? Icons.arrow_downward : Icons.arrow_upward, color: isIncome ? Colors.green : Colors.red),
+),
+title: Text('${appSettings.translate(txn.category)} ({appSettings.translate(txn.account)})', style: const TextStyle(fontWeight: FontWeight.bold)),
+subtitle: Text(txn.description),
+trailing: Text(
+'${isIncome ? '+' : '-'} curr{txn.amount}',
+style: TextStyle(color: isIncome ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 15),
+),
+),
+);
+},
+),
+],
+),
+),
+floatingActionButton: FloatingActionButton(
+backgroundColor: const Color(0xFF10B981),
+onPressed: () => _showAddTransactionDialog(context),
+child: const Icon(Icons.add, color: Colors.white),
+),
+);
+},
+);
+}
+}
+​// ==========================================
+// 6. LOAN & DEBT MANAGEMENT SCREEN
+// ==========================================
+​class LoanDebtScreen extends StatefulWidget {
+const LoanDebtScreen({super.key});
+​@override
+State<LoanDebtScreen> createState() => _LoanDebtScreenState();
+}
+​class _LoanDebtScreenState extends State<LoanDebtScreen> {
+String selectedFilter = 'All';
+​void _showAddEditLoanDialog(BuildContext context, {int? index, LoanItem? loan}) {
+String loanType = loan?.type ?? 'Given';
+String selectedAccount = loan?.account ?? appSettings.accounts.first.name;
+final nameC = TextEditingController(text: loan?.personName ?? '');
+final amountC = TextEditingController(text: loan != null ? loan.amount.toString() : '');
+final descC = TextEditingController(text: loan?.description ?? '');
+bool updateBalance = true;
+​showDialog(
+context: context,
+builder: (ctx) => StatefulBuilder(
+builder: (ctx, setStateModal) => AlertDialog(
+title: Text(index == null ? 'Add Loan / Debt' : 'Edit Loan / Debt'),
+content: SingleChildScrollView(
+child: Column(
+mainAxisSize: MainAxisSize.min,
+children: [
+Row(
+children: [
+Expanded(
+child: ElevatedButton(
+style: ElevatedButton.styleFrom(backgroundColor: loanType == 'Given' ? Colors.green : Theme.of(context).cardColor),
+onPressed: () => setStateModal(() => loanType = 'Given'),
+child: const Text('Given'),
+),
+),
+const SizedBox(width: 8),
+Expanded(
+child: ElevatedButton(
+style: ElevatedButton.styleFrom(backgroundColor: loanType == 'Taken' ? Colors.red : Theme.of(context).cardColor),
+onPressed: () => setStateModal(() => loanType = 'Taken'),
+child: const Text('Taken'),
+),
+),
+],
+),
+const SizedBox(height: 12),
+TextField(controller: nameC, decoration: const InputDecoration(labelText: 'Person Name', border: OutlineInputBorder())),
+const SizedBox(height: 10),
+TextField(controller: amountC, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Amount', border: OutlineInputBorder())),
+const SizedBox(height: 10),
+DropdownButtonFormField<String>(
+value: selectedAccount,
+decoration: const InputDecoration(labelText: 'Account', border: OutlineInputBorder()),
+items: appSettings.accounts.map((a) => DropdownMenuItem(value: a.name, child: Text(a.name))).toList(),
+onChanged: (val) { if (val != null) setStateModal(() => selectedAccount = val); },
+),
+const SizedBox(height: 10),
+TextField(controller: descC, decoration: const InputDecoration(labelText: 'Notes', border: OutlineInputBorder())),
+CheckboxListTile(
+title: const Text('Update Account Balance?'),
+value: updateBalance,
+onChanged: (val) => setStateModal(() => updateBalance = val ?? true),
+),
+],
+),
+),
+actions: [
+TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+ElevatedButton(
+onPressed: () {
+if (nameC.text.isNotEmpty && amountC.text.isNotEmpty) {
+double amt = double.tryParse(amountC.text) ?? 0.0;
+if (index == null) {
+appSettings.addLoan(
+LoanItem(
+id: DateTime.now().toString(),
+personName: nameC.text,
+amount: amt,
+type: loanType,
+date: DateTime.now(),
+description: descC.text,
+account: selectedAccount,
+),
+updateAccountBalance: updateBalance,
+);
+}
+Navigator.pop(ctx);
+setState(() {});
+}
+},
+child: const Text('Save'),
+),
+],
+),
+),
+);
+}
+​@override
+Widget build(BuildContext context) {
+String curr = appSettings.currency;
+​return AnimatedBuilder(
+animation: appSettings,
+builder: (context, _) {
+var filteredLoans = appSettings.loans.where((l) {
+if (selectedFilter == 'Given') return l.type == 'Given' && !l.isPaid;
+if (selectedFilter == 'Taken') return l.type == 'Taken' && !l.isPaid;
+if (selectedFilter == 'Paid') return l.isPaid;
+return true;
+}).toList();
+​return Scaffold(
+appBar: AppBar(
+title: const Text('Loan & Debt Ledger'),
+),
+body: Padding(
+padding: const EdgeInsets.all(16.0),
+child: Column(
+children: [
+Container(
+padding: const EdgeInsets.all(16),
+decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(16)),
+child: Row(
+mainAxisAlignment: MainAxisAlignment.spaceAround,
+children: [
+Column(
+children: [
+const Text('Total Given', style: TextStyle(color: Colors.green)),
+Text('{appSettings.getTotalGiven()}$curr', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green)),
+],
+),
+Column(
+children: [
+const Text('Total Taken', style: TextStyle(color: Colors.redAccent)),
+Text('${appSettings.getTotalTaken()}$curr', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.redAccent)),
+],
+),
+],
+),
+),
+const SizedBox(height: 12),
+Expanded(
+child: ListView.builder(
+itemCount: filteredLoans.length,
+itemBuilder: (context, index) {
+final l = filteredLoans[index];
+return Card(
+child: ListTile(
+title: Text(l.personName, style: TextStyle(decoration: l.isPaid ? TextDecoration.lineThrough : null)),
+subtitle: Text('${l.type} - Account:{l.account}'),
+trailing: Text('curr{l.amount}', style: TextStyle(color: l.type == 'Given' ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold)),
+),
+);
+},
+),
+),
+],
+),
+),
+floatingActionButton: FloatingActionButton(
+backgroundColor: const Color(0xFF10B981),
+onPressed: () => _showAddEditLoanDialog(context),
+child: const Icon(Icons.add, color: Colors.white),
+),
+);
+},
+);
+}
+}
+​// ==========================================
+// 7. ACCOUNTS MANAGEMENT SCREEN
+// ==========================================
+​class AccountsScreen extends StatefulWidget {
+const AccountsScreen({super.key});
+​@override
+State<AccountsScreen> createState() => _AccountsScreenState();
+}
+​class _AccountsScreenState extends State<AccountsScreen> {
+void _showAccountDialog({int? index, AccountModel? acc}) {
+final nameC = TextEditingController(text: acc?.name ?? '');
+final typeC = TextEditingController(text: acc?.type ?? 'Bank');
+final detC = TextEditingController(text: acc?.details ?? '');
+final balC = TextEditingController(text: acc != null ? acc.balance.toString() : '0.0');
+​showDialog(
+context: context,
+builder: (ctx) => AlertDialog(
+title: Text(index == null ? 'Add Account' : 'Edit Account'),
+content: Column(
+mainAxisSize: MainAxisSize.min,
+children: [
+TextField(controller: nameC, decoration: const InputDecoration(labelText: 'Account Name', border: OutlineInputBorder())),
+const SizedBox(height: 8),
+DropdownButtonFormField<String>(
+value: ['Bank', 'Cash', 'Mobile Banking', 'Others'].contains(typeC.text) ? typeC.text : 'Bank',
+decoration: const InputDecoration(labelText: 'Type Sequence', border: OutlineInputBorder()),
+items: ['Bank', 'Cash', 'Mobile Banking', 'Others'].map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
+onChanged: (v) { if (v != null) typeC.text = v; },
+),
+const SizedBox(height: 8),
+TextField(controller: detC, decoration: const InputDecoration(labelText: 'Details', border: OutlineInputBorder())),
+const SizedBox(height: 8),
+TextField(controller: balC, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Balance', border: OutlineInputBorder())),
+],
+),
+actions: [
+TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+ElevatedButton(
+onPressed: () {
+if (nameC.text.isNotEmpty) {
+double b = double.tryParse(balC.text) ?? 0.0;
+if (index == null) {
+appSettings.addAccount(nameC.text, typeC.text, detC.text, b);
+}
+Navigator.pop(ctx);
+setState(() {});
+}
+},
+child: const Text('Save'),
+),
+],
+),
+);
+}
+​@override
+Widget build(BuildContext context) {
+return AnimatedBuilder(
+animation: appSettings,
+builder: (context, _) => Scaffold(
+appBar: AppBar(title: const Text('Accounts Management')),
+body: ListView.builder(
+padding: const EdgeInsets.all(12),
+itemCount: appSettings.accounts.length,
+itemBuilder: (context, index) {
+final a = appSettings.accounts[index];
+return Card(
+child: ListTile(
+title: Text('{a.name} ({a.type})'),
+subtitle: Text(a.details),
+trailing: Text('{a.balance}{appSettings.currency}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
+onTap: () => _showAccountDialog(index: index, acc: a),
+),
+);
+},
+),
+floatingActionButton: FloatingActionButton(
+backgroundColor: const Color(0xFF10B981),
+onPressed: () => _showAccountDialog(),
+child: const Icon(Icons.add, color: Colors.white),
+),
+),
+);
+}
+}
+​// ==========================================
+// 8. CALCULATORS HUB SCREEN
+// ==========================================
+​class CalculatorsHubScreen extends StatefulWidget {
+const CalculatorsHubScreen({super.key});
+​@override
+State<CalculatorsHubScreen> createState() => _CalculatorsHubScreenState();
+}
+​class _CalculatorsHubScreenState extends State<CalculatorsHubScreen> {
+String display = '0';
+​@override
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(title: const Text('Calculators Hub')),
+body: Column(
+children: [
+Expanded(
+child: Container(
+alignment: Alignment.bottomRight,
+padding: const EdgeInsets.all(24),
+child: Text(display, style: const TextStyle(fontSize: 44, fontWeight: FontWeight.bold)),
+),
+),
+GridView.count(
+shrinkWrap: true,
+crossAxisCount: 4,
+children: ['7','8','9','/','4','5','6','*','1','2','3','-','C','0','=','+'].map((btn) {
+return InkWell(
+onTap: () {
+setState(() {
+if (btn == 'C') display = '0';
+else if (display == '0') display = btn;
+else display += btn;
+});
+},
+child: Container(
+margin: const EdgeInsets.all(6),
+decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
+child: Center(child: Text(btn, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold))),
+),
+);
+}).toList(),
+),
+],
+),
+);
+}
+}
+​// ==========================================
+// 9. NOTIFICATION CENTER & AUXILIARIES
+// ==========================================
+​class NotificationCenterScreen extends StatelessWidget {
+const NotificationCenterScreen({super.key});
+​@override
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(title: const Text('Notifications')),
+body: ListView.builder(
+itemCount: appSettings.notifications.length,
+itemBuilder: (context, index) {
+final n = appSettings.notifications[index];
+return ListTile(
+leading: const Icon(Icons.notifications, color: Color(0xFF10B981)),
+title: Text(n.title),
+subtitle: Text(n.message),
+);
+},
+),
+);
+}
+}
+​class BudgetScreen extends StatelessWidget {
+const BudgetScreen({super.key});
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(title: const Text('Budget Targets')),
+body: const Center(child: Text('Budget List & Threshold Alerts')),
+);
+}
+}
+​class CategoriesScreen extends StatelessWidget {
+const CategoriesScreen({super.key});
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(title: const Text('Categories')),
+body: ListView.builder(
+itemCount: appSettings.categories.length,
+itemBuilder: (context, index) => ListTile(
+title: Text(appSettings.categories[index]),
+),
+),
+);
+}
+}
+​class FundShoppingScreen extends StatelessWidget {
+const FundShoppingScreen({super.key});
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(title: const Text('Shopping Checklist')),
+body: const Center(child: Text('Shopping Checklist Screen')),
+);
+}
+}
+​class AppDrawer extends StatelessWidget {
+const AppDrawer({super.key});
+​@override
+Widget build(BuildContext context) {
+return Drawer(
+child: ListView(
+children: [
+UserAccountsDrawerHeader(
+decoration: const BoxDecoration(color: Color(0xFF10B981)),
+accountName: Text(appSettings.profileName),
+accountEmail: Text(appSettings.profileEmail),
+),
+ListTile(
+leading: const Icon(Icons.person),
+title: const Text('Profile & Security'),
+onTap: () {
+Navigator.pop(context);
+Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
+},
+),
+],
+),
+);
+}
+}
+​class ProfileScreen extends StatefulWidget {
+const ProfileScreen({super.key});
+​@override
+State<ProfileScreen> createState() => _ProfileScreenState();
+}
+​class _ProfileScreenState extends State<ProfileScreen> {
+final ImagePicker _picker = ImagePicker();
+​void _pickImage(ImageSource src) async {
+final XFile? img = await _picker.pickImage(source: src);
+if (img != null) {
+appSettings.updateProfile(
+name: appSettings.profileName,
+email: appSettings.profileEmail,
+gender: appSettings.profileGender,
+birthDate: appSettings.profileBirthDate,
+mobile: appSettings.profileMobile,
+imagePath: img.path,
+);
+setState(() {});
+}
+}
+​@override
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(title: const Text('Profile & Security')),
+body: ListView(
+padding: const EdgeInsets.all(16),
+children: [
+Center(
+child: Stack(
+children: [
+CircleAvatar(
+radius: 40,
+backgroundImage: appSettings.profileImagePath.isNotEmpty ? FileImage(File(appSettings.profileImagePath)) : null,
+child: appSettings.profileImagePath.isEmpty ? const Icon(Icons.person, size: 40) : null,
+),
+Positioned(
+bottom: 0,
+right: 0,
+child: IconButton(
+icon: const Icon(Icons.camera_alt, color: Color(0xFF10B981)),
+onPressed: () => _pickImage(ImageSource.gallery),
+),
+),
+],
+),
+),
+const SizedBox(height: 20),
+Text('Name: ${appSettings.profileName}', style: const TextStyle(fontSize: 16)),
+Text('Email: ${appSettings.profileEmail}', style: const TextStyle(fontSize: 16)),
+],
+),
+);
+}
+}
