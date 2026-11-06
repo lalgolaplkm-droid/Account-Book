@@ -206,6 +206,15 @@ class AppSettingsNotifier extends ChangeNotifier {
       description: 'Monthly Salary',
       date: DateTime.now(),
     ),
+    TransactionItem(
+      id: '2',
+      type: 'Expense',
+      account: 'Cash in Hand',
+      category: 'Tea & Snacks',
+      amount: 350.0,
+      description: 'Evening snacks',
+      date: DateTime.now(),
+    ),
   ];
 
   List<LoanItem> loans = [
@@ -221,10 +230,12 @@ class AppSettingsNotifier extends ChangeNotifier {
 
   List<ShoppingItem> shoppingList = [
     ShoppingItem(name: 'Cooking Oil', amount: 150.0, isChecked: true),
+    ShoppingItem(name: 'Rice (5 kg)', amount: 450.0, isChecked: false),
   ];
 
   List<BudgetModel> budgets = [
     BudgetModel(category: 'Food & Hotel', amount: 5000.0),
+    BudgetModel(category: 'Transport', amount: 3000.0),
   ];
 
   List<SavingsModel> savingsList = [
@@ -233,6 +244,7 @@ class AppSettingsNotifier extends ChangeNotifier {
 
   List<RepeatedTransactionModel> repeatedTransactions = [
     RepeatedTransactionModel(title: 'House Rent', amount: 8000, frequency: '1st of every month'),
+    RepeatedTransactionModel(title: 'WiFi Bill', amount: 1000, frequency: '10th of every month'),
   ];
 
   List<ReminderModel> reminders = [
@@ -289,8 +301,17 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Language': return 'ভাষা';
         case 'About App': return 'অ্যাপ সম্পর্কে';
         case 'Current Balance': return 'বর্তমান ব্যালেন্স';
+        case 'Month': return 'মাস';
+        case 'Year': return 'বছর';
         case 'Income': return 'আয়';
         case 'Expense': return 'ব্যয়';
+        case 'Quick Access': return 'কুইক এক্সেস';
+        case 'Recent Transactions': return 'সাম্প্রতিক লেনদেন';
+        case 'Budget': return 'বাজেট';
+        case 'Reminder': return 'রিমাইন্ডার';
+        case 'Repeat': return 'রিপিট';
+        case 'Savings': return 'সেভিংস';
+        case 'Shopping': return 'শপিং';
         case 'Account': return 'হিসাব';
         case 'Loan': return 'লোন';
         case 'Transactions': return 'লেনদেন';
@@ -407,7 +428,7 @@ class AccountBookApp extends StatelessWidget {
   }
 }
 
-// ----------------- Pin & Lock Screen with Language Selector -----------------
+// ----------------- Pin & Lock Screen -----------------
 class PinLockScreen extends StatefulWidget {
   const PinLockScreen({super.key});
 
@@ -573,7 +594,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
   }
 }
 
-// ----------------- Profile Screen with Camera, Gallery & Avatar Selector -----------------
+// ----------------- Profile Screen -----------------
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -739,7 +760,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-// ----------------- Privacy & Security Screen (Functional Locks) -----------------
+// ----------------- Privacy & Security Screen -----------------
 class PrivacySecurityScreen extends StatefulWidget {
   const PrivacySecurityScreen({super.key});
 
@@ -849,7 +870,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
   }
 }
 
-// ----------------- Main Navigation Container -----------------
+// ----------------- Main Home Navigation Container -----------------
 class MainHomeScreen extends StatefulWidget {
   const MainHomeScreen({super.key});
 
