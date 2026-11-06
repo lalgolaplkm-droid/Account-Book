@@ -492,3 +492,212 @@ class AppSettingsNotifier extends ChangeNotifier {
 }
 
 final appSettings = AppSettingsNotifier();
+// ----------------- App Entry Point -----------------
+class AccountBookApp extends StatelessWidget {
+  const AccountBookApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: appSettings,
+      builder: (context, child) {
+        return MaterialApp(
+          title: appSettings.getAppTitle(),
+          debugShowCheckedModeBanner: false,
+          themeMode: appSettings.themeMode,
+          theme: ThemeData(
+            brightness: Brightness.light,
+            scaffoldBackgroundColor: const Color(0xFFF3F4F6),
+            primaryColor: const Color(0xFF38BDF8),
+            cardColor: Colors.white,
+            appBarTheme: const AppBarTheme(backgroundColor: Colors.white, foregroundColor: Colors.black),
+            dialogTheme: const DialogTheme(backgroundColor: Colors.white, surfaceTintColor: Colors.white),
+            bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Colors.white, surfaceTintColor: Colors.white),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), foregroundColor: Colors.white),
+            ),
+          ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            scaffoldBackgroundColor: const Color(0xFF0F172A),
+            primaryColor: const Color(0xFF10B981),
+            cardColor: const Color(0xFF1E293B),
+            appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF1E293B), foregroundColor: Colors.white),
+            dialogTheme: const DialogTheme(backgroundColor: Color(0xFF1E293B), surfaceTintColor: Color(0xFF1E293B)),
+            bottomSheetTheme: const BottomSheetThemeData(backgroundColor: Color(0xFF1E293B), surfaceTintColor: Color(0xFF1E293B)),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), foregroundColor: Colors.white),
+            ),
+          ),
+          home: const PinLockScreen(),
+        );
+      },
+    );
+  }
+}
+
+// ----------------- Pin & Lock Screen with Language Switcher -----------------
+class PinLockScreen extends StatefulWidget {
+  const PinLockScreen({super.key});
+
+  @override
+  State<PinLockScreen> createState() => _PinLockScreenState();
+}
+
+class _PinLockScreenState extends State<PinLockScreen> {
+  final TextEditingController _pinController = TextEditingController();
+
+  void _verifyPin(BuildContext context) {
+    if (_pinController.text == appSettings.appPin || appSettings.useNoneLock) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MainHomeScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Wrong PIN!')),
+      );
+    }
+  }
+
+  void _showLockScreenLanguageDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setStateDialog) {
+            return AlertDialog(
+              title: Text(appSettings.translate('Language')),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RadioListTile<String>(
+                    title: const Text('English'),
+                    value: 'English',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage(val);
+                        setStateDialog(() {});
+                        setState(() {});
+                        Navigator.pop(ctx);
+                      }
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: const Text('Bangla (বাংলা)'),
+                    value: 'Bangla',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage(val);
+                        setStateDialog(() {});
+                        setState(() {});
+                        Navigator.pop(ctx);
+                      }
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: appSettings,
+      builder: (context, _) {
+        return Scaffold(
+          backgroundColor: const Color(0xFF0F172A),
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.language, color: Colors.white),
+                tooltip: 'Change Language',
+                onPressed: () => _showLockScreenLanguageDialog(context),
+              ),
+            ],
+          ),
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.lock_rounded, size: 70, color: Color(0xFF10B981)),
+                  const SizedBox(height: 16),
+                  Text(
+                    appSettings.getAppTitle(),
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                  const SizedBox(height: 24),
+                  const Text('Enter Your PIN', style: TextStyle(fontSize: 16, color: Colors.white70)),
+                  const SizedBox(height: 30),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(4, (index) {
+                          return Container(
+                            width: 50,
+                            height: 50,
+                            margin: const EdgeInsets.symmetric(horizontal: 6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF1E293B),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: const Color(0xFF10B981), width: 1.5),
+                            ),
+                            child: Center(
+                              child: Text(_pinController.text.length > index ? '•' : '', style: const TextStyle(color: Colors.white, fontSize: 28)),
+                            ),
+                          );
+                        }),
+                      ),
+                      SizedBox(
+                        width: 250,
+                        height: 60,
+                        child: TextField(
+                          controller: _pinController,
+                          keyboardType: TextInputType.number,
+                          maxLength: 4,
+                          style: const TextStyle(color: Colors.transparent),
+                          cursorColor: Colors.transparent,
+                          decoration: const InputDecoration(counterText: '', border: InputBorder.none),
+                          onChanged: (value) {
+                            setState(() {});
+                            if (value.length == 4) _verifyPin(context);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28))),
+                      onPressed: () => _verifyPin(context),
+                      child: const Text('Unlock', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
