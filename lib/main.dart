@@ -338,6 +338,20 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Settings': return 'সেটিংস';
         case 'Goals': return 'লক্ষ্য';
         case 'Calculators': return 'ক্যালকুলেটর হাব';
+        case 'Enter Your PIN': return 'আপনার পিন লিখুন';
+        case 'Unlock': return 'আনলক করুন';
+        case 'Forgot PIN?': return 'পিন ভুলে গেছেন?';
+        case 'This Month': return 'চলতি মাস';
+        case 'Custom Months': return 'কাস্টম মাস';
+        case 'Custom Years': return 'কাস্টম বছর';
+        case 'Custom Range': return 'কাস্টম রেঞ্জ';
+        case 'Financial Overview Summary': return 'আর্থিক সারসংক্ষেপ';
+        case 'Total Balance': return 'মোট ব্যালেন্স';
+        case 'Total Income': return 'মোট আয়';
+        case 'Total Expense': return 'মোট ব্যয়';
+        case 'Loan & Debt Overview': return 'ঋণ ও দেনার বিবরণী';
+        case 'Total Loan Given': return 'মোট প্রদত্ত লোন';
+        case 'Total Loan Taken': return 'মোট গৃহীত লোন';
         default: return key;
       }
     } else if (_language == 'Arabic') {
@@ -383,6 +397,20 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Settings': return 'الإعدادات';
         case 'Goals': return 'الأهداف';
         case 'Calculators': return 'الحاسبات';
+        case 'Enter Your PIN': return 'أدخل رقم التعريف الشخصي';
+        case 'Unlock': return 'فتح القفل';
+        case 'Forgot PIN?': return 'هل نسيت رقم التعريف الشخصي؟';
+        case 'This Month': return 'هذا الشهر';
+        case 'Custom Months': return 'أشهر مخصصة';
+        case 'Custom Years': return 'سنوات مخصصة';
+        case 'Custom Range': return 'نطاق مخصص';
+        case 'Financial Overview Summary': return 'ملخص النظرة العامة المالية';
+        case 'Total Balance': return 'الإجمالي الكلي';
+        case 'Total Income': return 'إجمالي الدخل';
+        case 'Total Expense': return 'إجمالي المصروفات';
+        case 'Loan & Debt Overview': return 'نظرة عامة على القروض والديون';
+        case 'Total Loan Given': return 'إجمالي القروض الممنوحة';
+        case 'Total Loan Taken': return 'إجمالي القروض المستلمة';
         default: return key;
       }
     }
@@ -547,7 +575,6 @@ class AppSettingsNotifier extends ChangeNotifier {
       } else if (timeFilter == 'Custom Months') {
         return txn.date.year == selectedYear && txn.date.month == selectedMonthIndex;
       } else {
-        // Default 'This Month'
         return txn.date.year == DateTime.now().year && txn.date.month == DateTime.now().month;
       }
     }).toList();
@@ -950,7 +977,7 @@ void showLocalizedDeleteDialog({
   );
 }
 
-// ----------------- Pin & Main Container (With Branding & Language Switcher) -----------------
+// ----------------- Pin & Main Container (With Bottom Language Icon & Alphabetical Order) -----------------
 class PinLockScreen extends StatefulWidget {
   const PinLockScreen({super.key});
 
@@ -988,19 +1015,6 @@ class _PinLockScreenState extends State<PinLockScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   RadioListTile<String>(
-                    title: const Text('English (Default)'),
-                    value: 'English',
-                    groupValue: appSettings.language,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) {
-                      if (val != null) {
-                        appSettings.setLanguage(val);
-                        setStateDialog(() {});
-                        setState(() {});
-                      }
-                    },
-                  ),
-                  RadioListTile<String>(
                     title: const Text('Arabic (العربية)'),
                     value: 'Arabic',
                     groupValue: appSettings.language,
@@ -1026,10 +1040,36 @@ class _PinLockScreenState extends State<PinLockScreen> {
                       }
                     },
                   ),
+                  RadioListTile<String>(
+                    title: const Text('English (Default)'),
+                    value: 'English',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage(val);
+                        setStateDialog(() {});
+                        setState(() {});
+                      }
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: const Text('System Default'),
+                    value: 'System',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage('English');
+                        setStateDialog(() {});
+                        setState(() {});
+                      }
+                    },
+                  ),
                 ],
               ),
               actions: [
-                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+                TextButton(onPressed: () => Navigator.pop(ctx), child: Text(appSettings.language == 'Bangla' ? 'বন্ধ করুন' : (appSettings.language == 'Arabic' ? 'إغلاق' : 'Close'))),
               ],
             );
           },
@@ -1132,95 +1172,114 @@ class _PinLockScreenState extends State<PinLockScreen> {
       animation: appSettings,
       builder: (context, _) => Scaffold(
         backgroundColor: const Color(0xFF0F172A),
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.language, color: Color(0xFF38BDF8), size: 28),
-              tooltip: 'Change Language',
-              onPressed: () => _showLanguageDialog(context),
-            ),
-            const SizedBox(width: 8),
-          ],
-        ),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Official Branding Logo
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF10B981).withOpacity(0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.account_balance_wallet_rounded, size: 60, color: Color(0xFF10B981)),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  appSettings.getAppTitle(),
-                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 0.5),
-                ),
-                const SizedBox(height: 24),
-                Text('Enter Your PIN', style: TextStyle(fontSize: 16, color: Colors.grey.shade400)),
-                const SizedBox(height: 24),
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(4, (index) {
-                        return Container(
-                          width: 55,
-                          height: 55,
-                          margin: const EdgeInsets.symmetric(horizontal: 6),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1E293B),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: const Color(0xFF10B981), width: 1.5),
-                          ),
-                          child: Center(
-                            child: Text(_pinController.text.length > index ? '•' : '', style: const TextStyle(color: Colors.white, fontSize: 28)),
-                          ),
-                        );
-                      }),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 40),
+                  // Official Branding Logo
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF10B981).withOpacity(0.15),
+                      shape: BoxShape.circle,
                     ),
-                    SizedBox(
-                      width: 250,
-                      height: 60,
-                      child: TextField(
-                        controller: _pinController,
-                        keyboardType: TextInputType.number,
-                        maxLength: 4,
-                        style: const TextStyle(color: Colors.transparent),
-                        cursorColor: Colors.transparent,
-                        decoration: const InputDecoration(counterText: '', border: InputBorder.none),
-                        onChanged: (value) {
-                          setState(() {});
-                          if (value.length == 4) _verifyPin(context);
-                        },
+                    child: const Icon(Icons.account_balance_wallet_rounded, size: 60, color: Color(0xFF10B981)),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    appSettings.getAppTitle(),
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 0.5),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(appSettings.translate('Enter Your PIN'), style: TextStyle(fontSize: 16, color: Colors.grey.shade400)),
+                  const SizedBox(height: 24),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(4, (index) {
+                          return Container(
+                            width: 55,
+                            height: 55,
+                            margin: const EdgeInsets.symmetric(horizontal: 6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF1E293B),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: const Color(0xFF10B981), width: 1.5),
+                            ),
+                            child: Center(
+                              child: Text(_pinController.text.length > index ? '•' : '', style: const TextStyle(color: Colors.white, fontSize: 28)),
+                            ),
+                          );
+                        }),
+                      ),
+                      SizedBox(
+                        width: 250,
+                        height: 60,
+                        child: TextField(
+                          controller: _pinController,
+                          keyboardType: TextInputType.number,
+                          maxLength: 4,
+                          style: const TextStyle(color: Colors.transparent),
+                          cursorColor: Colors.transparent,
+                          decoration: const InputDecoration(counterText: '', border: InputBorder.none),
+                          onChanged: (value) {
+                            setState(() {});
+                            if (value.length == 4) _verifyPin(context);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28))),
+                      onPressed: () => _verifyPin(context),
+                      child: Text(appSettings.translate('Unlock'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextButton(
+                    onPressed: () => _showForgotPinDialog(context),
+                    child: Text(appSettings.translate('Forgot PIN?'), style: const TextStyle(color: Color(0xFF38BDF8), fontSize: 14, fontWeight: FontWeight.w500)),
+                  ),
+                  const SizedBox(height: 20),
+                  // Language Icon placed below Forgot PIN nicely
+                  Center(
+                    child: InkWell(
+                      onTap: () => _showLanguageDialog(context),
+                      borderRadius: BorderRadius.circular(30),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1E293B),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: const Color(0xFF38BDF8).withOpacity(0.3)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.language, color: Color(0xFF38BDF8), size: 20),
+                            const SizedBox(width: 8),
+                            Text(
+                              appSettings.language == 'Bangla' ? 'ভাষা পরিবর্তন' : (appSettings.language == 'Arabic' ? 'تغيير اللغة' : 'Change Language'),
+                              style: const TextStyle(color: Colors.white70, fontSize: 13),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 30),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28))),
-                    onPressed: () => _verifyPin(context),
-                    child: const Text('Unlock', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
-                ),
-                const SizedBox(height: 20),
-                TextButton(
-                  onPressed: () => _showForgotPinDialog(context),
-                  child: const Text('Forgot PIN?', style: TextStyle(color: Color(0xFF38BDF8), fontSize: 14, fontWeight: FontWeight.w500)),
-                ),
-              ],
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
         ),
@@ -1230,8 +1289,26 @@ class _PinLockScreenState extends State<PinLockScreen> {
 }
 
 // ----------------- Dashboard Analytics Screen -----------------
-class DashboardAnalyticsScreen extends StatelessWidget {
+class DashboardAnalyticsScreen extends StatefulWidget {
   const DashboardAnalyticsScreen({super.key});
+
+  @override
+  State<DashboardAnalyticsScreen> createState() => _DashboardAnalyticsScreenState();
+}
+
+class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
+  void _pickCustomDateRange(BuildContext context) async {
+    DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(1990),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null) {
+      appSettings.setCustomDateRange(picked.start, picked.end);
+      appSettings.setTimeFilter('Custom Range');
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1242,6 +1319,9 @@ class DashboardAnalyticsScreen extends StatelessWidget {
     double totalGiven = appSettings.getTotalGiven();
     double totalTaken = appSettings.getTotalTaken();
 
+    List<String> months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    List<int> years = List.generate(110, (index) => 1990 + index);
+
     return AnimatedBuilder(
       animation: appSettings,
       builder: (context, _) => Scaffold(
@@ -1251,7 +1331,86 @@ class DashboardAnalyticsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Financial Overview Summary', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              // Dashboard Time Filtering Header
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    ChoiceChip(
+                      label: Text(appSettings.translate('This Month')),
+                      selected: appSettings.timeFilter == 'This Month',
+                      selectedColor: const Color(0xFF10B981),
+                      onSelected: (val) {
+                        appSettings.setTimeFilter('This Month');
+                        appSettings.setMonthYear(DateTime.now().month, DateTime.now().year);
+                        setState(() {});
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    ChoiceChip(
+                      label: Text(appSettings.translate('Custom Months')),
+                      selected: appSettings.timeFilter == 'Custom Months',
+                      selectedColor: const Color(0xFF10B981),
+                      onSelected: (val) {
+                        appSettings.setTimeFilter('Custom Months');
+                        setState(() {});
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    ChoiceChip(
+                      label: Text(appSettings.translate('Custom Years')),
+                      selected: appSettings.timeFilter == 'Custom Years',
+                      selectedColor: const Color(0xFF10B981),
+                      onSelected: (val) {
+                        appSettings.setTimeFilter('Custom Years');
+                        setState(() {});
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    ChoiceChip(
+                      label: Text(appSettings.translate('Custom Range')),
+                      selected: appSettings.timeFilter == 'Custom Range',
+                      selectedColor: const Color(0xFF10B981),
+                      onSelected: (val) => _pickCustomDateRange(context),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              if (appSettings.timeFilter == 'Custom Months')
+                Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButtonFormField<int>(
+                        value: appSettings.selectedMonthIndex,
+                        dropdownColor: Theme.of(context).cardColor,
+                        decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
+                        items: List.generate(12, (i) => DropdownMenuItem(value: i + 1, child: Text(months[i]))),
+                        onChanged: (val) { if (val != null) { appSettings.setMonthYear(val, appSettings.selectedYear); setState(() {}); } },
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: DropdownButtonFormField<int>(
+                        value: appSettings.selectedYear,
+                        dropdownColor: Theme.of(context).cardColor,
+                        decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
+                        items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString()))).toList(),
+                        onChanged: (val) { if (val != null) { appSettings.setMonthYear(appSettings.selectedMonthIndex, val); setState(() {}); } },
+                      ),
+                    ),
+                  ],
+                ),
+              if (appSettings.timeFilter == 'Custom Years')
+                DropdownButtonFormField<int>(
+                  value: appSettings.selectedYear,
+                  dropdownColor: Theme.of(context).cardColor,
+                  decoration: const InputDecoration(labelText: 'Select Year', border: OutlineInputBorder()),
+                  items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString()))).toList(),
+                  onChanged: (val) { if (val != null) { appSettings.setMonthYear(appSettings.selectedMonthIndex, val); setState(() {}); } },
+                ),
+              const SizedBox(height: 16),
+              Text(appSettings.translate('Financial Overview Summary'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(16),
@@ -1261,7 +1420,7 @@ class DashboardAnalyticsScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Total Balance', style: TextStyle(color: Colors.grey)),
+                        Text(appSettings.translate('Total Balance'), style: const TextStyle(color: Colors.grey)),
                         Text('$balance $curr', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: balance >= 0 ? const Color(0xFF10B981) : Colors.redAccent)),
                       ],
                     ),
@@ -1269,7 +1428,7 @@ class DashboardAnalyticsScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Total Income', style: TextStyle(color: Colors.grey)),
+                        Text(appSettings.translate('Total Income'), style: const TextStyle(color: Colors.grey)),
                         Text('$income $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
                       ],
                     ),
@@ -1277,7 +1436,7 @@ class DashboardAnalyticsScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Total Expense', style: TextStyle(color: Colors.grey)),
+                        Text(appSettings.translate('Total Expense'), style: const TextStyle(color: Colors.grey)),
                         Text('$expense $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
                       ],
                     ),
@@ -1285,7 +1444,7 @@ class DashboardAnalyticsScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              const Text('Loan & Debt Overview', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(appSettings.translate('Loan & Debt Overview'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(16),
@@ -1295,7 +1454,7 @@ class DashboardAnalyticsScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Total Loan Given', style: TextStyle(color: Colors.grey)),
+                        Text(appSettings.translate('Total Loan Given'), style: const TextStyle(color: Colors.grey)),
                         Text('$totalGiven $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
                       ],
                     ),
@@ -1303,7 +1462,7 @@ class DashboardAnalyticsScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Total Loan Taken', style: TextStyle(color: Colors.grey)),
+                        Text(appSettings.translate('Total Loan Taken'), style: const TextStyle(color: Colors.grey)),
                         Text('$totalTaken $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
                       ],
                     ),
@@ -1330,8 +1489,6 @@ class _CalculatorsHubScreenState extends State<CalculatorsHubScreen> {
   int selectedCalcIndex = 0;
   String calcDisplay = '0';
   double loanAmount = 100000;
-  double interestRate = 10;
-  double tenureMonths = 12;
 
   @override
   Widget build(BuildContext context) {
@@ -1559,18 +1716,6 @@ class AppDrawer extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   RadioListTile<String>(
-                    title: const Text('English (Default)'),
-                    value: 'English',
-                    groupValue: appSettings.language,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) {
-                      if (val != null) {
-                        appSettings.setLanguage(val);
-                        setStateDialog(() {});
-                      }
-                    },
-                  ),
-                  RadioListTile<String>(
                     title: const Text('Arabic (العربية)'),
                     value: 'Arabic',
                     groupValue: appSettings.language,
@@ -1590,6 +1735,30 @@ class AppDrawer extends StatelessWidget {
                     onChanged: (val) {
                       if (val != null) {
                         appSettings.setLanguage(val);
+                        setStateDialog(() {});
+                      }
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: const Text('English (Default)'),
+                    value: 'English',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage(val);
+                        setStateDialog(() {});
+                      }
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: const Text('System Default'),
+                    value: 'System',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage('English');
                         setStateDialog(() {});
                       }
                     },
@@ -2526,7 +2695,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
   }
 }
 
-// ----------------- Home Screen Content (With Dashboard Time Filtering) -----------------
+// ----------------- Home Screen Content (With Full Width Current Balance & Advanced Date Pickers) -----------------
 class HomeScreenContent extends StatefulWidget {
   const HomeScreenContent({super.key});
 
@@ -2632,19 +2801,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
     );
   }
 
-  void _pickCustomDateRange(BuildContext context) async {
-    DateTimeRange? picked = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime(1990),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null) {
-      appSettings.setCustomDateRange(picked.start, picked.end);
-      appSettings.setTimeFilter('Custom Range');
-      setState(() {});
-    }
-  }
-
   Widget _buildQuickAccessIcon(BuildContext context, IconData icon, String label, Widget targetScreen) {
     return InkWell(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => targetScreen)),
@@ -2679,8 +2835,9 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 1. Current Balance Card (No Time Filtering)
+                // 1. Current Balance Card (Full Width / Across the screen)
                 Container(
+                  width: double.infinity,
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(16)),
                   child: Column(
@@ -2700,7 +2857,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                   child: Row(
                     children: [
                       ChoiceChip(
-                        label: const Text('This Month'),
+                        label: Text(appSettings.translate('This Month')),
                         selected: appSettings.timeFilter == 'This Month',
                         selectedColor: const Color(0xFF10B981),
                         onSelected: (val) {
@@ -2711,7 +2868,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                       ),
                       const SizedBox(width: 8),
                       ChoiceChip(
-                        label: const Text('Custom Months'),
+                        label: Text(appSettings.translate('Custom Months')),
                         selected: appSettings.timeFilter == 'Custom Months',
                         selectedColor: const Color(0xFF10B981),
                         onSelected: (val) {
@@ -2721,7 +2878,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                       ),
                       const SizedBox(width: 8),
                       ChoiceChip(
-                        label: const Text('Custom Years'),
+                        label: Text(appSettings.translate('Custom Years')),
                         selected: appSettings.timeFilter == 'Custom Years',
                         selectedColor: const Color(0xFF10B981),
                         onSelected: (val) {
@@ -2731,17 +2888,20 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                       ),
                       const SizedBox(width: 8),
                       ChoiceChip(
-                        label: const Text('Custom Range'),
+                        label: Text(appSettings.translate('Custom Range')),
                         selected: appSettings.timeFilter == 'Custom Range',
                         selectedColor: const Color(0xFF10B981),
-                        onSelected: (val) => _pickCustomDateRange(context),
+                        onSelected: (val) {
+                          appSettings.setTimeFilter('Custom Range');
+                          setState(() {});
+                        },
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 12),
 
-                // Dropdown pickers based on selected filter
+                // Conditional Pickers for Custom Months / Years / Range with two input boxes
                 if (appSettings.timeFilter == 'Custom Months')
                   Row(
                     children: [
@@ -2774,13 +2934,55 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                     items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString()))).toList(),
                     onChanged: (val) { if (val != null) { appSettings.setMonthYear(appSettings.selectedMonthIndex, val); setState(() {}); } },
                   ),
-                if (appSettings.timeFilter == 'Custom Range' && appSettings.customStartDate != null && appSettings.customEndDate != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Text(
-                      'Range: ${appSettings.customStartDate.toString().substring(0, 10)} to ${appSettings.customEndDate.toString().substring(0, 10)}',
-                      style: const TextStyle(color: Color(0xFF38BDF8), fontSize: 13, fontWeight: FontWeight.w500),
-                    ),
+                if (appSettings.timeFilter == 'Custom Range')
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () async {
+                            DateTime? picked = await showDatePicker(
+                              context: context,
+                              initialDate: appSettings.customStartDate ?? DateTime.now(),
+                              firstDate: DateTime(1990),
+                              lastDate: DateTime(2100),
+                            );
+                            if (picked != null) {
+                              appSettings.setCustomDateRange(picked, appSettings.customEndDate ?? picked);
+                              setState(() {});
+                            }
+                          },
+                          child: AbsorbPointer(
+                            child: TextField(
+                              controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.customStartDate.toString().substring(0, 10) : 'Start Date'),
+                              decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Start Date', suffixIcon: Icon(Icons.calendar_today, size: 18)),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () async {
+                            DateTime? picked = await showDatePicker(
+                              context: context,
+                              initialDate: appSettings.customEndDate ?? DateTime.now(),
+                              firstDate: DateTime(1990),
+                              lastDate: DateTime(2100),
+                            );
+                            if (picked != null) {
+                              appSettings.setCustomDateRange(appSettings.customStartDate ?? picked, picked);
+                              setState(() {});
+                            }
+                          },
+                          child: AbsorbPointer(
+                            child: TextField(
+                              controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.customEndDate.toString().substring(0, 10) : 'End Date'),
+                              decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'End Date', suffixIcon: Icon(Icons.calendar_today, size: 18)),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
 
                 const SizedBox(height: 12),
