@@ -4141,7 +4141,7 @@ const LoanDebtScreen(),
 const AllTransactionsScreen(),
 const ReportsScreen(),
 const ProfileScreen(),
-];ab
+];
 ​return AnimatedBuilder(
 animation: appSettings,
 builder: (context, _) => Scaffold(
