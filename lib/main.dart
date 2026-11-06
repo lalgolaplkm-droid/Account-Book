@@ -977,7 +977,7 @@ void showLocalizedDeleteDialog({
   );
 }
 
-// ----------------- Pin & Main Container (With Bottom Language Icon & Alphabetical Order) -----------------
+// ----------------- Pin & Main Container -----------------
 class PinLockScreen extends StatefulWidget {
   const PinLockScreen({super.key});
 
@@ -1053,23 +1053,10 @@ class _PinLockScreenState extends State<PinLockScreen> {
                       }
                     },
                   ),
-                  RadioListTile<String>(
-                    title: const Text('System Default'),
-                    value: 'System',
-                    groupValue: appSettings.language,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) {
-                      if (val != null) {
-                        appSettings.setLanguage('English');
-                        setStateDialog(() {});
-                        setState(() {});
-                      }
-                    },
-                  ),
                 ],
               ),
               actions: [
-                TextButton(onPressed: () => Navigator.pop(ctx), child: Text(appSettings.language == 'Bangla' ? 'বন্ধ করুন' : (appSettings.language == 'Arabic' ? 'إغلاق' : 'Close'))),
+                TextButton(onPressed: () => Navigator.pop(ctx), child: Text(appSettings.language == 'Bangla' ? 'বন্ধ করুন' : 'Close')),
               ],
             );
           },
@@ -1180,7 +1167,6 @@ class _PinLockScreenState extends State<PinLockScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(height: 40),
-                  // Official Branding Logo
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -1251,7 +1237,6 @@ class _PinLockScreenState extends State<PinLockScreen> {
                     child: Text(appSettings.translate('Forgot PIN?'), style: const TextStyle(color: Color(0xFF38BDF8), fontSize: 14, fontWeight: FontWeight.w500)),
                   ),
                   const SizedBox(height: 20),
-                  // Language Icon placed below Forgot PIN nicely
                   Center(
                     child: InkWell(
                       onTap: () => _showLanguageDialog(context),
@@ -1269,7 +1254,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
                             const Icon(Icons.language, color: Color(0xFF38BDF8), size: 20),
                             const SizedBox(width: 8),
                             Text(
-                              appSettings.language == 'Bangla' ? 'ভাষা পরিবর্তন' : (appSettings.language == 'Arabic' ? 'تغيير اللغة' : 'Change Language'),
+                              appSettings.language == 'Bangla' ? 'ভাষা পরিবর্তন' : 'Change Language',
                               style: const TextStyle(color: Colors.white70, fontSize: 13),
                             ),
                           ],
@@ -1331,7 +1316,6 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Dashboard Time Filtering Header
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -1747,18 +1731,6 @@ class AppDrawer extends StatelessWidget {
                     onChanged: (val) {
                       if (val != null) {
                         appSettings.setLanguage(val);
-                        setStateDialog(() {});
-                      }
-                    },
-                  ),
-                  RadioListTile<String>(
-                    title: const Text('System Default'),
-                    value: 'System',
-                    groupValue: appSettings.language,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) {
-                      if (val != null) {
-                        appSettings.setLanguage('English');
                         setStateDialog(() {});
                       }
                     },
@@ -2695,7 +2667,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
   }
 }
 
-// ----------------- Home Screen Content (With Full Width Current Balance & Advanced Date Pickers) -----------------
+// ----------------- Home Screen Content -----------------
 class HomeScreenContent extends StatefulWidget {
   const HomeScreenContent({super.key});
 
@@ -2835,7 +2807,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 1. Current Balance Card (Full Width / Across the screen)
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(18),
@@ -2850,8 +2821,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                   ),
                 ),
                 const SizedBox(height: 16),
-
-                // 2. Time Filtering Header (This Month default, Custom Months, Custom Years, Custom Range)
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -2900,8 +2869,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                   ),
                 ),
                 const SizedBox(height: 12),
-
-                // Conditional Pickers for Custom Months / Years / Range with two input boxes
                 if (appSettings.timeFilter == 'Custom Months')
                   Row(
                     children: [
@@ -2984,10 +2951,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                       ),
                     ],
                   ),
-
                 const SizedBox(height: 12),
-
-                // 3. Income & Expense Cards aligned with Time Filtering
                 Row(
                   children: [
                     Expanded(
@@ -3021,7 +2985,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 24),
                 Text(appSettings.translate('Quick Access'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 const SizedBox(height: 12),
@@ -3081,7 +3044,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
   }
 }
 
-// ----------------- 1. Loan & Debt Screen -----------------
+// ----------------- Loan & Debt Screen -----------------
 class LoanDebtScreen extends StatefulWidget {
   const LoanDebtScreen({super.key});
 
@@ -3339,7 +3302,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
   }
 }
 
-// ----------------- 2. All Transactions Screen -----------------
+// ----------------- All Transactions Screen -----------------
 class AllTransactionsScreen extends StatefulWidget {
   const AllTransactionsScreen({super.key});
 
@@ -3621,7 +3584,7 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
   }
 }
 
-// ----------------- 3. Reports & Analysis Screen -----------------
+// ----------------- Reports & Analysis Screen -----------------
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
 
