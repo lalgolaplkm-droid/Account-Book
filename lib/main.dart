@@ -1,4 +1,4 @@
-Import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -158,12 +158,11 @@ class AppSettingsNotifier extends ChangeNotifier {
   late SharedPreferences _prefs;
 
   ThemeMode _themeMode = ThemeMode.dark;
-  String _language = 'English'; // Default Language strictly English
+  String _language = 'English';
   String currency = '৳';
   String timeFilter = 'Month';
   String appPin = '1234';
 
-  // Profile fields (Default in English)
   String profileName = 'MD ALAMGIR HOSSAIN';
   String profileEmail = 'alamgir@email.com';
   String profileGender = 'Male';
@@ -182,11 +181,9 @@ class AppSettingsNotifier extends ChangeNotifier {
   bool loanAlert = true;
   String notificationSound = 'Default';
 
-  // Selected Month & Year for Home and Reports
   int selectedMonthIndex = DateTime.now().month;
   int selectedYear = DateTime.now().year;
 
-  // Custom Date Range for Reports/Filtering
   DateTime? customStartDate;
   DateTime? customEndDate;
 
@@ -375,7 +372,7 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Tea & Snacks': return 'شاي ووجبات خفيفة';
         case 'Transport': return 'مواصلات';
         case 'Food & Hotel': return 'طعام وفنادق';
-        case 'Bikash': return 'ب বিকাশ';
+        case 'Bikash': return 'بیکاش';
         case 'Cash in Hand': return 'نقداً في اليد';
         case 'Dutch-Bangla Bank': return 'بنك دتش بنگلا';
         case 'Nagad': return 'نقد';
@@ -1041,11 +1038,7 @@ class CalculatorsHubScreen extends StatefulWidget {
 
 class _CalculatorsHubScreenState extends State<CalculatorsHubScreen> {
   int selectedCalcIndex = 0;
-
-  // General Calc Controller
   String calcDisplay = '0';
-
-  // SIP / Loan / Tax controllers with precise increment/decrement (+ / -) touch controls
   double loanAmount = 100000;
   double interestRate = 10;
   double tenureMonths = 12;
@@ -1159,8 +1152,6 @@ class _CalculatorsHubScreenState extends State<CalculatorsHubScreen> {
             calcDisplay = '0';
           } else if (calcDisplay == '0') {
             calcDisplay = val;
-          } else if (val == '=') {
-            // Simple evaluate logic or display
           } else {
             calcDisplay += val;
           }
@@ -1190,20 +1181,6 @@ class _CalculatorsHubScreenState extends State<CalculatorsHubScreen> {
             ],
           ),
           Slider(value: loanAmount, min: 1000, max: 1000000, divisions: 100, activeColor: const Color(0xFF10B981), onChanged: (v) => setState(() => loanAmount = v)),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Interest Rate (%): $interestRate'),
-              Row(
-                children: [
-                  IconButton(icon: const Icon(Icons.remove_circle, color: Colors.red), onPressed: () => setState(() => interestRate = (interestRate - 0.5).clamp(1, 50))),
-                  IconButton(icon: const Icon(Icons.add_circle, color: Colors.green), onPressed: () => setState(() => interestRate = (interestRate + 0.5).clamp(1, 50))),
-                ],
-              )
-            ],
-          ),
-          Slider(value: interestRate, min: 1, max: 50, divisions: 49, activeColor: const Color(0xFF10B981), onChanged: (v) => setState(() => interestRate = v)),
         ],
       ),
     );
@@ -3247,7 +3224,7 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
   }
 }
 
-// ----------------- 3. Reports & Analysis Screen (Advanced Date Filters) -----------------
+// ----------------- 3. Reports & Analysis Screen -----------------
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
 
@@ -3257,7 +3234,7 @@ class ReportsScreen extends StatefulWidget {
 
 class _ReportsScreenState extends State<ReportsScreen> {
   bool isSortedAscending = true;
-  String currentFilterMode = 'This Month'; // 'This Month', 'Custom Years', 'Custom Months', 'Custom Range'
+  String currentFilterMode = 'This Month';
 
   void _pickCustomDateRange(BuildContext context) async {
     DateTimeRange? picked = await showDateRangePicker(
@@ -3335,7 +3312,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Fast Filter Chips
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -3709,7 +3685,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
   }
 }
 
-// ----------------- 4. Profile & Settings Screen (Gender Dropdown & Date Picker) -----------------
+// ----------------- Profile & Settings Screen -----------------
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -3788,7 +3764,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 12),
                 TextField(controller: emailC, decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder())),
                 const SizedBox(height: 12),
-                // Gender Dropdown (Male, Female, Other)
                 DropdownButtonFormField<String>(
                   value: ['Male', 'Female', 'Other'].contains(selectedGender) ? selectedGender : 'Male',
                   dropdownColor: Theme.of(context).cardColor,
@@ -3797,7 +3772,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onChanged: (val) { if (val != null) setStateDialog(() => selectedGender = val); },
                 ),
                 const SizedBox(height: 12),
-                // Modern Calendar Date Picker for Birth Date
                 GestureDetector(
                   onTap: () async {
                     DateTime? pickedDate = await showDatePicker(
