@@ -1,32 +1,32 @@
-Import 'package:flutter/material.dart';
-Import 'package:shared_preferences/shared_preferences.dart';
-Import 'package:image_picker/image_picker.dart';
-Import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
-Void main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await appSettings.initPrefs();
-  RunApp(const AccountBookApp());
+  runApp(const AccountBookApp());
 }
 
 // ----------------- Models -----------------
 class TransactionItem {
   final String id;
-  Final String type;
+  final String type;
   String account;
   String category;
-  Double amount;
+  double amount;
   String description;
   DateTime date;
 
   TransactionItem({
-    Required this.id,
-    Required this.type,
-    Required this.account,
-    Required this.category,
-    Required this.amount,
-    Required this.description,
-    Required this.date,
+    required this.id,
+    required this.type,
+    required this.account,
+    required this.category,
+    required this.amount,
+    required this.description,
+    required this.date,
   });
 
   Map<String, dynamic> toJson() => {
@@ -39,7 +39,7 @@ class TransactionItem {
     'date': date.toIso8601String(),
   };
 
-  Factory TransactionItem.fromJson(Map<String, dynamic> json) => TransactionItem(
+  factory TransactionItem.fromJson(Map<String, dynamic> json) => TransactionItem(
     id: json['id'],
     type: json['type'],
     account: json['account'],
@@ -53,18 +53,18 @@ class TransactionItem {
 class LoanItem {
   final String id;
   String personName;
-  Double amount;
+  double amount;
   String type;
   DateTime date;
-  Bool isPaid;
+  bool isPaid;
 
   LoanItem({
-    Required this.id,
-    Required this.personName,
-    Required this.amount,
-    Required this.type,
-    Required this.date,
-    This.isPaid = false,
+    required this.id,
+    required this.personName,
+    required this.amount,
+    required this.type,
+    required this.date,
+    this.isPaid = false,
   });
 
   Map<String, dynamic> toJson() => {
@@ -76,7 +76,7 @@ class LoanItem {
     'isPaid': isPaid,
   };
 
-  Factory LoanItem.fromJson(Map<String, dynamic> json) => LoanItem(
+  factory LoanItem.fromJson(Map<String, dynamic> json) => LoanItem(
     id: json['id'],
     personName: json['personName'],
     amount: json['amount'],
@@ -88,74 +88,74 @@ class LoanItem {
 
 class ShoppingItem {
   String name;
-  Double amount;
-  Bool isChecked;
+  double amount;
+  bool isChecked;
   ShoppingItem({required this.name, this.amount = 0.0, this.isChecked = false});
 
   Map<String, dynamic> toJson() => {'name': name, 'amount': amount, 'isChecked': isChecked};
-  Factory ShoppingItem.fromJson(Map<String, dynamic> json) => ShoppingItem(name: json['name'], amount: json['amount'], isChecked: json['isChecked']);
+  factory ShoppingItem.fromJson(Map<String, dynamic> json) => ShoppingItem(name: json['name'], amount: json['amount'], isChecked: json['isChecked']);
 }
 
 class BudgetModel {
   String category;
-  Double amount;
+  double amount;
   BudgetModel({required this.category, required this.amount});
 
   Map<String, dynamic> toJson() => {'category': category, 'amount': amount};
-  Factory BudgetModel.fromJson(Map<String, dynamic> json) => BudgetModel(category: json['category'], amount: json['amount']);
+  factory BudgetModel.fromJson(Map<String, dynamic> json) => BudgetModel(category: json['category'], amount: json['amount']);
 }
 
 class SavingsModel {
   String title;
-  Double targetAmount;
-  Double currentAmount;
-  Bool isCompleted;
+  double targetAmount;
+  double currentAmount;
+  bool isCompleted;
   SavingsModel({required this.title, required this.targetAmount, required this.currentAmount, this.isCompleted = false});
 
   Map<String, dynamic> toJson() => {'title': title, 'targetAmount': targetAmount, 'currentAmount': currentAmount, 'isCompleted': isCompleted};
-  Factory SavingsModel.fromJson(Map<String, dynamic> json) => SavingsModel(title: json['title'], targetAmount: json['targetAmount'], currentAmount: json['currentAmount'], isCompleted: json['isCompleted']);
+  factory SavingsModel.fromJson(Map<String, dynamic> json) => SavingsModel(title: json['title'], targetAmount: json['targetAmount'], currentAmount: json['currentAmount'], isCompleted: json['isCompleted']);
 }
 
 class AccountModel {
   String name;
   String type;
   String details;
-  Bool isDefault;
+  bool isDefault;
 
   AccountModel({
-    Required this.name,
-    Required this.type,
-    Required this.details,
-    This.isDefault = false,
+    required this.name,
+    required this.type,
+    required this.details,
+    this.isDefault = false,
   });
 
   Map<String, dynamic> toJson() => {'name': name, 'type': type, 'details': details, 'isDefault': isDefault};
-  Factory AccountModel.fromJson(Map<String, dynamic> json) => AccountModel(name: json['name'], type: json['type'], details: json['details'], isDefault: json['isDefault']);
+  factory AccountModel.fromJson(Map<String, dynamic> json) => AccountModel(name: json['name'], type: json['type'], details: json['details'], isDefault: json['isDefault']);
 }
 
 class RepeatedTransactionModel {
   String title;
-  Double amount;
+  double amount;
   String frequency;
   RepeatedTransactionModel({required this.title, required this.amount, required this.frequency});
 
   Map<String, dynamic> toJson() => {'title': title, 'amount': amount, 'frequency': frequency};
-  Factory RepeatedTransactionModel.fromJson(Map<String, dynamic> json) => RepeatedTransactionModel(title: json['title'], amount: json['amount'], frequency: json['frequency']);
+  factory RepeatedTransactionModel.fromJson(Map<String, dynamic> json) => RepeatedTransactionModel(title: json['title'], amount: json['amount'], frequency: json['frequency']);
 }
 
 class ReminderModel {
   String title;
-  Double amount;
+  double amount;
   String dueDate;
   ReminderModel({required this.title, required this.amount, required this.dueDate});
 
   Map<String, dynamic> toJson() => {'title': title, 'amount': amount, 'dueDate': dueDate};
-  Factory ReminderModel.fromJson(Map<String, dynamic> json) => ReminderModel(title: json['title'], amount: json['amount'], dueDate: json['dueDate']);
+  factory ReminderModel.fromJson(Map<String, dynamic> json) => ReminderModel(title: json['title'], amount: json['amount'], dueDate: json['dueDate']);
 }
 
 // ----------------- State Management with Persistent Storage -----------------
 class AppSettingsNotifier extends ChangeNotifier {
-  Late SharedPreferences _prefs;
+  late SharedPreferences _prefs;
 
   ThemeMode _themeMode = ThemeMode.dark;
   String _language = 'English'; // Default Language strictly English
@@ -171,20 +171,20 @@ class AppSettingsNotifier extends ChangeNotifier {
   String profileMobile = '018xxxxxxxx';
   String profileImagePath = '';
 
-  Bool useFaceLock = false;
-  Bool useFingerprint = false;
-  Bool useNoneLock = false;
-  Bool usePatternLock = false;
-  Bool usePinLock = true;
+  bool useFaceLock = false;
+  bool useFingerprint = false;
+  bool useNoneLock = false;
+  bool usePatternLock = false;
+  bool usePinLock = true;
 
-  Bool dailyReminder = true;
-  Bool budgetAlert = true;
-  Bool loanAlert = true;
+  bool dailyReminder = true;
+  bool budgetAlert = true;
+  bool loanAlert = true;
   String notificationSound = 'Default';
 
   // Selected Month & Year for Home and Reports
-  Int selectedMonthIndex = DateTime.now().month;
-  Int selectedYear = DateTime.now().year;
+  int selectedMonthIndex = DateTime.now().month;
+  int selectedYear = DateTime.now().year;
 
   // Custom Date Range for Reports/Filtering
   DateTime? customStartDate;
@@ -201,7 +201,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   ];
 
   String defaultCategory = 'Others';
-  Double monthlyBudget = 15000.0;
+  double monthlyBudget = 15000.0;
 
   List<TransactionItem> transactions = [
     TransactionItem(
@@ -299,522 +299,461 @@ class AppSettingsNotifier extends ChangeNotifier {
 
   String translate(String key) {
     if (_language == 'Bangla') {
-      Switch (key) {
-        Case 'Account Book': return 'হিসাবের খাতা';
-        Case 'Dashboard Analytics': return 'ড্যাশবোর্ড অ্যানালিটিক্স';
-        Case 'Categories': return 'ক্যাটাগরি সমূহ';
-        Case 'Accounts': return 'অ্যাকাউন্ট সমূহ';
-        Case 'Theme': return 'থিম';
-        Case 'Language': return 'ভাষা';
-        Case 'About App': return 'অ্যাপ সম্পর্কে';
-        Case 'Current Balance': return 'বর্তমান ব্যালেন্স';
-        Case 'Month': return 'মাস';
-        Case 'Year': return 'বছর';
-        Case 'Income': return 'আয়';
-        Case 'Expense': return 'ব্যয়';
-        Case 'Quick Access': return 'কুইক এক্সেস';
-        Case 'Recent Transactions': return 'সাম্প্রতিক লেনদেন';
-        Case 'Budget': return 'বাজেট';
-        Case 'Reminder': return 'রিমাইন্ডার';
-        Case 'Repeat': return 'রিপিট';
-        Case 'Savings': return 'সেভিংস';
-        Case 'Shopping': return 'শপিং';
-        Case 'Account': return 'হিসাব';
-        Case 'Loan': return 'লোন';
-        Case 'Transactions': return 'লেনদেন';
-        Case 'Report': return 'রিপোর্ট';
-        Case 'Profile': return 'প্রোফাইল';
-        Case 'Grocery': return 'মুদি বাজার';
-        Case 'Others': return 'অন্যান্য';
-        Case 'Salary': return 'বেতন';
-        Case 'Tea & Snacks': return 'চা ও নাস্তা';
-        Case 'Transport': return 'যাতায়াত';
-        Case 'Food & Hotel': return 'খাবার ও হোটেল';
-        Case 'Bikash': return 'বিকাশ';
-        Case 'Cash in Hand': return 'হাতে নগদ টাকা';
-        Case 'Dutch-Bangla Bank': return 'ডাচ-বাংলা ব্যাংক';
-        Case 'Nagad': return 'নগদ';
-        Case 'UCB Bank': return 'ইউসিবি ব্যাংক';
-        Case 'Mobile Banking': return 'মোবাইল ব্যাংকিং';
-        Case 'Cash': return 'নগদ';
-        Case 'Bank': return 'ব্যাংক';
-        Case 'Settings': return 'সেটিংস';
-        Case 'Goals': return 'লক্ষ্য';
-        Case 'Calculators': return 'ক্যালকুলেটর হাব';
-        Default: return key;
+      switch (key) {
+        case 'Account Book': return 'হিসাবের খাতা';
+        case 'Dashboard Analytics': return 'ড্যাশবোর্ড অ্যানালিটিক্স';
+        case 'Categories': return 'ক্যাটাগরি সমূহ';
+        case 'Accounts': return 'অ্যাকাউন্ট সমূহ';
+        case 'Theme': return 'থিম';
+        case 'Language': return 'ভাষা';
+        case 'About App': return 'অ্যাপ সম্পর্কে';
+        case 'Current Balance': return 'বর্তমান ব্যালেন্স';
+        case 'Month': return 'মাস';
+        case 'Year': return 'বছর';
+        case 'Income': return 'আয়';
+        case 'Expense': return 'ব্যয়';
+        case 'Quick Access': return 'কুইক এক্সেস';
+        case 'Recent Transactions': return 'সাম্প্রতিক লেনদেন';
+        case 'Budget': return 'বাজেট';
+        case 'Reminder': return 'রিমাইন্ডার';
+        case 'Repeat': return 'রিপিট';
+        case 'Savings': return 'সেভিংস';
+        case 'Shopping': return 'শপিং';
+        case 'Account': return 'হিসাব';
+        case 'Loan': return 'লোন';
+        case 'Transactions': return 'লেনদেন';
+        case 'Report': return 'রিপোর্ট';
+        case 'Profile': return 'প্রোফাইল';
+        case 'Grocery': return 'মুদি বাজার';
+        case 'Others': return 'অন্যান্য';
+        case 'Salary': return 'বেতন';
+        case 'Tea & Snacks': return 'চা ও নাস্তা';
+        case 'Transport': return 'যাতায়াত';
+        case 'Food & Hotel': return 'খাবার ও হোটেল';
+        case 'Bikash': return 'বিকাশ';
+        case 'Cash in Hand': return 'হাতে নগদ টাকা';
+        case 'Dutch-Bangla Bank': return 'ডাচ-বাংলা ব্যাংক';
+        case 'Nagad': return 'নগদ';
+        case 'UCB Bank': return 'ইউসিবি ব্যাংক';
+        case 'Mobile Banking': return 'মোবাইল ব্যাংকিং';
+        case 'Cash': return 'নগদ';
+        case 'Bank': return 'ব্যাংক';
+        case 'Settings': return 'সেটিংস';
+        case 'Goals': return 'লক্ষ্য';
+        case 'Calculators': return 'ক্যালকুলেটর হাব';
+        default: return key;
       }
     } else if (_language == 'Arabic') {
-      Switch (key) {
-        Case 'Account Book': return 'دفتر الحسابات';
-        Case 'Dashboard Analytics': return 'تحليلات لوحة القيادة';
-        Case 'Categories': return 'الفئات';
-        Case 'Accounts': return 'الحسابات';
-        Case 'Theme': return 'المظهر';
-        Case 'Language': return 'اللغة';
-        Case 'About App': return 'حول التطبيق';
-        Case 'Current Balance': return 'الرصيد الحالي';
-        Case 'Month': return 'شهر';
-        Case 'Year': return 'سنة';
-        Case 'Income': return 'إيرادات';
-        Case 'Expense': return 'مصروفات';
-        Case 'Quick Access': return 'وصول سريع';
-        Case 'Recent Transactions': return 'المعاملات الأخيرة';
-        Case 'Budget': return 'الميزانية';
-        Case 'Reminder': return 'التذكيرات';
-        Case 'Repeat': return 'متكرر';
-        Case 'Savings': return 'المدخرات';
-        Case 'Shopping': return 'التسوق';
-        Case 'Account': return 'حساب';
-        Case 'Loan': return 'قرض';
-        Case 'Transactions': return 'المعاملات';
-        Case 'Report': return 'تقرير';
-        Case 'Profile': return 'الملف الشخصي';
-        Case 'Grocery': return 'بقالة';
-        Case 'Others': return 'أخرى';
-        Case 'Salary': return 'راتب';
-        Case 'Tea & Snacks': return 'شاي ووجبات خفيفة';
-        Case 'Transport': return 'مواصلات';
-        Case 'Food & Hotel': return 'طعام وفنادق';
-        Case 'Bikash': return 'ب বিকাশ';
-        Case 'Cash in Hand': return 'نقداً في اليد';
-        Case 'Dutch-Bangla Bank': return 'بنك دتش بنگلا';
-        Case 'Nagad': return 'نقد';
-        Case 'UCB Bank': return 'بنك UCB';
-        Case 'Mobile Banking': return 'خدمات مصرفية عبر الهاتف المحمول';
-        Case 'Cash': return 'نقدي';
-        Case 'Bank': return 'بنك';
-        Case 'Settings': return 'الإعدادات';
-        Case 'Goals': return 'الأهداف';
-        Case 'Calculators': return 'الحاسبات';
-        Default: return key;
+      switch (key) {
+        case 'Account Book': return 'دفتر الحسابات';
+        case 'Dashboard Analytics': return 'تحليلات لوحة القيادة';
+        case 'Categories': return 'الفئات';
+        case 'Accounts': return 'الحسابات';
+        case 'Theme': return 'المظهر';
+        case 'Language': return 'اللغة';
+        case 'About App': return 'حول التطبيق';
+        case 'Current Balance': return 'الرصيد الحالي';
+        case 'Month': return 'شهر';
+        case 'Year': return 'سنة';
+        case 'Income': return 'إيرادات';
+        case 'Expense': return 'مصروفات';
+        case 'Quick Access': return 'وصول سريع';
+        case 'Recent Transactions': return 'المعاملات الأخيرة';
+        case 'Budget': return 'الميزانية';
+        case 'Reminder': return 'التذكيرات';
+        case 'Repeat': return 'متكرر';
+        case 'Savings': return 'المدخرات';
+        case 'Shopping': return 'التسوق';
+        case 'Account': return 'حساب';
+        case 'Loan': return 'قرض';
+        case 'Transactions': return 'المعاملات';
+        case 'Report': return 'تقرير';
+        case 'Profile': return 'الملف الشخصي';
+        case 'Goals': return 'الأهداف';
+        case 'Calculators': return 'الحاسبات';
+        default: return key;
       }
     }
-    Return key;
+    return key;
   }
 
-  Void setTheme(ThemeMode mode) {
+  void setTheme(ThemeMode mode) {
     _themeMode = mode;
     _saveToPrefs();
-    NotifyListeners();
+    notifyListeners();
   }
 
-  Void setLanguage(String lang) {
+  void setLanguage(String lang) {
     _language = lang;
     _saveToPrefs();
-    NotifyListeners();
+    notifyListeners();
   }
 
-  Void setTimeFilter(String filter) {
+  void setTimeFilter(String filter) {
     timeFilter = filter;
-    NotifyListeners();
+    notifyListeners();
   }
 
-  Void setMonthYear(int month, int year) {
+  void setMonthYear(int month, int year) {
     selectedMonthIndex = month;
     selectedYear = year;
-    NotifyListeners();
+    notifyListeners();
   }
 
-  Void setCustomDateRange(DateTime? start, DateTime? end) {
+  void setCustomDateRange(DateTime? start, DateTime? end) {
     customStartDate = start;
     customEndDate = end;
-    NotifyListeners();
+    notifyListeners();
   }
 
-  Void setCurrency(String newCurrency) {
-    currency = newCurrency;
-    NotifyListeners();
-  }
-
-  Void updatePin(String newPin) {
+  void updatePin(String newPin) {
     appPin = newPin;
     _saveToPrefs();
-    NotifyListeners();
+    notifyListeners();
   }
 
-  Void updateProfile({required String name, required String email, required String gender, required String birthDate, required String mobile, String? imagePath}) {
+  void updateProfile({required String name, required String email, required String gender, required String birthDate, required String mobile, String? imagePath}) {
     profileName = name;
     profileEmail = email;
     profileGender = gender;
     profileBirthDate = birthDate;
     profileMobile = mobile;
-    If (imagePath != null) profileImagePath = imagePath;
+    if (imagePath != null) profileImagePath = imagePath;
     _saveToPrefs();
-    NotifyListeners();
+    notifyListeners();
   }
 
-  Void updateSecurityToggles({required bool face, required bool fingerprint, required bool none, required bool pattern, required bool pin}) {
+  void updateSecurityToggles({required bool face, required bool fingerprint, required bool none, required bool pattern, required bool pin}) {
     useFaceLock = face;
     useFingerprint = fingerprint;
     useNoneLock = none;
     usePatternLock = pattern;
     usePinLock = pin;
-    NotifyListeners();
+    notifyListeners();
   }
 
-  Void toggleNotification(String key, bool val) {
-    If (key == 'daily') dailyReminder = val;
-    If (key == 'budget') budgetAlert = val;
-    If (key == 'loan') loanAlert = val;
-    NotifyListeners();
-  }
-
-  Void setNotificationSound(String sound) {
-    notificationSound = sound;
-    NotifyListeners();
-  }
-
-  Void addTransaction(TransactionItem txn) {
+  void addTransaction(TransactionItem txn) {
     transactions.insert(0, txn);
-    NotifyListeners();
+    notifyListeners();
   }
 
-  Void updateTransaction(int index, TransactionItem txn) {
+  void updateTransaction(int index, TransactionItem txn) {
     transactions[index] = txn;
-    NotifyListeners();
+    notifyListeners();
   }
 
-  Void removeTransaction(int index) {
+  void removeTransaction(int index) {
     transactions.removeAt(index);
-    NotifyListeners();
+    notifyListeners();
   }
 
-  Void addLoan(LoanItem loan) {
+  void addLoan(LoanItem loan) {
     loans.insert(0, loan);
-    NotifyListeners();
+    notifyListeners();
   }
 
-  Void updateLoan(int index, String personName, double amount, String type) {
-    Loans[index].personName = personName;
-    Loans[index].amount = amount;
-    Loans[index].type = type;
-    NotifyListeners();
+  void updateLoan(int index, String personName, double amount, String type) {
+    loans[index].personName = personName;
+    loans[index].amount = amount;
+    loans[index].type = type;
+    notifyListeners();
   }
 
-  Void removeLoan(int index) {
+  void removeLoan(int index) {
     loans.removeAt(index);
-    NotifyListeners();
+    notifyListeners();
   }
 
-  Void toggleLoanStatus(String id) {
-    For (var loan in loans) {
-      If (loan.id == id) {
-        Loan.isPaid = !loan.isPaid;
-        NotifyListeners();
-        Break;
+  void toggleLoanStatus(String id) {
+    for (var loan in loans) {
+      if (loan.id == id) {
+        loan.isPaid = !loan.isPaid;
+        notifyListeners();
+        break;
       }
     }
   }
 
-  Void sortLoans(String criteria) {
-    If (criteria.contains('New-Old')) {
-      Loans.sort((a, b) => b.date.compareTo(a.date));
+  void sortLoans(String criteria) {
+    if (criteria.contains('New-Old')) {
+      loans.sort((a, b) => b.date.compareTo(a.date));
     } else if (criteria.contains('Old-New')) {
-      Loans.sort((a, b) => a.date.compareTo(b.date));
+      loans.sort((a, b) => a.date.compareTo(b.date));
     } else if (criteria.contains('A-Z')) {
-      Loans.sort((a, b) => a.personName.compareTo(b.personName));
+      loans.sort((a, b) => a.personName.compareTo(b.personName));
     } else if (criteria.contains('Z-A')) {
-      Loans.sort((a, b) => b.personName.compareTo(a.personName));
+      loans.sort((a, b) => b.personName.compareTo(a.personName));
     } else if (criteria.contains('Large-Small')) {
-      Loans.sort((a, b) => b.amount.compareTo(a.amount));
+      loans.sort((a, b) => b.amount.compareTo(a.amount));
     } else if (criteria.contains('Small-Large')) {
-      Loans.sort((a, b) => a.amount.compareTo(b.amount));
+      loans.sort((a, b) => a.amount.compareTo(b.amount));
     }
-    NotifyListeners();
+    notifyListeners();
   }
 
-  Void sortTransactions(String criteria) {
-    If (criteria.contains('New-Old')) {
-      Transactions.sort((a, b) => b.date.compareTo(a.date));
+  void sortTransactions(String criteria) {
+    if (criteria.contains('New-Old')) {
+      transactions.sort((a, b) => b.date.compareTo(a.date));
     } else if (criteria.contains('Old-New')) {
-      Transactions.sort((a, b) => a.date.compareTo(b.date));
+      transactions.sort((a, b) => a.date.compareTo(b.date));
     } else if (criteria.contains('A-Z')) {
-      Transactions.sort((a, b) => a.category.compareTo(b.category));
+      transactions.sort((a, b) => a.category.compareTo(b.category));
     } else if (criteria.contains('Z-A')) {
-      Transactions.sort((a, b) => b.category.compareTo(a.category));
+      transactions.sort((a, b) => b.category.compareTo(a.category));
     } else if (criteria.contains('Number Large-Small')) {
-      Transactions.sort((a, b) => b.amount.compareTo(a.amount));
+      transactions.sort((a, b) => b.amount.compareTo(a.amount));
     } else if (criteria.contains('Number Small-Large')) {
-      Transactions.sort((a, b) => a.amount.compareTo(b.amount));
+      transactions.sort((a, b) => a.amount.compareTo(b.amount));
     }
-    NotifyListeners();
+    notifyListeners();
   }
 
   List<TransactionItem> getFilteredTransactions() {
-    Return transactions.where((txn) {
-      If (timeFilter == 'Custom Range' && customStartDate != null && customEndDate != null) {
-        Return txn.date.isAfter(customStartDate!.subtract(const Duration(days: 1))) &&
-               Txn.date.isBefore(customEndDate!.add(const Duration(days: 1)));
+    return transactions.where((txn) {
+      if (timeFilter == 'Custom Range' && customStartDate != null && customEndDate != null) {
+        return txn.date.isAfter(customStartDate!.subtract(const Duration(days: 1))) &&
+               txn.date.isBefore(customEndDate!.add(const Duration(days: 1)));
       }
-      Return txn.date.year == selectedYear && txn.date.month == selectedMonthIndex;
+      return txn.date.year == selectedYear && txn.date.month == selectedMonthIndex;
     }).toList();
   }
 
-  Double getTotalIncome() {
-    Double total = 0;
-    For (var txn in getFilteredTransactions()) {
-      If (txn.type == 'Income') total += txn.amount;
+  double getTotalIncome() {
+    double total = 0;
+    for (var txn in getFilteredTransactions()) {
+      if (txn.type == 'Income') total += txn.amount;
     }
-    Return total;
+    return total;
   }
 
-  Double getTotalExpense() {
-    Double total = 0;
-    For (var txn in getFilteredTransactions()) {
-      If (txn.type == 'Expense') total += txn.amount;
+  double getTotalExpense() {
+    double total = 0;
+    for (var txn in getFilteredTransactions()) {
+      if (txn.type == 'Expense') total += txn.amount;
     }
-    Return total;
+    return total;
   }
 
-  Double getTotalBalance() {
-    Return getTotalIncome() - getTotalExpense();
+  double getTotalBalance() {
+    return getTotalIncome() - getTotalExpense();
   }
 
-  Double getTotalGiven() {
-    Double total = 0;
-    For (var loan in loans) {
-      If (loan.type == 'Given' && !loan.isPaid) total += loan.amount;
+  double getTotalGiven() {
+    double total = 0;
+    for (var loan in loans) {
+      if (loan.type == 'Given' && !loan.isPaid) total += loan.amount;
     }
-    Return total;
+    return total;
   }
 
-  Double getTotalTaken() {
-    Double total = 0;
-    For (var loan in loans) {
-      If (loan.type == 'Taken' && !loan.isPaid) total += loan.amount;
+  double getTotalTaken() {
+    double total = 0;
+    for (var loan in loans) {
+      if (loan.type == 'Taken' && !loan.isPaid) total += loan.amount;
     }
-    Return total;
+    return total;
   }
 
-  Double getNetBalance() {
-    Return getTotalGiven() - getTotalTaken();
+  double getNetBalance() {
+    return getTotalGiven() - getTotalTaken();
   }
 
-  Void addAccount(String name, String type, String details) {
-    If (name.isNotEmpty) {
-      Accounts.add(AccountModel(
-        Name: name,
-        Type: type,
-        Details: details.isEmpty ? (type == 'Cash' ? 'Hand Cash' : 'N/A') : details,
-        IsDefault: accounts.isEmpty,
+  void addAccount(String name, String type, String details) {
+    if (name.isNotEmpty) {
+      accounts.add(AccountModel(
+        name: name,
+        type: type,
+        details: details.isEmpty ? (type == 'Cash' ? 'Hand Cash' : 'N/A') : details,
+        isDefault: accounts.isEmpty,
       ));
-      Accounts.sort((a, b) => a.name.compareTo(b.name));
-      NotifyListeners();
+      accounts.sort((a, b) => a.name.compareTo(b.name));
+      notifyListeners();
     }
   }
 
-  Void updateAccount(int index, String name, String type, String details) {
-    Accounts[index].name = name;
-    Accounts[index].type = type;
-    Accounts[index].details = details;
-    Accounts.sort((a, b) => a.name.compareTo(b.name));
-    NotifyListeners();
+  void updateAccount(int index, String name, String type, String details) {
+    accounts[index].name = name;
+    accounts[index].type = type;
+    accounts[index].details = details;
+    accounts.sort((a, b) => a.name.compareTo(b.name));
+    notifyListeners();
   }
 
-  Void setDefaultAccount(int index) {
-    For (int i = 0; i < accounts.length; i++) {
-      Accounts[i].isDefault = (i == index);
+  void setDefaultAccount(int index) {
+    for (int i = 0; i < accounts.length; i++) {
+      accounts[i].isDefault = (i == index);
     }
-    NotifyListeners();
+    notifyListeners();
   }
 
-  Bool removeAccount(int index) {
-    If (accounts.length > 1) {
-      Bool wasDefault = accounts[index].isDefault;
+  bool removeAccount(int index) {
+    if (accounts.length > 1) {
+      bool wasDefault = accounts[index].isDefault;
       String deletedAccName = accounts[index].name;
-      Accounts.removeAt(index);
-      If (wasDefault) {
-        Accounts[0].isDefault = true;
+      accounts.removeAt(index);
+      if (wasDefault) {
+        accounts[0].isDefault = true;
       }
       String defaultAccName = accounts.firstWhere((acc) => acc.isDefault, orElse: () => accounts[0]).name;
-      For (var txn in transactions) {
-        If (txn.account == deletedAccName) {
-          Txn.account = defaultAccName;
+      for (var txn in transactions) {
+        if (txn.account == deletedAccName) {
+          txn.account = defaultAccName;
         }
       }
-      Accounts.sort((a, b) => a.name.compareTo(b.name));
-      NotifyListeners();
-      Return true;
+      accounts.sort((a, b) => a.name.compareTo(b.name));
+      notifyListeners();
+      return true;
     }
-    Return false;
+    return false;
   }
 
-  Void addBudget(String category, double amount) {
-    Budgets.add(BudgetModel(category: category, amount: amount));
-    Budgets.sort((a, b) => a.category.compareTo(b.category));
-    NotifyListeners();
+  void addBudget(String category, double amount) {
+    budgets.add(BudgetModel(category: category, amount: amount));
+    budgets.sort((a, b) => a.category.compareTo(b.category));
+    notifyListeners();
   }
 
-  Void updateBudget(int index, String category, double amount) {
-    Budgets[index] = BudgetModel(category: category, amount: amount);
-    Budgets.sort((a, b) => a.category.compareTo(b.category));
-    NotifyListeners();
+  void updateBudget(int index, String category, double amount) {
+    budgets[index] = BudgetModel(category: category, amount: amount);
+    budgets.sort((b1, b2) => b1.category.compareTo(b2.category));
+    notifyListeners();
   }
 
-  Void removeBudget(int index) {
-    Budgets.removeAt(index);
-    NotifyListeners();
+  void removeBudget(int index) {
+    budgets.removeAt(index);
+    notifyListeners();
   }
 
-  Void addSavings(String title, double target) {
-    SavingsList.add(SavingsModel(title: title, targetAmount: target, currentAmount: 0));
-    SavingsList.sort((a, b) => a.title.compareTo(b.title));
-    NotifyListeners();
+  void addSavings(String title, double target) {
+    savingsList.add(SavingsModel(title: title, targetAmount: target, currentAmount: 0));
+    savingsList.sort((a, b) => a.title.compareTo(b.title));
+    notifyListeners();
   }
 
-  Void updateSavings(int index, String title, double targetAmount) {
-    SavingsList[index].title = title;
-    SavingsList[index].targetAmount = targetAmount;
-    SavingsList.sort((a, b) => a.title.compareTo(b.title));
-    NotifyListeners();
+  void updateSavings(int index, String title, double targetAmount) {
+    savingsList[index].title = title;
+    savingsList[index].targetAmount = targetAmount;
+    savingsList.sort((a, b) => a.title.compareTo(b.title));
+    notifyListeners();
   }
 
-  Void removeSavings(int index) {
-    SavingsList.removeAt(index);
-    NotifyListeners();
+  void removeSavings(int index) {
+    savingsList.removeAt(index);
+    notifyListeners();
   }
 
-  Void addCategory(String cat) {
-    If (cat.isNotEmpty && !categories.contains(cat)) {
-      Categories.add(cat);
-      Categories.sort();
-      NotifyListeners();
-    }
-  }
-
-  Void updateCategory(int index, String newCat) {
-    If (newCat.isNotEmpty) {
-      Categories[index] = newCat;
-      Categories.sort();
-      NotifyListeners();
+  void addCategory(String cat) {
+    if (cat.isNotEmpty && !categories.contains(cat)) {
+      categories.add(cat);
+      categories.sort();
+      notifyListeners();
     }
   }
 
-  Void removeCategory(int index) {
-    If (categories.length > 1) {
-      Categories.removeAt(index);
-      NotifyListeners();
+  void updateCategory(int index, String newCat) {
+    if (newCat.isNotEmpty) {
+      categories[index] = newCat;
+      categories.sort();
+      notifyListeners();
     }
   }
 
-  Void addRepeatedTransaction(String title, double amount, String frequency) {
-    If (title.isNotEmpty) {
-      RepeatedTransactions.add(RepeatedTransactionModel(title: title, amount: amount, frequency: frequency));
-      RepeatedTransactions.sort((a, b) => a.title.compareTo(b.title));
-      NotifyListeners();
+  void removeCategory(int index) {
+    if (categories.length > 1) {
+      categories.removeAt(index);
+      notifyListeners();
     }
   }
 
-  Void updateRepeatedTransaction(int index, String title, double amount, String frequency) {
-    RepeatedTransactions[index] = RepeatedTransactionModel(title: title, amount: amount, frequency: frequency);
-    RepeatedTransactions.sort((a, b) => a.title.compareTo(b.title));
-    NotifyListeners();
-  }
-
-  Void removeRepeatedTransaction(int index) {
-    RepeatedTransactions.removeAt(index);
-    NotifyListeners();
-  }
-
-  Void addShoppingItem(String name, double amount) {
-    If (name.isNotEmpty) {
-      ShoppingList.add(ShoppingItem(name: name, amount: amount));
-      ShoppingList.sort((a, b) => a.name.compareTo(b.name));
-      NotifyListeners();
+  void addShoppingItem(String name, double amount) {
+    if (name.isNotEmpty) {
+      shoppingList.add(ShoppingItem(name: name, amount: amount));
+      shoppingList.sort((a, b) => a.name.compareTo(b.name));
+      notifyListeners();
     }
   }
 
-  Void updateShoppingItem(int index, String name, double amount) {
-    If (name.isNotEmpty) {
-      ShoppingList[index].name = name;
-      ShoppingList[index].amount = amount;
-      ShoppingList.sort((a, b) => a.name.compareTo(b.name));
-      NotifyListeners();
+  void updateShoppingItem(int index, String name, double amount) {
+    if (name.isNotEmpty) {
+      shoppingList[index].name = name;
+      shoppingList[index].amount = amount;
+      shoppingList.sort((a, b) => a.name.compareTo(b.name));
+      notifyListeners();
     }
   }
 
-  Void removeShoppingItem(int index) {
-    ShoppingList.removeAt(index);
-    NotifyListeners();
+  void removeShoppingItem(int index) {
+    shoppingList.removeAt(index);
+    notifyListeners();
   }
 
-  Void toggleShoppingCheck(int index) {
-    ShoppingList[index].isChecked = !shoppingList[index].isChecked;
-    If (shoppingList[index].isChecked && shoppingList[index].amount > 0) {
+  void toggleShoppingCheck(int index) {
+    shoppingList[index].isChecked = !shoppingList[index].isChecked;
+    if (shoppingList[index].isChecked && shoppingList[index].amount > 0) {
       String defaultAcc = accounts.firstWhere((acc) => acc.isDefault, orElse: () => accounts[0]).name;
-      Transactions.insert(0, TransactionItem(
-        Id: DateTime.now().toString(),
-        Type: 'Expense',
-        Account: defaultAcc,
-        Category: categories.first,
-        Amount: shoppingList[index].amount,
-        Description: 'Shopping: ${shoppingList[index].name}',
-        Date: DateTime.now(),
+      transactions.insert(0, TransactionItem(
+        id: DateTime.now().toString(),
+        type: 'Expense',
+        account: defaultAcc,
+        category: categories.first,
+        amount: shoppingList[index].amount,
+        description: 'Shopping: ${shoppingList[index].name}',
+        date: DateTime.now(),
       ));
     }
-    NotifyListeners();
+    notifyListeners();
   }
 
-  Void addReminder(String title, double amount, String dueDate) {
-    If (title.isNotEmpty) {
-      Reminders.add(ReminderModel(title: title, amount: amount, dueDate: dueDate));
-      Reminders.sort((a, b) => a.title.compareTo(b.title));
-      NotifyListeners();
+  void addReminder(String title, double amount, String dueDate) {
+    if (title.isNotEmpty) {
+      reminders.add(ReminderModel(title: title, amount: amount, dueDate: dueDate));
+      reminders.sort((a, b) => a.title.compareTo(b.title));
+      notifyListeners();
     }
   }
 
-  Void updateReminder(int index, String title, double amount, String dueDate) {
-    Reminders[index] = ReminderModel(title: title, amount: amount, dueDate: dueDate);
-    Reminders.sort((a, b) => a.title.compareTo(b.title));
-    NotifyListeners();
+  void updateReminder(int index, String title, double amount, String dueDate) {
+    reminders[index] = ReminderModel(title: title, amount: amount, dueDate: dueDate);
+    reminders.sort((a, b) => a.title.compareTo(b.title));
+    notifyListeners();
   }
 
-  Void removeReminder(int index) {
-    Reminders.removeAt(index);
-    NotifyListeners();
+  void removeReminder(int index) {
+    reminders.removeAt(index);
+    notifyListeners();
   }
 }
 
-Final appSettings = AppSettingsNotifier();
+final appSettings = AppSettingsNotifier();
 
 // ----------------- App Entry Point -----------------
 class AccountBookApp extends StatelessWidget {
-  Const AccountBookApp({super.key});
+  const AccountBookApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Return AnimatedBuilder(
-      Animation: appSettings,
-      Builder: (context, child) {
-        Return MaterialApp(
-          Title: appSettings.getAppTitle(),
-          DebugShowCheckedModeBanner: false,
-          ThemeMode: appSettings.themeMode,
-          Theme: ThemeData(
-            Brightness: Brightness.light,
-            ScaffoldBackgroundColor: const Color(0xFFF3F4F6),
-            PrimaryColor: const Color(0xFF38BDF8),
-            CardColor: Colors.white,
-            AppBarTheme: const AppBarTheme(backgroundColor: Colors.white, foregroundColor: Colors.black),
-            DialogTheme: const DialogTheme(backgroundColor: Colors.white, surfaceTintColor: Colors.white),
-            BottomSheetThemeData: const BottomSheetThemeData(backgroundColor: Colors.white, surfaceTintColor: Colors.white),
-            ElevatedButtonTheme: ElevatedButtonThemeData(
-              Style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), foregroundColor: Colors.white),
-            ),
+    return AnimatedBuilder(
+      animation: appSettings,
+      builder: (context, child) {
+        return MaterialApp(
+          title: appSettings.getAppTitle(),
+          debugShowCheckedModeBanner: false,
+          themeMode: appSettings.themeMode,
+          theme: ThemeData(
+            brightness: Brightness.light,
+            scaffoldBackgroundColor: const Color(0xFFF3F4F6),
+            primaryColor: const Color(0xFF38BDF8),
+            cardColor: Colors.white,
+            appBarTheme: const AppBarTheme(backgroundColor: Colors.white, foregroundColor: Colors.black),
           ),
-          DarkTheme: ThemeData(
-            Brightness: Brightness.dark,
-            ScaffoldBackgroundColor: const Color(0xFF0F172A),
-            PrimaryColor: const Color(0xFF10B981),
-            CardColor: const Color(0xFF1E293B),
-            AppBarTheme: const AppBarTheme(backgroundColor: Color(0xFF1E293B), foregroundColor: Colors.white),
-            DialogTheme: const DialogTheme(backgroundColor: Color(0xFF1E293B), surfaceTintColor: Color(0xFF1E293B)),
-            BottomSheetThemeData: const BottomSheetThemeData(backgroundColor: Color(0xFF1E293B), surfaceTintColor: Color(0xFF1E293B)),
-            ElevatedButtonTheme: ElevatedButtonThemeData(
-              Style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), foregroundColor: Colors.white),
-            ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            scaffoldBackgroundColor: const Color(0xFF0F172A),
+            primaryColor: const Color(0xFF10B981),
+            cardColor: const Color(0xFF1E293B),
+            appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF1E293B), foregroundColor: Colors.white),
           ),
-          Home: const PinLockScreen(),
+          home: const PinLockScreen(),
         );
       },
     );
@@ -824,71 +763,30 @@ class AccountBookApp extends StatelessWidget {
 // ----------------- Standard Menus & Helpers -----------------
 void showStandardDownloadMenu(BuildContext context, Offset offset) {
   String lang = appSettings.language;
-  String previewText = lang == 'Bangla' ? 'প্রিভিউ' : (lang == 'Arabic' ? 'معاينة' : 'Preview');
-  String pdfText = lang == 'Bangla' ? 'পিডিএফ ডাউনলোড' : (lang == 'Arabic' ? 'تحميل كـ PDF' : 'Download as PDF');
-  String excelText = lang == 'Bangla' ? 'এক্সেল ডাউনলোড' : (lang == 'Arabic' ? 'تحميل كـ Excel' : 'Download as Excel');
+  String previewText = lang == 'Bangla' ? 'প্রিভিউ' : 'Preview';
+  String pdfText = lang == 'Bangla' ? 'পিডিএফ ডাউনলোড' : 'Download as PDF';
+  String excelText = lang == 'Bangla' ? 'এক্সেল ডাউনলোড' : 'Download as Excel';
 
-  ShowMenu(
-    Context: context,
-    Position: RelativeRect.fromLTRB(offset.dx, offset.dy + 40, 20, 0),
-    Items: [
-      PopupMenuItem(
-        Value: 'preview',
-        Child: Row(
-          Children: [
-            Const Icon(Icons.visibility, color: Colors.blue, size: 20),
-            Const SizedBox(width: 8),
-            Text(previewText),
-          ],
-        ),
-      ),
-      PopupMenuItem(
-        Value: 'pdf',
-        Child: Row(
-          Children: [
-            Const Icon(Icons.picture_as_pdf, color: Colors.red, size: 20),
-            Const SizedBox(width: 8),
-            Text(pdfText),
-          ],
-        ),
-      ),
-      PopupMenuItem(
-        Value: 'excel',
-        Child: Row(
-          Children: [
-            Const Icon(Icons.table_chart, color: Colors.green, size: 20),
-            Const SizedBox(width: 8),
-            Text(excelText),
-          ],
-        ),
-      ),
+  showMenu(
+    context: context,
+    position: RelativeRect.fromLTRB(offset.dx, offset.dy + 40, 20, 0),
+    items: [
+      PopupMenuItem(value: 'preview', child: Row(children: [const Icon(Icons.visibility, color: Colors.blue, size: 20), const SizedBox(width: 8), Text(previewText)])),
+      PopupMenuItem(value: 'pdf', child: Row(children: [const Icon(Icons.picture_as_pdf, color: Colors.red, size: 20), const SizedBox(width: 8), Text(pdfText)])),
+      PopupMenuItem(value: 'excel', child: Row(children: [const Icon(Icons.table_chart, color: Colors.green, size: 20), const SizedBox(width: 8), Text(excelText)])),
     ],
   ).then((value) {
-    If (value != null) {
-      If (value == 'preview') {
-        ShowDialog(
-          Context: context,
-          Builder: (ctx) => AlertDialog(
-            Title: Text(lang == 'Bangla' ? 'রিপোর্ট প্রিভিউ' : (lang == 'Arabic' ? 'معاينة التقرير' : 'Report Preview')),
-            Content: Text(lang == 'Bangla' ? 'এখানে আপনার বর্তমান হিসাবের সংক্ষিপ্ত প্রিভিউ দেখানো হচ্ছে।' : (lang == 'Arabic' ? 'هذا معاينة موجزة لحسابك الحالي.' : 'Here is a preview of your financial summary.')),
-            Actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK'))],
-          ),
-        );
-      } else {
-        String formatType = value.toUpperCase();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Report saved to device storage as $formatType successfully!')),
-        );
-      }
+    if (value != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Report saved as $value successfully!')));
     }
   });
 }
 
 void showStandardSortMenu(BuildContext context, Offset offset, Function(String) onSelected) {
-  ShowMenu(
-    Context: context,
-    Position: RelativeRect.fromLTRB(offset.dx, offset.dy + 40, 20, 0),
-    Items: const [
+  showMenu(
+    context: context,
+    position: RelativeRect.fromLTRB(offset.dx, offset.dy + 40, 20, 0),
+    items: const [
       PopupMenuItem(value: 'Date New-Old', child: Text('Sort by Date (Newest to Oldest)')),
       PopupMenuItem(value: 'Date Old-New', child: Text('Sort by Date (Oldest to Newest)')),
       PopupMenuItem(value: 'Name A-Z', child: Text('Sort by Name (A to Z)')),
@@ -897,139 +795,115 @@ void showStandardSortMenu(BuildContext context, Offset offset, Function(String) 
       PopupMenuItem(value: 'Number Small-Large', child: Text('Sort by Number (Small to Large)')),
     ],
   ).then((value) {
-    If (value != null) {
-      OnSelected(value);
-    }
+    if (value != null) onSelected(value);
   });
 }
 
 void showLocalizedDeleteDialog({
-  Required BuildContext context,
-  Required bool isImportant,
-  Required String itemName,
-  Required VoidCallback onDeleteConfirmed,
+  required BuildContext context,
+  required bool isImportant,
+  required String itemName,
+  required VoidCallback onDeleteConfirmed,
 }) {
   String lang = appSettings.language;
-  String title1 = lang == 'Bangla' ? 'নিশ্চিতকরণ' : (lang == 'Arabic' ? 'تأكيد' : 'Confirmation');
-  String msg1 = lang == 'Bangla' 
-      ? 'আপনি কি আসলেই "$itemName" ডিলিট করতে চান?' 
-      : (lang == 'Arabic' ? 'هل أنت متأكد أنك تريد حذف "$itemName"؟' : 'Are you sure you want to delete "$itemName"?');
+  String title1 = lang == 'Bangla' ? 'নিশ্চিতকরণ' : 'Confirmation';
+  String msg1 = lang == 'Bangla' ? 'আপনি কি আসলেই "$itemName" ডিলিট করতে চান?' : 'Are you sure you want to delete "$itemName"?';
   
-  String warningMsg = lang == 'Bangla'
-      ? 'সতর্কতা: এটি অন্য কোনো রেকর্ডের সাথে জড়িত। ডিলিট করলে ডাটা প্রভাবিত হতে পারে। নিশ্চিত?'
-      : (lang == 'Arabic' ? 'تحذير: هذا مرتبط بسجل آخر. هل أنت متأكد؟' : 'Warning: This is linked with other records. Are you sure?');
-  
-  String yesText = lang == 'Bangla' ? 'হ্যাঁ' : (lang == 'Arabic' ? 'نعم' : 'Yes');
-  String noText = lang == 'Bangla' ? 'না' : (lang == 'Arabic' ? 'لا' : 'No');
-
-  ShowDialog(
-    Context: context,
-    Builder: (ctx) => AlertDialog(
-      Title: Text(title1),
-      Content: Text(isImportant ? warningMsg : msg1),
-      Actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(noText)),
+  showDialog(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: Text(title1),
+      content: Text(msg1),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('No')),
         ElevatedButton(
-          Style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-          OnPressed: () {
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+          onPressed: () {
             Navigator.pop(ctx);
-            OnDeleteConfirmed();
+            onDeleteConfirmed();
           },
-          Child: Text(yesText, style: const TextStyle(color: Colors.white)),
+          child: const Text('Yes', style: TextStyle(color: Colors.white)),
         ),
       ],
     ),
   );
 }
 
-// ----------------- Dashboard Analytics Screen -----------------
-class DashboardAnalyticsScreen extends StatelessWidget {
-  Const DashboardAnalyticsScreen({super.key});
+// ----------------- App Drawer Widget -----------------
+class AppDrawer extends StatelessWidget {
+  const AppDrawer({super.key});
+
+  void _showThemeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setStateDialog) {
+            return AlertDialog(
+              title: Text(appSettings.translate('Theme')),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RadioListTile<ThemeMode>(title: const Text('Dark'), value: ThemeMode.dark, groupValue: appSettings.themeMode, activeColor: const Color(0xFF10B981), onChanged: (val) { if (val != null) { appSettings.setTheme(val); setStateDialog(() {}); } }),
+                  RadioListTile<ThemeMode>(title: const Text('Light'), value: ThemeMode.light, groupValue: appSettings.themeMode, activeColor: const Color(0xFF10B981), onChanged: (val) { if (val != null) { appSettings.setTheme(val); setStateDialog(() {}); } }),
+                  RadioListTile<ThemeMode>(title: const Text('System Default'), value: ThemeMode.system, groupValue: appSettings.themeMode, activeColor: const Color(0xFF10B981), onChanged: (val) { if (val != null) { appSettings.setTheme(val); setStateDialog(() {}); } }),
+                ],
+              ),
+              actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close'))],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setStateDialog) {
+            return AlertDialog(
+              title: Text(appSettings.translate('Language')),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RadioListTile<String>(title: const Text('Arabic (العربية)'), value: 'Arabic', groupValue: appSettings.language, activeColor: const Color(0xFF10B981), onChanged: (val) { if (val != null) { appSettings.setLanguage(val); setStateDialog(() {}); } }),
+                  RadioListTile<String>(title: const Text('Bangla (বাংলা)'), value: 'Bangla', groupValue: appSettings.language, activeColor: const Color(0xFF10B981), onChanged: (val) { if (val != null) { appSettings.setLanguage(val); setStateDialog(() {}); } }),
+                  RadioListTile<String>(title: const Text('English'), value: 'English', groupValue: appSettings.language, activeColor: const Color(0xFF10B981), onChanged: (val) { if (val != null) { appSettings.setLanguage(val); setStateDialog(() {}); } }),
+                ],
+              ),
+              actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close'))],
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    String curr = appSettings.currency;
-    Double income = appSettings.getTotalIncome();
-    Double expense = appSettings.getTotalExpense();
-    Double balance = appSettings.getTotalBalance();
-    Double totalGiven = appSettings.getTotalGiven();
-    Double totalTaken = appSettings.getTotalTaken();
-
-    Return AnimatedBuilder(
-      Animation: appSettings,
-      Builder: (context, _) => Scaffold(
-        AppBar: AppBar(title: Text(appSettings.translate('Dashboard Analytics'))),
-        Body: SingleChildScrollView(
-          Padding: const EdgeInsets.all(16),
-          Child: Column(
-            CrossAxisAlignment: CrossAxisAlignment.start,
-            Children: [
-              Const Text('Financial Overview Summary', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              Const SizedBox(height: 12),
-              Container(
-                Padding: const EdgeInsets.all(16),
-                Decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
-                Child: Column(
-                  Children: [
-                    Row(
-                      MainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      Children: [
-                        Const Text('Total Balance', style: TextStyle(color: Colors.grey)),
-                        Text('$balance$curr', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: balance >= 0 ? const Color(0xFF10B981) : Colors.redAccent)),
-                      ],
-                    ),
-                    Const Divider(height: 24),
-                    Row(
-                      MainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      Children: [
-                        Const Text('Total Income', style: TextStyle(color: Colors.grey)),
-                        Text('$income$curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
-                      ],
-                    ),
-                    Const SizedBox(height: 8),
-                    Row(
-                      MainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      Children: [
-                        Const Text('Total Expense', style: TextStyle(color: Colors.grey)),
-                        Text('$expense$curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
-                      ],
-                    ),
-                  ],
-                ),
+    return AnimatedBuilder(
+      animation: appSettings,
+      builder: (context, _) => Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            UserAccountsDrawerHeader(
+              decoration: const BoxDecoration(color: Color(0xFF10B981)),
+              accountName: Text(appSettings.profileName, style: const TextStyle(fontWeight: FontWeight.bold)),
+              accountEmail: Text(appSettings.profileEmail),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white,
+                backgroundImage: appSettings.profileImagePath.isNotEmpty ? FileImage(File(appSettings.profileImagePath)) : null,
+                child: appSettings.profileImagePath.isEmpty ? const Icon(Icons.person, size: 40, color: Color(0xFF10B981)) : null,
               ),
-              Const SizedBox(height: 24),
-              Const Text('Loan & Debt Overview', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              Const SizedBox(height: 12),
-              Container(
-                Padding: const EdgeInsets.all(16),
-                Decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
-                Child: Column(
-                  Children: [
-                    Row(
-                      MainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      Children: [
-                        Const Text('Total Loan Given', style: TextStyle(color: Colors.grey)),
-                        Text('$totalGiven$curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
-                      ],
-                    ),
-                    Const SizedBox(height: 8),
-                    Row(
-                      MainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      Children: [
-                        Const Text('Total Loan Taken', style: TextStyle(color: Colors.grey)),
-                        Text('$totalTaken$curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+            ListTile(leading: const Icon(Icons.palette), title: Text(appSettings.translate('Theme')), onTap: () { Navigator.pop(context); _showThemeDialog(context); }),
+            ListTile(leading: const Icon(Icons.language), title: Text(appSettings.translate('Language')), onTap: () { Navigator.pop(context); _showLanguageDialog(context); }),
+          ],
         ),
       ),
     );
   }
 }
-
-// ----------------- Calculators Screen -----------------
-class
