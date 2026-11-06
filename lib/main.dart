@@ -4037,12 +4037,12 @@ const NotificationSettingsScreen({super.key});
 ​@override
 State<NotificationSettingsScreen> createState() => _NotificationSettingsScreenState();
 }
-​class _NotificationSettingsScreenState extends State<NotificationSettingsScreen> {
+class _NotificationSettingsScreenState extends State<NotificationSettingsScreen> {
 late bool daily;
 late bool budget;
 late bool loan;
 String selectedSound = 'Default';
-​@override
+@override
 void initState() {
 super.initState();
 daily = appSettings.dailyReminder;
@@ -4050,7 +4050,7 @@ budget = appSettings.budgetAlert;
 loan = appSettings.loanAlert;
 selectedSound = appSettings.notificationSound;
 }
-​@override
+@override
 Widget build(BuildContext context) {
 return AnimatedBuilder(
 animation: appSettings,
@@ -4125,7 +4125,7 @@ child: const Text('Save Changes', style: TextStyle(fontSize: 16, fontWeight: Fon
 );
 }
 }
-​// Main Navigation Container
+// Main Navigation Container
 class MainHomeScreen extends StatefulWidget {
 const MainHomeScreen({super.key});
 ​@override
