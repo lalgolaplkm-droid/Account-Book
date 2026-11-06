@@ -353,4 +353,315 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Month': return 'شهر';
         case 'Year': return 'سنة';
         case 'Income': return 'إيرادات';
-        case '
+        case 'Expense': return 'مصروفات';
+        default: return key;
+      }
+    }
+    return key;
+  }
+
+  void setTheme(ThemeMode mode) {
+    _themeMode = mode;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  void setLanguage(String lang) {
+    _language = lang;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  void setMonthYear(int month, int year) {
+    selectedMonthIndex = month;
+    selectedYear = year;
+    notifyListeners();
+  }
+
+  void updatePin(String newPin) {
+    appPin = newPin;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  void updateProfile({required String name, required String email, required String gender, required String birthDate, required String mobile, String? imagePath}) {
+    profileName = name;
+    profileEmail = email;
+    profileGender = gender;
+    profileBirthDate = birthDate;
+    profileMobile = mobile;
+    if (imagePath != null) profileImagePath = imagePath;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  void updateSecurityToggles({required bool face, required bool fingerprint, required bool none, required bool pattern, required bool pin}) {
+    useFaceLock = face;
+    useFingerprint = fingerprint;
+    useNoneLock = none;
+    usePatternLock = pattern;
+    usePinLock = pin;
+    notifyListeners();
+  }
+
+  void addTransaction(TransactionItem txn) {
+    transactions.insert(0, txn);
+    notifyListeners();
+  }
+
+  void removeTransaction(int index) {
+    transactions.removeAt(index);
+    notifyListeners();
+  }
+
+  void addLoan(LoanItem loan) {
+    loans.insert(0, loan);
+    notifyListeners();
+  }
+
+  void removeLoan(int index) {
+    loans.removeAt(index);
+    notifyListeners();
+  }
+
+  void toggleLoanStatus(String id) {
+    for (var loan in loans) {
+      if (loan.id == id) {
+        loan.isPaid = !loan.isPaid;
+        notifyListeners();
+        break;
+      }
+    }
+  }
+
+  List<TransactionItem> getFilteredTransactions() {
+    return transactions.where((txn) {
+      return txn.date.year == selectedYear && txn.date.month == selectedMonthIndex;
+    }).toList();
+  }
+
+  double getTotalIncome() {
+    double total = 0;
+    for (var txn in getFilteredTransactions()) {
+      if (txn.type == 'Income') total += txn.amount;
+    }
+    return total;
+  }
+
+  double getTotalExpense() {
+    double total = 0;
+    for (var txn in getFilteredTransactions()) {
+      if (txn.type == 'Expense') total += txn.amount;
+    }
+    return total;
+  }
+
+  double getTotalBalance() {
+    return getTotalIncome() - getTotalExpense();
+  }
+
+  double getTotalGiven() {
+    double total = 0;
+    for (var loan in loans) {
+      if (loan.type == 'Given' && !loan.isPaid) total += loan.amount;
+    }
+    return total;
+  }
+
+  double getTotalTaken() {
+    double total = 0;
+    for (var loan in loans) {
+      if (loan.type == 'Taken' && !loan.isPaid) total += loan.amount;
+    }
+    return total;
+  }
+
+  double getNetBalance() {
+    return getTotalGiven() - getTotalTaken();
+  }
+
+  void addAccount(String name, String type, String details) {
+    if (name.isNotEmpty) {
+      accounts.add(AccountModel(name: name, type: type, details: details, isDefault: false));
+      notifyListeners();
+    }
+  }
+
+  void addBudget(String category, double amount) {
+    budgets.add(BudgetModel(category: category, amount: amount));
+    notifyListeners();
+  }
+
+  void addSavings(String title, double target) {
+    savingsList.add(SavingsModel(title: title, targetAmount: target, currentAmount: 0));
+    notifyListeners();
+  }
+}
+
+final appSettings = AppSettingsNotifier();
+
+// ----------------- App Entry Point -----------------
+class AccountBookApp extends StatelessWidget {
+  const AccountBookApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: appSettings,
+      builder: (context, child) {
+        return MaterialApp(
+          title: appSettings.getAppTitle(),
+          debugShowCheckedModeBanner: false,
+          themeMode: appSettings.themeMode,
+          theme: ThemeData(
+            brightness: Brightness.light,
+            scaffoldBackgroundColor: const Color(0xFFF3F4F6),
+            primaryColor: const Color(0xFF38BDF8),
+            cardColor: Colors.white,
+            appBarTheme: const AppBarTheme(backgroundColor: Colors.white, foregroundColor: Colors.black),
+          ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            scaffoldBackgroundColor: const Color(0xFF0F172A),
+            primaryColor: const Color(0xFF10B981),
+            cardColor: const Color(0xFF1E293B),
+            appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF1E293B), foregroundColor: Colors.white),
+          ),
+          home: const PinLockScreen(),
+        );
+      },
+    );
+  }
+}
+
+// ----------------- Helper Functions -----------------
+void showStandardDownloadMenu(BuildContext context, Offset offset) {
+  showMenu(
+    context: context,
+    position: RelativeRect.fromLTRB(offset.dx, offset.dy + 40, 20, 0),
+    items: const [
+      PopupMenuItem(value: 'preview', child: Text('Preview')),
+      PopupMenuItem(value: 'pdf', child: Text('Download as PDF')),
+      PopupMenuItem(value: 'excel', child: Text('Download as Excel')),
+    ],
+  );
+}
+
+void showLocalizedDeleteDialog({
+  required BuildContext context,
+  required String itemName,
+  required VoidCallback onDeleteConfirmed,
+}) {
+  showDialog(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Text('Confirmation'),
+      content: Text('Are you sure you want to delete "$itemName"?'),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('No')),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+          onPressed: () {
+            Navigator.pop(ctx);
+            onDeleteConfirmed();
+          },
+          child: const Text('Yes'),
+        ),
+      ],
+    ),
+  );
+}
+
+// ----------------- Pin & Lock Screen with Language Switcher -----------------
+class PinLockScreen extends StatefulWidget {
+  const PinLockScreen({super.key});
+
+  @override
+  State<PinLockScreen> createState() => _PinLockScreenState();
+}
+
+class _PinLockScreenState extends State<PinLockScreen> {
+  final TextEditingController _pinController = TextEditingController();
+
+  void _verifyPin(BuildContext context) {
+    if (_pinController.text == appSettings.appPin || appSettings.useNoneLock) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MainHomeScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Wrong PIN!')),
+      );
+    }
+  }
+
+  void _showLockScreenLanguageDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setStateDialog) {
+            return AlertDialog(
+              title: Text(appSettings.translate('Language')),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RadioListTile<String>(
+                    title: const Text('English'),
+                    value: 'English',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage(val);
+                        setStateDialog(() {});
+                        setState(() {});
+                        Navigator.pop(ctx);
+                      }
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: const Text('Bangla (বাংলা)'),
+                    value: 'Bangla',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage(val);
+                        setStateDialog(() {});
+                        setState(() {});
+                        Navigator.pop(ctx);
+                      }
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: appSettings,
+      builder: (context, _) {
+        return Scaffold(
+          backgroundColor: const Color(0xFF0F172A),
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.language, color: Colors.white),
+                tooltip: 'Change Language',
+                onPressed: () => _showLockScreenLanguageDialog(context),
+              ),
+            ],
+          
