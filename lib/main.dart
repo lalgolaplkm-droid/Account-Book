@@ -57,6 +57,7 @@ class LoanItem {
   String type;
   DateTime date;
   bool isPaid;
+  String? account; // Master review: Account selection field for loan
 
   LoanItem({
     required this.id,
@@ -65,6 +66,7 @@ class LoanItem {
     required this.type,
     required this.date,
     this.isPaid = false,
+    this.account,
   });
 
   Map<String, dynamic> toJson() => {
@@ -74,6 +76,7 @@ class LoanItem {
     'type': type,
     'date': date.toIso8601String(),
     'isPaid': isPaid,
+    'account': account,
   };
 
   factory LoanItem.fromJson(Map<String, dynamic> json) => LoanItem(
@@ -83,6 +86,7 @@ class LoanItem {
     type: json['type'],
     date: DateTime.parse(json['date']),
     isPaid: json['isPaid'],
+    account: json['account'],
   );
 }
 
@@ -163,7 +167,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   String timeFilter = 'Month';
   String appPin = '1234';
 
-  String profileName = 'MD ALAMGIR HOSSAIN';
+  String profileName = 'মোহাম্মদ আলমগীর হোসেন';
   String profileEmail = 'alamgir@email.com';
   String profileGender = 'Male';
   String profileBirthDate = '01-01-1995';
@@ -192,8 +196,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   List<AccountModel> accounts = [
     AccountModel(name: 'Bank', type: 'Bank', details: 'A/C: ...1234', isDefault: false),
     AccountModel(name: 'Cash in Hand', type: 'Cash', details: 'Main pocket cash', isDefault: true),
-    AccountModel(name: 'Bikash', type: 'Mobile Banking', details: '018xxxxxxxx', isDefault: false),
-    AccountModel(name: 'Nagad', type: 'Mobile Banking', details: '017xxxxxxxx', isDefault: false),
+    AccountModel(name: 'Mobile Banking', type: 'Mobile Banking', details: '018xxxxxxxx', isDefault: false),
   ];
 
   String defaultCategory = 'Others';
@@ -227,7 +230,7 @@ class AppSettingsNotifier extends ChangeNotifier {
     else if (themeStr == 'system') _themeMode = ThemeMode.system;
     else _themeMode = ThemeMode.dark;
 
-    profileName = _prefs.getString('profileName') ?? 'MD ALAMGIR HOSSAIN';
+    profileName = _prefs.getString('profileName') ?? 'মোহাম্মদ আলমগীর হোসেন';
     profileEmail = _prefs.getString('profileEmail') ?? 'alamgir@email.com';
     profileGender = _prefs.getString('profileGender') ?? 'Male';
     profileBirthDate = _prefs.getString('profileBirthDate') ?? '01-01-1995';
@@ -347,9 +350,20 @@ class AppSettingsNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addTransaction(TransactionItem txn) {
+    transactions.insert(0, txn);
+    notifyListeners();
+  }
+
+  List<TransactionItem> getFilteredTransactions() {
+    return transactions.where((txn) {
+      return txn.date.year == selectedYear && txn.date.month == selectedMonthIndex;
+    }).toList();
+  }
+
   double getTotalIncome() {
     double total = 0;
-    for (var txn in transactions) {
+    for (var txn in getFilteredTransactions()) {
       if (txn.type == 'Income') total += txn.amount;
     }
     return total;
@@ -357,14 +371,40 @@ class AppSettingsNotifier extends ChangeNotifier {
 
   double getTotalExpense() {
     double total = 0;
-    for (var txn in transactions) {
+    for (var txn in getFilteredTransactions()) {
       if (txn.type == 'Expense') total += txn.amount;
     }
     return total;
   }
 
   double getTotalBalance() {
-    return getTotalIncome() - getTotalExpense();
+    double totalInc = 0;
+    double totalExp = 0;
+    for (var txn in transactions) {
+      if (txn.type == 'Income') totalInc += txn.amount;
+      if (txn.type == 'Expense') totalExp += txn.amount;
+    }
+    return totalInc - totalExp;
+  }
+
+  double getTotalGiven() {
+    double total = 0;
+    for (var loan in loans) {
+      if (loan.type == 'Given' && !loan.isPaid) total += loan.amount;
+    }
+    return total;
+  }
+
+  double getTotalTaken() {
+    double total = 0;
+    for (var loan in loans) {
+      if (loan.type == 'Taken' && !loan.isPaid) total += loan.amount;
+    }
+    return total;
+  }
+
+  double getNetBalance() {
+    return getTotalGiven() - getTotalTaken();
   }
 }
 
@@ -402,7 +442,7 @@ class AccountBookApp extends StatelessWidget {
   }
 }
 
-// ----------------- Pin & Main Container -----------------
+// ----------------- Pin & Lock Screen with Language Switch -----------------
 class PinLockScreen extends StatefulWidget {
   const PinLockScreen({super.key});
 
@@ -426,17 +466,52 @@ class _PinLockScreenState extends State<PinLockScreen> {
     }
   }
 
+  void _showLanguageSelector(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Select Language'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: const Text('Arabic (العربية)'),
+              onTap: () { appSettings.setLanguage('Arabic'); Navigator.pop(ctx); setState(() {}); },
+            ),
+            ListTile(
+              title: const Text('Bangla (বাংলা)'),
+              onTap: () { appSettings.setLanguage('Bangla'); Navigator.pop(ctx); setState(() {}); },
+            ),
+            ListTile(
+              title: const Text('English'),
+              onTap: () { appSettings.setLanguage('English'); Navigator.pop(ctx); setState(() {}); },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0F172A),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.language, color: Colors.white),
+            onPressed: () => _showLanguageSelector(context),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Point 1: Logo & Branding on Lock Screen
               const Icon(Icons.lock_rounded, size: 70, color: Color(0xFF10B981)),
               const SizedBox(height: 16),
               Text(appSettings.getAppTitle(), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
@@ -482,7 +557,6 @@ class HomeScreenContent extends StatelessWidget {
       appBar: AppBar(
         title: Text(appSettings.getAppTitle(), style: const TextStyle(fontWeight: FontWeight.bold)),
         actions: [
-          // Point 4: Notification Bell Icon on Top Right
           IconButton(
             icon: const Icon(Icons.notifications),
             onPressed: () {
@@ -496,7 +570,6 @@ class HomeScreenContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Point 4: Current Balance (Always real-time, no month/year filter attached directly here)
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(16)),
@@ -510,7 +583,6 @@ class HomeScreenContent extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            // Point 4: Time Filtering moved to Income & Expense section
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
