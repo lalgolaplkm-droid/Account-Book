@@ -4142,7 +4142,7 @@ const AllTransactionsScreen(),
 const ReportsScreen(),
 const ProfileScreen(),
 ];
-​return AnimatedBuilder(
+return AnimatedBuilder(
 animation: appSettings,
 builder: (context, _) => Scaffold(
 body: pages[_currentIndex],
