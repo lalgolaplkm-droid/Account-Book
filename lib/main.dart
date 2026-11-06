@@ -4402,3 +4402,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             const SizedBox(height: 20),
+            const Center(child: Text('Version 1.0.0', style: TextStyle(color: Colors.grey, fontSize: 12))),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ----------------- Main Navigation Container -----------------
+class MainHomeScreen extends StatefulWidget {
+  const MainHomeScreen({super.key});
+
+  @override
+  State<MainHomeScreen> createState() => _MainHomeScreenState();
+}
+
+class _MainHomeScreenState extends State<MainHomeScreen> {
+  int _currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      const HomeScreenContent(),
+      const LoanDebtScreen(),
+      const AllTransactionsScreen(), 
+      const ReportsScreen(),
+      const ProfileScreen(),
+    ];
+
+    return AnimatedBuilder(
+      animation: appSettings,
+      builder: (context, _) => Scaffold(
+        body: pages[_currentIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (index) => setState(() => _currentIndex = index),
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: const Color(0xFF10B981),
+          unselectedItemColor: Colors.grey,
+          backgroundColor: Theme.of(context).cardColor,
+          items: [
+            BottomNavigationBarItem(icon: const Icon(Icons.home), label: appSettings.translate('Account')),
+            BottomNavigationBarItem(icon: const Icon(Icons.money), label: appSettings.translate('Loan')),
+            BottomNavigationBarItem(icon: const Icon(Icons.list_alt), label: appSettings.translate('Transactions')),
+            BottomNavigationBarItem(icon: const Icon(Icons.bar_chart), label: appSettings.translate('Report')),
+            BottomNavigationBarItem(icon: const Icon(Icons.person), label: appSettings.translate('Profile')),
+          ],
+        ),
+      ),
+    );
+  }
+}
