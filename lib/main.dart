@@ -3615,7 +3615,7 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                             margin: const EdgeInsets.only(bottom: 8),
                             child: ListTile(
                               leading: CircleAvatar(
-                                backgroundColor: (isIncome ? Colors.green : Colors.red).withOpacity(0.2),
+                                backgroundColor: (isIncome ? Colors.green : Colors.red.shade100).withOpacity(0.2),
                                 child: Icon(isIncome ? Icons.add : Icons.remove, color: isIncome ? Colors.green : Colors.red),
                               ),
                               title: Text('${appSettings.translate(txn.category)} (${appSettings.translate(txn.account)})', style: const TextStyle(fontWeight: FontWeight.bold)),
