@@ -15,7 +15,7 @@ class AccountBookApp extends StatefulWidget {
 
 class _AccountBookAppState extends State<AccountBookApp> {
   ThemeMode _themeMode = ThemeMode.dark;
-  Locale _locale = const Locale('bn');
+  Locale _locale = const Locale('bn'); // ডিফল্ট বাংলা
 
   void setThemeMode(ThemeMode mode) {
     setState(() {
@@ -51,7 +51,9 @@ class _AccountBookAppState extends State<AccountBookApp> {
   }
 }
 
-// ১. লক স্ক্রিন ও পিন অথেন্টিকেশন
+// ==========================================
+// ১. লক স্ক্রিন ও সিকিউরিটি মডিউল
+// ==========================================
 class LockScreen extends StatefulWidget {
   const LockScreen({Key? key}) : super(key: key);
 
@@ -135,7 +137,9 @@ class _LockScreenState extends State<LockScreen> {
   }
 }
 
-// ২. মূল হোম স্ক্রিন ড্যাশবোর্ড ও ট্যাব ম্যানেজমেন্ট
+// ==========================================
+// ২. মূল হোম স্ক্রিন ও নেভিগেশন ট্যাব
+// ==========================================
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -179,6 +183,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+// ==========================================
+// ৩. হোম ট্যাব (ড্যাশবোর্ড ও টাইম ফিল্টার)
+// ==========================================
 class HomeTab extends StatelessWidget {
   const HomeTab({Key? key}) : super(key: key);
 
@@ -186,11 +193,13 @@ class HomeTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Account Book / হিসাবের খাতা"),
+        title: const Text("হিসাবের খাতা"),
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationScreen()));
+            },
           ),
         ],
       ),
@@ -199,6 +208,7 @@ class HomeTab extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // কারেন্ট ব্যালেন্স (কোনো মাস ফিল্টার ছাড়া)
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -214,11 +224,19 @@ class HomeTab extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
-            const Text("সাম্প্রতিক লেনদেন", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            // আয়-ব্যয় সেকশন বরাবর টাইম ফিল্টার (এই মাস)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text("আয়-ব্যয় হিসাব", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Chip(label: Text("এই মাস (This Month)")),
+              ],
+            ),
+            const SizedBox(height: 10),
             const Expanded(
               child: Center(
-                child: Text("কোনো সাম্প্রতিক লেনদেন পাওয়া যায়নি।"),
+                child: Text("সাম্প্রতিক লেনদেনের তালিকা এখানে প্রদর্শিত হবে।"),
               ),
             ),
           ],
@@ -228,26 +246,115 @@ class HomeTab extends StatelessWidget {
   }
 }
 
+// ==========================================
+// ৪. লোন ও ডেবট ট্যাব
+// ==========================================
 class LoanTab extends StatelessWidget {
   const LoanTab({Key? key}) : super(key: key);
   @override
-  Widget build(BuildContext context) => const Scaffold(body: Center(child: Text("লোন স্ক্রিন")));
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("লোন ও ধার-দেনা")),
+      body: const Center(child: Text("লোন লিস্ট ও ম্যানেজমেন্ট মডিউল")),
+    );
+  }
 }
 
+// ==========================================
+// ৫. ট্রানজেকশন ট্যাব (লেনদেন)
+// ==========================================
 class TransactionTab extends StatelessWidget {
   const TransactionTab({Key? key}) : super(key: key);
   @override
-  Widget build(BuildContext context) => const Scaffold(body: Center(child: Text("লেনদেন স্ক্রিন")));
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("সকল লেনদেন")),
+      body: const Center(child: Text("লেনদেন ও ক্যালকুলেটর পপআপ মডিউল")),
+    );
+  }
 }
 
+// ==========================================
+// ৬. রিপোর্ট ট্যাব
+// ==========================================
 class ReportTab extends StatelessWidget {
   const ReportTab({Key? key}) : super(key: key);
   @override
-  Widget build(BuildContext context) => const Scaffold(body: Center(child: Text("রিপোর্ট স্ক্রিন")));
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("রিপোর্ট ও অ্যানালিটিক্স")),
+      body: const Center(child: Text("রিপোর্ট প্রিভিউ ও ডাউনলোড মডিউল")),
+    );
+  }
 }
 
+// ==========================================
+// ৭. প্রোফাইল ও সেটিংস ট্যাব
+// ==========================================
 class ProfileTab extends StatelessWidget {
   const ProfileTab({Key? key}) : super(key: key);
+
   @override
-  Widget build(BuildContext context) => const Scaffold(body: Center(child: Text("প্রোফাইল ও সেটিংস")));
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("প্রোফাইল ও সেটিংস")),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // প্রোফাইল কার্ড
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.green,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                const CircleAvatar(radius: 30, child: Icon(Icons.person, size: 35)),
+                const SizedBox(width: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text("MD ALAMGIR HOSSAIN", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text("alamgir@email.com", style: TextStyle(color: Colors.white70)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          ListTile(
+            leading: const Icon(Icons.security),
+            title: const Text("প্রাইভেসি ও সিকিউরিটি (Privacy & Security)"),
+            onplet: () {},
+          ),
+          ListTile(
+            leading: const Icon(Icons.notifications_active),
+            title: const Text("নোটিফিকেশন সেটিংস"),
+            onPressed: () {},
+          ),
+          ListTile(
+            leading: const Icon(Icons.logout, color: Colors.red),
+            title: const Text("সাইন আউট", style: TextStyle(color: Colors.red)),
+            onPressed: () {},
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ==========================================
+// ৮. নোটিফিকেশন সেন্টার স্ক্রিন
+// ==========================================
+class NotificationScreen extends StatelessWidget {
+  const NotificationScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("নোটিফিকেশন")),
+      body: const Center(child: Text("সকল নোটিফিকেশন এবং ফিল্টার")),
+    );
+  }
 }
