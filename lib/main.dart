@@ -107,6 +107,38 @@ class AppSettingsNotifier extends ChangeNotifier {
 
 final appSettings = AppSettingsNotifier();
 
+// ----------------- App Entry Point -----------------
+class AccountBookApp extends StatelessWidget {
+  const AccountBookApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: appSettings,
+      builder: (context, child) {
+        return MaterialApp(
+          title: appSettings.getAppTitle(),
+          debugShowCheckedModeBanner: false,
+          themeMode: appSettings.themeMode,
+          theme: ThemeData(
+            brightness: Brightness.light,
+            scaffoldBackgroundColor: const Color(0xFFF3F4F6),
+            primaryColor: const Color(0xFF38BDF8),
+            cardColor: Colors.white,
+          ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            scaffoldBackgroundColor: const Color(0xFF0F172A),
+            primaryColor: const Color(0xFF10B981),
+            cardColor: const Color(0xFF1E293B),
+          ),
+          home: const PinLockScreen(),
+        );
+      },
+    );
+  }
+}
+
 // ----------------- Brand Header & Lock Screen -----------------
 class PinLockScreen extends StatefulWidget {
   const PinLockScreen({super.key});
@@ -141,7 +173,6 @@ class _PinLockScreenState extends State<PinLockScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Alphabetical Sequence: Arabic, Bangla, English, System Default
             ListTile(
               title: const Text('Arabic (العربية)'),
               onTap: () { appSettings.setLanguage('Arabic'); Navigator.pop(ctx); },
@@ -186,7 +217,6 @@ class _PinLockScreenState extends State<PinLockScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // App Logo & Branding Title
                 const CircleAvatar(
                   radius: 40,
                   backgroundColor: Color(0xFF10B981),
@@ -203,8 +233,6 @@ class _PinLockScreenState extends State<PinLockScreen> {
                   style: const TextStyle(fontSize: 16, color: Colors.grey),
                 ),
                 const SizedBox(height: 20),
-
-                // PIN Boxes
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(4, (index) {
@@ -226,8 +254,6 @@ class _PinLockScreenState extends State<PinLockScreen> {
                     );
                   }),
                 ),
-
-                // Hidden Text Input
                 SizedBox(
                   width: 220,
                   height: 40,
@@ -245,12 +271,10 @@ class _PinLockScreenState extends State<PinLockScreen> {
                     },
                   ),
                 ),
-
                 if (_errorMessage.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Text(_errorMessage, style: const TextStyle(color: Colors.redAccent, fontSize: 13)),
                 ],
-
                 const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
@@ -267,6 +291,21 @@ class _PinLockScreenState extends State<PinLockScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ----------------- Temporary Main Home Screen Placeholder -----------------
+class MainHomeScreen extends StatelessWidget {
+  const MainHomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(appSettings.getAppTitle())),
+      body: const Center(
+        child: Text('Main Home Screen Loaded Successfully!', style: TextStyle(fontSize: 16)),
       ),
     );
   }
