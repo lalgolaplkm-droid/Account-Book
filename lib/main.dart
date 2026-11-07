@@ -158,7 +158,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   late SharedPreferences _prefs;
 
   ThemeMode _themeMode = ThemeMode.dark;
-  String _language = 'English'; // আপনার চাহিদা অনুযায়ী ডিফল্ট ভাষা ইংরেজি সেট করা হলো
+  String _language = 'English'; // অ্যাপ শুরু হবে ইংরেজি ভাষায়
   String currency = '৳';
   String timeFilter = 'This Month';
   String appPin = '1234';
@@ -166,8 +166,8 @@ class AppSettingsNotifier extends ChangeNotifier {
   String profileName = 'মোহাম্মদ আলমগীর হোসেন';
   String profileEmail = 'alamgir@email.com';
   String profileGender = 'Male';
-  String profileBirthDate = '০১-০১-১৯৯৫';
-  String profileMobile = '০১৮xxxxxxxx';
+  String profileBirthDate = '01-01-1995';
+  String profileMobile = '018xxxxxxxx';
   String profileImagePath = '';
 
   bool useFaceLock = false;
@@ -258,7 +258,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   Future<void> initPrefs() async {
     _prefs = await SharedPreferences.getInstance();
     appPin = _prefs.getString('appPin') ?? '1234';
-    _language = _prefs.getString('language') ?? 'English'; // যদি সেভ করা না থাকে তবে ইংরেজি দিয়ে শুরু হবে
+    _language = _prefs.getString('language') ?? 'English'; 
     String themeStr = _prefs.getString('themeMode') ?? 'dark';
     if (themeStr == 'light') _themeMode = ThemeMode.light;
     else if (themeStr == 'system') _themeMode = ThemeMode.system;
@@ -267,8 +267,8 @@ class AppSettingsNotifier extends ChangeNotifier {
     profileName = _prefs.getString('profileName') ?? 'মোহাম্মদ আলমগীর হোসেন';
     profileEmail = _prefs.getString('profileEmail') ?? 'alamgir@email.com';
     profileGender = _prefs.getString('profileGender') ?? 'Male';
-    profileBirthDate = _prefs.getString('profileBirthDate') ?? '০১-০১-১৯৯৫';
-    profileMobile = _prefs.getString('profileMobile') ?? '০১৮xxxxxxxx';
+    profileBirthDate = _prefs.getString('profileBirthDate') ?? '01-01-1995';
+    profileMobile = _prefs.getString('profileMobile') ?? '018xxxxxxxx';
     profileImagePath = _prefs.getString('profileImagePath') ?? '';
     notifyListeners();
   }
@@ -299,11 +299,10 @@ class AppSettingsNotifier extends ChangeNotifier {
     return str;
   }
 
-  // মাসের নাম লোকাল অনুযায়ী দেখানোর জন্য
   String getLocalizedMonth(int monthIndex) {
     List<String> engMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     List<String> banMonths = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
-    List<String> arbMonths = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'আগস্ট', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    List<String> arbMonths = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
     
     if (monthIndex < 1 || monthIndex > 12) return engMonths[0];
     if (_language == 'Bangla') return banMonths[monthIndex - 1];
@@ -1559,9 +1558,16 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                           }
                         },
                         child: AbsorbPointer(
-                          child: TextField(
-                            controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
-                            decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                          child: Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: Theme.of(context).brightness == Brightness.dark
+                                  ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
+                                  : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
+                            ),
+                            child: TextField(
+                              controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
+                              decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                            ),
                           ),
                         ),
                       ),
@@ -1583,9 +1589,16 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                           }
                         },
                         child: AbsorbPointer(
-                          child: TextField(
-                            controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
-                            decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                          child: Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: Theme.of(context).brightness == Brightness.dark
+                                  ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
+                                  : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
+                            ),
+                            child: TextField(
+                              controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
+                              decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                            ),
                           ),
                         ),
                       ),
@@ -3130,9 +3143,16 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                             }
                           },
                           child: AbsorbPointer(
-                            child: TextField(
-                              controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
-                              decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                            child: Theme(
+                              data: Theme.of(context).copyWith(
+                                colorScheme: Theme.of(context).brightness == Brightness.dark
+                                    ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
+                                    : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
+                              ),
+                              child: TextField(
+                                controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
+                                decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                              ),
                             ),
                           ),
                         ),
@@ -3154,9 +3174,16 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                             }
                           },
                           child: AbsorbPointer(
-                            child: TextField(
-                              controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
-                              decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                            child: Theme(
+                              data: Theme.of(context).copyWith(
+                                colorScheme: Theme.of(context).brightness == Brightness.dark
+                                    ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
+                                    : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
+                              ),
+                              child: TextField(
+                                controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
+                                decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                              ),
                             ),
                           ),
                         ),
