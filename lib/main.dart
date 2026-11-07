@@ -1548,7 +1548,7 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                             initialDate: appSettings.customStartDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
                             lastDate: DateTime(2100),
-                            locale: const Locale('en', 'US'), // ফিক্সড ল্যাঙ্গুয়েজ লোকাল যাতে সাদা স্ক্রিন না হয়
+                            locale: const Locale('en', 'US'),
                           );
                           if (picked != null) {
                             appSettings.setCustomDateRange(picked, appSettings.customEndDate ?? picked);
@@ -1579,7 +1579,7 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                             initialDate: appSettings.customEndDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
                             lastDate: DateTime(2100),
-                            locale: const Locale('en', 'US'), // ফিক্সড লোকাল ফিক্স
+                            locale: const Locale('en', 'US'),
                           );
                           if (picked != null) {
                             appSettings.setCustomDateRange(appSettings.customStartDate ?? picked, picked);
@@ -3133,7 +3133,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               initialDate: appSettings.customStartDate ?? DateTime.now(),
                               firstDate: DateTime(1990),
                               lastDate: DateTime(2100),
-                              locale: const Locale('en', 'US'), // ফিক্সড লোকাল
+                              locale: const Locale('en', 'US'),
                             );
                             if (picked != null) {
                               appSettings.setCustomDateRange(picked, appSettings.customEndDate ?? picked);
@@ -3164,7 +3164,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               initialDate: appSettings.customEndDate ?? DateTime.now(),
                               firstDate: DateTime(1990),
                               lastDate: DateTime(2100),
-                              locale: const Locale('en', 'US'), // ফিক্সড লোকাল
+                              locale: const Locale('en', 'US'),
                             );
                             if (picked != null) {
                               appSettings.setCustomDateRange(appSettings.customStartDate ?? picked, picked);
@@ -3983,7 +3983,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                             initialDate: appSettings.customStartDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
                             lastDate: DateTime(2100),
-                            locale: const Locale('en', 'US'), // ফিক্সড লোকাল
+                            locale: const Locale('en', 'US'),
                           );
                           if (picked != null) {
                             appSettings.setCustomDateRange(picked, appSettings.customEndDate ?? picked);
@@ -4014,7 +4014,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                             initialDate: appSettings.customEndDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
                             lastDate: DateTime(2100),
-                            locale: const Locale('en', 'US'), // ফিক্সড লোকাল
+                            locale: const Locale('en', 'US'),
                           );
                           if (picked != null) {
                             appSettings.setCustomDateRange(appSettings.customStartDate ?? picked, picked);
@@ -4432,7 +4432,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       initialDate: DateTime(1995, 1, 1),
                       firstDate: DateTime(1900),
                       lastDate: DateTime.now(),
-                      locale: const Locale('en', 'US'), // ফিক্সড লোকাল
+                      locale: const Locale('en', 'US'),
                     );
                     if (pickedDate != null) {
                       setStateDialog(() {
@@ -4449,14 +4449,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
                       ),
                       child: TextField(
-                        controller: TextEditingController(text: birthDate),
+                        controller: TextEditingController(text: appSettings.localizeNumber(birthDate)),
                         decoration: InputDecoration(labelText: appSettings.translate('Birth Date (DD-MM-YYYY)'), border: const OutlineInputBorder(), suffixIcon: const Icon(Icons.calendar_today)),
                       ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 12),
-                TextField(controller: mobileC, keyboardType: TextInputType.phone, decoration: InputDecoration(labelText: appSettings.translate('Mobile Number'), border: const OutlineInputBorder())),
+                TextField(
+                  controller: mobileC, 
+                  keyboardType: TextInputType.phone, 
+                  decoration: InputDecoration(labelText: appSettings.translate('Mobile Number'), border: const OutlineInputBorder())
+                ),
               ],
             ),
           ),
@@ -4468,7 +4472,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   name: nameC.text,
                   email: emailC.text,
                   gender: selectedGender,
-                  birthDate: birthDate,
+                  birthDate: appSettings.localizeNumber(birthDate),
                   mobile: appSettings.localizeNumber(mobileC.text),
                 );
                 Navigator.pop(ctx);
