@@ -360,6 +360,39 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Reports & Analysis': return 'রিপোর্ট ও বিশ্লেষণ';
         case 'Monthly Budget Overview': return 'মাসিক বাজেট সারসংক্ষেপ';
         case 'Expense Categories': return 'ব্যয়ের ক্যাটাগরি';
+        // নতুন যোগ করা কি-গুলো (Bangla)
+        case 'All Transactions': return 'সকল লেনদেন';
+        case 'All': return 'সকল';
+        case 'Given': return 'প্রদত্ত';
+        case 'Taken': return 'গৃহীত';
+        case 'Paid': return 'পরিশোধিত';
+        case 'Loan List': return 'লোনের তালিকা';
+        case 'No loans found': return 'কোনো লোন পাওয়া যায়নি';
+        case 'Sort: Low-High': return 'সর্ট: কম থেকে বেশি';
+        case 'Sort: High-Low': return 'সর্ট: বেশি থেকে কম';
+        case 'Profile & Settings': return 'প্রোফাইল ও সেটিংস';
+        case 'Edit Profile': return 'প্রোফাইল সম্পাদনা করুন';
+        case 'Privacy & Security': return 'গোপনীয়তা ও নিরাপত্তা';
+        case 'Notification Settings': return 'নোটিফিকেশন সেটিংস';
+        case 'Sign Out': return 'লগআউট';
+        case 'Version 1.0.0': return 'সংস্করণ ১.০.০';
+        case 'Security Options': return 'নিরাপত্তা অপশনসমূহ';
+        case 'Face Unlock': return 'ফেস আনলক';
+        case 'Fingerprint Sensor': return 'ফিঙ্গারপ্রিন্ট সেন্সর';
+        case 'None (No Lock)': return 'কোনো লক নেই';
+        case 'Pattern Lock': return 'প্যাটার্ন লক';
+        case 'PIN Code Lock': return 'পিন কোড লক';
+        case 'Change PIN Code': return 'পিন কোড পরিবর্তন করুন';
+        case '4-Digit App PIN': return '৪-সংখ্যার অ্যাপ পিন';
+        case 'Save Changes': return 'পরিবর্তন সংরক্ষণ করুন';
+        case 'Manage App Alerts & Reminders': return 'অ্যাপ অ্যালার্ট ও রিমাইন্ডার ম্যানেজ করুন';
+        case 'Daily Transaction Reminder': return 'দৈনিক লেনদেন রিমাইন্ডার';
+        case 'Budget Limit Alert': return 'বাজেট সীমা অ্যালার্ট';
+        case 'Loan Payment Due Alert': return 'লোন পরিশোধের তারিখের অ্যালার্ট';
+        case 'Notification Sound & Alert Tone': return 'নোটিফিকেশন সাউন্ড ও অ্যালার্ট টোন';
+        case 'Default': return 'ডিফল্ট';
+        case 'App Chime': return 'অ্যাপ চाइम';
+        case 'Custom from Device Memory': return 'ডিভাইস মেমোরি থেকে কাস্টম';
         default: return key;
       }
     } else if (_language == 'Arabic') {
@@ -427,6 +460,39 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Reports & Analysis': return 'التقارير والتحليلات';
         case 'Monthly Budget Overview': return 'نظرة عامة على الميزانية الشهرية';
         case 'Expense Categories': return 'فئات المصروفات';
+        // নতুন যোগ করা কি-গুলো (Arabic)
+        case 'All Transactions': return 'جميع المعاملات';
+        case 'All': return 'الكل';
+        case 'Given': return 'ممنوح';
+        case 'Taken': return 'مستلم';
+        case 'Paid': return 'مدفوع';
+        case 'Loan List': return 'قائمة القروض';
+        case 'No loans found': return 'لم يتم العثور على قروض';
+        case 'Sort: Low-High': return 'ترتيب: من الأقل إلى الأعلى';
+        case 'Sort: High-Low': return 'ترتيب: من الأعلى إلى الأقل';
+        case 'Profile & Settings': return 'الملف الشخصي والإعدادات';
+        case 'Edit Profile': return 'تعديل الملف الشخصي';
+        case 'Privacy & Security': return 'الخصوصية والأمان';
+        case 'Notification Settings': return 'إعدادات الإشعارات';
+        case 'Sign Out': return 'تسجيل الخروج';
+        case 'Version 1.0.0': return 'الإصدار 1.0.0';
+        case 'Security Options': return 'خيارات الأمان';
+        case 'Face Unlock': return 'فتح القفل بالوجه';
+        case 'Fingerprint Sensor': return 'مستشعر بصمة الإصبع';
+        case 'None (No Lock)': return 'بلا (بدون قفل)';
+        case 'Pattern Lock': return 'قفل النمط';
+        case 'PIN Code Lock': return 'قفل رمز PIN';
+        case 'Change PIN Code': return 'تغيير رمز PIN';
+        case '4-Digit App PIN': return 'رمز PIN للتطبيق مكون من 4 أرقام';
+        case 'Save Changes': return 'حفظ التغييرات';
+        case 'Manage App Alerts & Reminders': return 'إدارة تنبيهات وتذكيرات التطبيق';
+        case 'Daily Transaction Reminder': return 'تذكير المعاملات اليومية';
+        case 'Budget Limit Alert': return 'تنبيه حد الميزانية';
+        case 'Loan Payment Due Alert': return 'تنبيه استحقاق سداد القرض';
+        case 'Notification Sound & Alert Tone': return 'صوت الإشعار ونغمة التنبيه';
+        case 'Default': return 'افتراضي';
+        case 'App Chime': return 'رنين التطبيق';
+        case 'Custom from Device Memory': return 'مخصص من ذاكرة الجهاز';
         default: return key;
       }
     }
@@ -1423,6 +1489,7 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                             initialDate: appSettings.customStartDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
                             lastDate: DateTime(2100),
+                            locale: appSettings.language == 'Bangla' ? const Locale('bn', 'BD') : (appSettings.language == 'Arabic' ? const Locale('ar', 'SA') : const Locale('en', 'US')),
                           );
                           if (picked != null) {
                             appSettings.setCustomDateRange(picked, appSettings.customEndDate ?? picked);
@@ -1446,6 +1513,7 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                             initialDate: appSettings.customEndDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
                             lastDate: DateTime(2100),
+                            locale: appSettings.language == 'Bangla' ? const Locale('bn', 'BD') : (appSettings.language == 'Arabic' ? const Locale('ar', 'SA') : const Locale('en', 'US')),
                           );
                           if (picked != null) {
                             appSettings.setCustomDateRange(appSettings.customStartDate ?? picked, picked);
@@ -2993,6 +3061,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               initialDate: appSettings.customStartDate ?? DateTime.now(),
                               firstDate: DateTime(1990),
                               lastDate: DateTime(2100),
+                              locale: appSettings.language == 'Bangla' ? const Locale('bn', 'BD') : (appSettings.language == 'Arabic' ? const Locale('ar', 'SA') : const Locale('en', 'US')),
                             );
                             if (picked != null) {
                               appSettings.setCustomDateRange(picked, appSettings.customEndDate ?? picked);
@@ -3016,6 +3085,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               initialDate: appSettings.customEndDate ?? DateTime.now(),
                               firstDate: DateTime(1990),
                               lastDate: DateTime(2100),
+                              locale: appSettings.language == 'Bangla' ? const Locale('bn', 'BD') : (appSettings.language == 'Arabic' ? const Locale('ar', 'SA') : const Locale('en', 'US')),
                             );
                             if (picked != null) {
                               appSettings.setCustomDateRange(appSettings.customStartDate ?? picked, picked);
@@ -3147,7 +3217,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
         return StatefulBuilder(
           builder: (ctx, setStateModal) {
             return AlertDialog(
-              title: Text(index == null ? 'Add New Loan / Debt' : 'Edit Loan / Debt'),
+              title: Text(appSettings.translate(index == null ? 'Add New Loan / Debt' : 'Edit Loan / Debt')),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -3157,7 +3227,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(backgroundColor: loanType == 'Given' ? Colors.green : Theme.of(context).cardColor),
                           onPressed: () => setStateModal(() => loanType = 'Given'),
-                          child: const Text('Given', style: TextStyle(fontSize: 11)),
+                          child: Text(appSettings.translate('Given'), style: const TextStyle(fontSize: 11)),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -3165,19 +3235,19 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(backgroundColor: loanType == 'Taken' ? Colors.red : Theme.of(context).cardColor),
                           onPressed: () => setStateModal(() => loanType = 'Taken'),
-                          child: const Text('Taken', style: TextStyle(fontSize: 11)),
+                          child: Text(appSettings.translate('Taken'), style: const TextStyle(fontSize: 11)),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
-                  TextField(controller: nameController, decoration: const InputDecoration(labelText: 'Person Name', border: OutlineInputBorder())),
+                  TextField(controller: nameController, decoration: InputDecoration(labelText: appSettings.translate('Person Name'), border: const OutlineInputBorder())),
                   const SizedBox(height: 12),
-                  TextField(controller: amountController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Amount', border: OutlineInputBorder())),
+                  TextField(controller: amountController, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: appSettings.translate('Amount'), border: const OutlineInputBorder())),
                 ],
               ),
               actions: [
-                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+                TextButton(onPressed: () => Navigator.pop(ctx), child: Text(appSettings.translate('Cancel'))),
                 ElevatedButton(
                   onPressed: () {
                     if (nameController.text.isNotEmpty && amountController.text.isNotEmpty) {
@@ -3197,7 +3267,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                       setState(() {});
                     }
                   },
-                  child: const Text('Save'),
+                  child: Text(appSettings.translate('Save')),
                 ),
               ],
             );
@@ -3828,6 +3898,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                             initialDate: appSettings.customStartDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
                             lastDate: DateTime(2100),
+                            locale: appSettings.language == 'Bangla' ? const Locale('bn', 'BD') : (appSettings.language == 'Arabic' ? const Locale('ar', 'SA') : const Locale('en', 'US')),
                           );
                           if (picked != null) {
                             appSettings.setCustomDateRange(picked, appSettings.customEndDate ?? picked);
@@ -3851,6 +3922,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                             initialDate: appSettings.customEndDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
                             lastDate: DateTime(2100),
+                            locale: appSettings.language == 'Bangla' ? const Locale('bn', 'BD') : (appSettings.language == 'Arabic' ? const Locale('ar', 'SA') : const Locale('en', 'US')),
                           );
                           if (picked != null) {
                             appSettings.setCustomDateRange(appSettings.customStartDate ?? picked, picked);
@@ -3898,7 +3970,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   TextButton.icon(
                     onPressed: () => setState(() => isSortedAscending = !isSortedAscending),
                     icon: const Icon(Icons.sort, size: 16, color: Color(0xFF10B981)),
-                    label: Text(isSortedAscending ? 'Sort: Low-High' : 'Sort: High-Low', style: const TextStyle(fontSize: 12, color: Color(0xFF10B981))),
+                    label: Text(isSortedAscending ? appSettings.translate('Sort: Low-High') : appSettings.translate('Sort: High-Low'), style: const TextStyle(fontSize: 12, color: Color(0xFF10B981))),
                   ),
                 ],
               ),
@@ -3915,7 +3987,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                           color: Theme.of(context).cardColor,
                           margin: const EdgeInsets.only(bottom: 8),
                           child: ListTile(
-                            leading: CircleAvatar(backgroundColor: Colors.red.shade100, child: const Icon(Icons.category, color: Colors.redAccent)),
+                            leading: const CircleAvatar(backgroundColor: Colors.red100, child: Icon(Icons.category, color: Colors.redAccent)),
                             title: Text(appSettings.translate(catEntry.key), style: const TextStyle(fontWeight: FontWeight.bold)),
                             trailing: Text('${catEntry.value} $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
                           ),
@@ -3964,32 +4036,32 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
     return AnimatedBuilder(
       animation: appSettings,
       builder: (context, _) => Scaffold(
-        appBar: AppBar(title: const Text('Privacy & Security')),
+        appBar: AppBar(title: Text(appSettings.translate('Privacy & Security'))),
         body: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            const Text('Security Options (Alphabetically Sorted)', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
+            Text(appSettings.translate('Security Options'), style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
             Card(
               color: Theme.of(context).cardColor,
               child: Column(
                 children: [
                   SwitchListTile(
-                    title: const Text('Face Unlock'),
+                    title: Text(appSettings.translate('Face Unlock')),
                     subtitle: const Text('Scan & unlock with camera'),
                     value: _faceLock,
                     activeColor: const Color(0xFF10B981),
                     onChanged: (val) => setState(() { _faceLock = val; if (val) _noneLock = false; }),
                   ),
                   SwitchListTile(
-                    title: const Text('Fingerprint Sensor'),
+                    title: Text(appSettings.translate('Fingerprint Sensor')),
                     subtitle: const Text('Unlock using device fingerprint'),
                     value: _fingerprint,
                     activeColor: const Color(0xFF10B981),
                     onChanged: (val) => setState(() { _fingerprint = val; if (val) _noneLock = false; }),
                   ),
                   SwitchListTile(
-                    title: const Text('None (No Lock)'),
+                    title: Text(appSettings.translate('None (No Lock)')),
                     subtitle: const Text('Bypass lock screen security'),
                     value: _noneLock,
                     activeColor: const Color(0xFF10B981),
@@ -3999,14 +4071,14 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                     }),
                   ),
                   SwitchListTile(
-                    title: const Text('Pattern Lock'),
+                    title: Text(appSettings.translate('Pattern Lock')),
                     subtitle: const Text('Draw a secure pattern shape'),
                     value: _patternLock,
                     activeColor: const Color(0xFF10B981),
                     onChanged: (val) => setState(() { _patternLock = val; if (val) _noneLock = false; }),
                   ),
                   SwitchListTile(
-                    title: const Text('PIN Code Lock'),
+                    title: Text(appSettings.translate('PIN Code Lock')),
                     subtitle: const Text('Use a 4-digit numeric code'),
                     value: _pinLock,
                     activeColor: const Color(0xFF10B981),
@@ -4017,7 +4089,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
             ),
             const SizedBox(height: 20),
             if (_pinLock) ...[
-              const Text('Change PIN Code', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
+              Text(appSettings.translate('Change PIN Code'), style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
               Card(
                 color: Theme.of(context).cardColor,
@@ -4029,7 +4101,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                     maxLength: 4,
                     obscureText: _obscurePin,
                     decoration: InputDecoration(
-                      labelText: '4-Digit App PIN',
+                      labelText: appSettings.translate('4-Digit App PIN'),
                       border: const OutlineInputBorder(),
                       counterText: '',
                       suffixIcon: IconButton(
@@ -4062,7 +4134,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('PIN must be exactly 4 digits!')));
                   }
                 },
-                child: const Text('Save Changes', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                child: Text(appSettings.translate('Save Changes'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),
             ),
           ],
@@ -4100,32 +4172,32 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
     return AnimatedBuilder(
       animation: appSettings,
       builder: (context, _) => Scaffold(
-        appBar: AppBar(title: const Text('Notification Settings')),
+        appBar: AppBar(title: Text(appSettings.translate('Notification Settings'))),
         body: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            const Text('Manage App Alerts & Reminders', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
+            Text(appSettings.translate('Manage App Alerts & Reminders'), style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
             Card(
               color: Theme.of(context).cardColor,
               child: Column(
                 children: [
                   SwitchListTile(
-                    title: const Text('Daily Transaction Reminder'),
+                    title: Text(appSettings.translate('Daily Transaction Reminder')),
                     subtitle: const Text('Get reminded to record daily expenses'),
                     value: daily,
                     activeColor: const Color(0xFF10B981),
                     onChanged: (val) => setState(() => daily = val),
                   ),
                   SwitchListTile(
-                    title: const Text('Budget Limit Alert'),
+                    title: Text(appSettings.translate('Budget Limit Alert')),
                     subtitle: const Text('Notify when expenses reach near budget limit'),
                     value: budget,
                     activeColor: const Color(0xFF10B981),
                     onChanged: (val) => setState(() => budget = val),
                   ),
                   SwitchListTile(
-                    title: const Text('Loan Payment Due Alert'),
+                    title: Text(appSettings.translate('Loan Payment Due Alert')),
                     subtitle: const Text('Alert on upcoming loan settlement dates'),
                     value: loan,
                     activeColor: const Color(0xFF10B981),
@@ -4135,13 +4207,13 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
               ),
             ),
             const SizedBox(height: 20),
-            const Text('Notification Sound & Alert Tone', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
+            Text(appSettings.translate('Notification Sound & Alert Tone'), style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
               value: selectedSound,
               dropdownColor: Theme.of(context).cardColor,
               decoration: const InputDecoration(border: OutlineInputBorder()),
-              items: ['Default', 'App Chime', 'Custom from Device Memory'].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+              items: ['Default', 'App Chime', 'Custom from Device Memory'].map((s) => DropdownMenuItem(value: s, child: Text(appSettings.translate(s)))).toList(),
               onChanged: (val) { if (val != null) setState(() => selectedSound = val); },
             ),
             const SizedBox(height: 30),
@@ -4157,7 +4229,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Notification settings updated successfully!')));
                 },
-                child: const Text('Save Changes', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                child: Text(appSettings.translate('Save Changes'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),
             ),
           ],
@@ -4237,7 +4309,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setStateDialog) => AlertDialog(
-          title: const Text('Edit Profile'),
+          title: Text(appSettings.translate('Edit Profile')),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -4261,6 +4333,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       initialDate: DateTime(1995, 1, 1),
                       firstDate: DateTime(1900),
                       lastDate: DateTime.now(),
+                      locale: appSettings.language == 'Bangla' ? const Locale('bn', 'BD') : (appSettings.language == 'Arabic' ? const Locale('ar', 'SA') : const Locale('en', 'US')),
                     );
                     if (pickedDate != null) {
                       setStateDialog(() {
@@ -4308,7 +4381,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return AnimatedBuilder(
       animation: appSettings,
       builder: (context, _) => Scaffold(
-        appBar: AppBar(title: const Text('Profile & Settings')),
+        appBar: AppBar(title: Text(appSettings.translate('Profile & Settings'))),
         drawer: const AppDrawer(),
         body: ListView(
           padding: const EdgeInsets.all(16),
@@ -4361,31 +4434,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     onPressed: () => _showEditProfileDialog(context),
                     icon: const Icon(Icons.edit, size: 16),
-                    label: const Text('Edit Profile'),
+                    label: Text(appSettings.translate('Edit Profile')),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 20),
-            const Text('Account', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
+            Text(appSettings.translate('Account'), style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Card(
               color: Theme.of(context).cardColor,
               child: ListTile(
                 leading: const Icon(Icons.lock_outline, color: Color(0xFF10B981)),
-                title: const Text('Privacy & Security'),
+                title: Text(appSettings.translate('Privacy & Security')),
                 trailing: const Icon(Icons.chevron_right, color: Colors.grey),
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PrivacySecurityScreen())),
               ),
             ),
             const SizedBox(height: 16),
-            const Text('Preferences', style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
+            Text(appSettings.translate('Preferences'), style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Card(
               color: Theme.of(context).cardColor,
               child: ListTile(
                 leading: const Icon(Icons.notifications_none, color: Color(0xFF10B981)),
-                title: const Text('Notification Settings'),
+                title: Text(appSettings.translate('Notification Settings')),
                 trailing: const Icon(Icons.chevron_right, color: Colors.grey),
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationSettingsScreen())),
               ),
@@ -4395,14 +4468,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               color: Theme.of(context).cardColor,
               child: ListTile(
                 leading: const Icon(Icons.logout, color: Colors.redAccent),
-                title: const Text('Sign Out', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                title: Text(appSettings.translate('Sign Out'), style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
                 onTap: () {
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const PinLockScreen()));
                 },
               ),
             ),
             const SizedBox(height: 20),
-            const Center(child: Text('Version 1.0.0', style: TextStyle(color: Colors.grey, fontSize: 12))),
+            Center(child: Text(appSettings.translate('Version 1.0.0'), style: const TextStyle(color: Colors.grey, fontSize: 12))),
           ],
         ),
       ),
