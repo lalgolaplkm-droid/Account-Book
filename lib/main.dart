@@ -158,7 +158,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   late SharedPreferences _prefs;
 
   ThemeMode _themeMode = ThemeMode.dark;
-  String _language = 'Bangla'; // বাই ডিফল্ট বাংলা সেট করা হলো আপনার চাহিদা অনুযায়ী
+  String _language = 'English'; // আপনার চাহিদা অনুযায়ী ডিফল্ট ভাষা ইংরেজি সেট করা হলো
   String currency = '৳';
   String timeFilter = 'This Month';
   String appPin = '1234';
@@ -258,7 +258,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   Future<void> initPrefs() async {
     _prefs = await SharedPreferences.getInstance();
     appPin = _prefs.getString('appPin') ?? '1234';
-    _language = _prefs.getString('language') ?? 'Bangla';
+    _language = _prefs.getString('language') ?? 'English'; // যদি সেভ করা না থাকে তবে ইংরেজি দিয়ে শুরু হবে
     String themeStr = _prefs.getString('themeMode') ?? 'dark';
     if (themeStr == 'light') _themeMode = ThemeMode.light;
     else if (themeStr == 'system') _themeMode = ThemeMode.system;
@@ -288,7 +288,6 @@ class AppSettingsNotifier extends ChangeNotifier {
   ThemeMode get themeMode => _themeMode;
   String get language => _language;
   
-  // সংখ্যাকে বাংলা ডিজিটে রূপান্তর করার হেল্পার মেথড
   String localizeNumber(dynamic number) {
     String str = number.toString();
     if (_language != 'Bangla') return str;
@@ -298,6 +297,18 @@ class AppSettingsNotifier extends ChangeNotifier {
       str = str.replaceAll(EnglishDigits[i], BanglaDigits[i]);
     }
     return str;
+  }
+
+  // মাসের নাম লোকাল অনুযায়ী দেখানোর জন্য
+  String getLocalizedMonth(int monthIndex) {
+    List<String> engMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    List<String> banMonths = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
+    List<String> arbMonths = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'আগস্ট', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    
+    if (monthIndex < 1 || monthIndex > 12) return engMonths[0];
+    if (_language == 'Bangla') return banMonths[monthIndex - 1];
+    if (_language == 'Arabic') return arbMonths[monthIndex - 1];
+    return engMonths[monthIndex - 1];
   }
 
   String getAppTitle() {
@@ -368,7 +379,6 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'End Date': return 'শেষ তারিখ';
         case 'Loan & Debt': return 'লোন ও দেনা';
         case 'Search (note, category)...': return 'অনুসন্ধান (নোট, ক্যাটাগরি)...';
-        case 'মোহাম্মদ আলমগীর হোসেন': return 'মোহাম্মদ আলমগীর হোসেন';
         case 'Reports & Analysis': return 'রিপোর্ট ও বিশ্লেষণ';
         case 'Monthly Budget Overview': return 'মাসিক বাজেট সারসংক্ষেপ';
         case 'Expense Categories': return 'ব্যয়ের ক্যাটাগরি';
@@ -409,10 +419,14 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Preferences': return 'পছন্দসমূহ';
         case 'Male': return 'পুরুষ';
         case 'Female': return 'মহিলা';
-        case 'Other': return 'অন্যny';
+        case 'Other': return 'অন্যান্য';
         case 'Gender': return 'লিঙ্গ';
         case 'DOB': return 'জন্মতারিখ';
+        case 'Birth Date (DD-MM-YYYY)': return 'জন্মতারিখ (দিন-মাস-বছর)';
         case 'Mobile': return 'মোবাইল';
+        case 'Mobile Number': return 'মোবাইল নম্বর';
+        case 'Name': return 'নাম';
+        case 'Email': return 'ইমেল';
         case 'Net Balance': return 'নিট ব্যালেন্স';
         case 'Spent': return 'ব্যয় হয়েছে';
         case 'Budget:': return 'বাজেট:';
@@ -420,7 +434,8 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Total Income:': return 'মোট আয়:';
         case 'Total Expense:': return 'মোট ব্যয়:';
         case 'Rofiqul Islam': return 'রফিকুল ইসলাম';
-        case 'रফিকুল ইসলাম': return 'রফিকুল ইসলাম';
+        case 'Cancel': return 'বাতিল';
+        case 'Save': return 'সংরক্ষণ';
         default: return key;
       }
     } else if (_language == 'Arabic') {
@@ -484,7 +499,6 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'End Date': return 'تاريخ الانتهاء';
         case 'Loan & Debt': return 'القروض والديون';
         case 'Search (note, category)...': return 'بحث (ملاحظة، فئة)...';
-        case 'মোহাম্মদ আলমগীর হোসেন': return 'محمد عالمجير حسين';
         case 'Reports & Analysis': return 'التقارير والتحليلات';
         case 'Monthly Budget Overview': return 'نظرة عامة على الميزانية الشهرية';
         case 'Expense Categories': return 'فئات المصروفات';
@@ -528,7 +542,11 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Other': return 'آخر';
         case 'Gender': return 'الجنس';
         case 'DOB': return 'تاريخ الميلاد';
+        case 'Birth Date (DD-MM-YYYY)': return 'تاريخ الميلاد (يوم-شهر-سنة)';
         case 'Mobile': return 'محمول';
+        case 'Mobile Number': return 'رقم الهاتف المحمول';
+        case 'Name': return 'الاسم';
+        case 'Email': return 'البريد الإلكتروني';
         case 'Net Balance': return 'الرصيد الصافي';
         case 'Spent': return 'المصروف';
         case 'Budget:': return 'الميزانية:';
@@ -536,7 +554,8 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Total Income:': return 'إجمالي الدخل:';
         case 'Total Expense:': return 'إجمالي المصروفات:';
         case 'Rofiqul Islam': return 'رفيق الإسلام';
-        case 'রফিকুল ইসলাম': return 'رفيق الإسلام';
+        case 'Cancel': return 'إلغاء';
+        case 'Save': return 'حفظ';
         default: return key;
       }
     }
@@ -1430,7 +1449,6 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
     double totalGiven = appSettings.getTotalGiven();
     double totalTaken = appSettings.getTotalTaken();
 
-    List<String> months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     List<int> years = List.generate(110, (index) => 1990 + index);
 
     return AnimatedBuilder(
@@ -1498,7 +1516,7 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                         value: appSettings.selectedMonthIndex,
                         dropdownColor: Theme.of(context).cardColor,
                         decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
-                        items: List.generate(12, (i) => DropdownMenuItem(value: i + 1, child: Text(months[i]))),
+                        items: List.generate(12, (i) => DropdownMenuItem(value: i + 1, child: Text(appSettings.getLocalizedMonth(i + 1)))),
                         onChanged: (val) { if (val != null) { appSettings.setMonthYear(val, appSettings.selectedYear); setState(() {}); } },
                       ),
                     ),
@@ -1508,7 +1526,7 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                         value: appSettings.selectedYear,
                         dropdownColor: Theme.of(context).cardColor,
                         decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
-                        items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString()))).toList(),
+                        items: years.map((y) => DropdownMenuItem(value: y, child: Text(appSettings.localizeNumber(y)))).toList(),
                         onChanged: (val) { if (val != null) { appSettings.setMonthYear(appSettings.selectedMonthIndex, val); setState(() {}); } },
                       ),
                     ),
@@ -1519,7 +1537,7 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                   value: appSettings.selectedYear,
                   dropdownColor: Theme.of(context).cardColor,
                   decoration: const InputDecoration(labelText: 'Select Year', border: OutlineInputBorder()),
-                  items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString()))).toList(),
+                  items: years.map((y) => DropdownMenuItem(value: y, child: Text(appSettings.localizeNumber(y)))).toList(),
                   onChanged: (val) { if (val != null) { appSettings.setMonthYear(appSettings.selectedMonthIndex, val); setState(() {}); } },
                 ),
               if (appSettings.timeFilter == 'Custom Range')
@@ -2986,7 +3004,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
   @override
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
-    List<String> months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     List<int> years = List.generate(110, (index) => 1990 + index);
 
     return AnimatedBuilder(
@@ -3070,7 +3087,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           value: appSettings.selectedMonthIndex,
                           dropdownColor: Theme.of(context).cardColor,
                           decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
-                          items: List.generate(12, (i) => DropdownMenuItem(value: i + 1, child: Text(months[i]))),
+                          items: List.generate(12, (i) => DropdownMenuItem(value: i + 1, child: Text(appSettings.getLocalizedMonth(i + 1)))),
                           onChanged: (val) { if (val != null) { appSettings.setMonthYear(val, appSettings.selectedYear); setState(() {}); } },
                         ),
                       ),
@@ -3799,7 +3816,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
     double budget = appSettings.monthlyBudget;
     double progress = budget > 0 ? (expense / budget).clamp(0.0, 1.0) : 0.0;
 
-    List<String> months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     List<int> years = List.generate(110, (index) => 1990 + index);
 
     Map<String, double> categoryExpenses = {};
@@ -3907,7 +3923,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                         value: appSettings.selectedMonthIndex,
                         dropdownColor: Theme.of(context).cardColor,
                         decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
-                        items: List.generate(12, (i) => DropdownMenuItem(value: i + 1, child: Text(months[i]))),
+                        items: List.generate(12, (i) => DropdownMenuItem(value: i + 1, child: Text(appSettings.getLocalizedMonth(i + 1)))),
                         onChanged: (val) { if (val != null) setState(() => appSettings.setMonthYear(val, appSettings.selectedYear)); },
                       ),
                     ),
@@ -3950,9 +3966,16 @@ class _ReportsScreenState extends State<ReportsScreen> {
                           }
                         },
                         child: AbsorbPointer(
-                          child: TextField(
-                            controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
-                            decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                          child: Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: Theme.of(context).brightness == Brightness.dark
+                                  ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
+                                  : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
+                            ),
+                            child: TextField(
+                              controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
+                              decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                            ),
                           ),
                         ),
                       ),
@@ -3974,9 +3997,16 @@ class _ReportsScreenState extends State<ReportsScreen> {
                           }
                         },
                         child: AbsorbPointer(
-                          child: TextField(
-                            controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
-                            decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                          child: Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: Theme.of(context).brightness == Brightness.dark
+                                  ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
+                                  : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
+                            ),
+                            child: TextField(
+                              controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
+                              decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                            ),
                           ),
                         ),
                       ),
@@ -4358,14 +4388,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextField(controller: nameC, decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder())),
+                TextField(controller: nameC, decoration: InputDecoration(labelText: appSettings.translate('Name'), border: const OutlineInputBorder())),
                 const SizedBox(height: 12),
-                TextField(controller: emailC, decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder())),
+                TextField(controller: emailC, decoration: InputDecoration(labelText: appSettings.translate('Email'), border: const OutlineInputBorder())),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
                   value: ['Male', 'Female', 'Other'].contains(selectedGender) ? selectedGender : 'Male',
                   dropdownColor: Theme.of(context).cardColor,
-                  decoration: const InputDecoration(labelText: 'Gender', border: OutlineInputBorder()),
+                  decoration: InputDecoration(labelText: appSettings.translate('Gender'), border: const OutlineInputBorder()),
                   items: ['Male', 'Female', 'Other'].map((g) => DropdownMenuItem(value: g, child: Text(appSettings.translate(g)))).toList(),
                   onChanged: (val) { if (val != null) setStateDialog(() => selectedGender = val); },
                 ),
@@ -4387,19 +4417,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     }
                   },
                   child: AbsorbPointer(
-                    child: TextField(
-                      controller: TextEditingController(text: birthDate),
-                      decoration: const InputDecoration(labelText: 'Birth Date (DD-MM-YYYY)', border: OutlineInputBorder(), suffixIcon: Icon(Icons.calendar_today)),
+                    child: Theme(
+                      data: Theme.of(context).copyWith(
+                        colorScheme: Theme.of(context).brightness == Brightness.dark
+                            ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
+                            : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
+                      ),
+                      child: TextField(
+                        controller: TextEditingController(text: birthDate),
+                        decoration: InputDecoration(labelText: appSettings.translate('Birth Date (DD-MM-YYYY)'), border: const OutlineInputBorder(), suffixIcon: const Icon(Icons.calendar_today)),
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 12),
-                TextField(controller: mobileC, keyboardType: TextInputType.phone, decoration: const InputDecoration(labelText: 'Mobile Number', border: OutlineInputBorder())),
+                TextField(controller: mobileC, keyboardType: TextInputType.phone, decoration: InputDecoration(labelText: appSettings.translate('Mobile Number'), border: const OutlineInputBorder())),
               ],
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(appSettings.translate('Cancel'))),
             ElevatedButton(
               onPressed: () {
                 appSettings.updateProfile(
@@ -4413,7 +4450,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 setState(() {});
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile updated successfully!')));
               },
-              child: const Text('Save'),
+              child: Text(appSettings.translate('Save')),
             ),
           ],
         ),
