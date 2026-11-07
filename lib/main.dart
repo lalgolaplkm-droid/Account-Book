@@ -158,16 +158,16 @@ class AppSettingsNotifier extends ChangeNotifier {
   late SharedPreferences _prefs;
 
   ThemeMode _themeMode = ThemeMode.dark;
-  String _language = 'English';
+  String _language = 'Bangla'; // বাই ডিফল্ট বাংলা সেট করা হলো আপনার চাহিদা অনুযায়ী
   String currency = '৳';
   String timeFilter = 'This Month';
   String appPin = '1234';
 
-  String profileName = 'MD ALAMGIR HOSSAIN';
+  String profileName = 'মোহাম্মদ আলমগীর হোসেন';
   String profileEmail = 'alamgir@email.com';
   String profileGender = 'Male';
-  String profileBirthDate = '01-01-1995';
-  String profileMobile = '018xxxxxxxx';
+  String profileBirthDate = '০১-০১-১৯৯৫';
+  String profileMobile = '০১৮xxxxxxxx';
   String profileImagePath = '';
 
   bool useFaceLock = false;
@@ -224,7 +224,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   List<LoanItem> loans = [
     LoanItem(
       id: '101',
-      personName: 'Rafiqul Islam',
+      personName: 'রফিকুল ইসলাম',
       amount: 2000.0,
       type: 'Given',
       date: DateTime.now(),
@@ -258,17 +258,17 @@ class AppSettingsNotifier extends ChangeNotifier {
   Future<void> initPrefs() async {
     _prefs = await SharedPreferences.getInstance();
     appPin = _prefs.getString('appPin') ?? '1234';
-    _language = _prefs.getString('language') ?? 'English';
+    _language = _prefs.getString('language') ?? 'Bangla';
     String themeStr = _prefs.getString('themeMode') ?? 'dark';
     if (themeStr == 'light') _themeMode = ThemeMode.light;
     else if (themeStr == 'system') _themeMode = ThemeMode.system;
     else _themeMode = ThemeMode.dark;
 
-    profileName = _prefs.getString('profileName') ?? 'MD ALAMGIR HOSSAIN';
+    profileName = _prefs.getString('profileName') ?? 'মোহাম্মদ আলমগীর হোসেন';
     profileEmail = _prefs.getString('profileEmail') ?? 'alamgir@email.com';
     profileGender = _prefs.getString('profileGender') ?? 'Male';
-    profileBirthDate = _prefs.getString('profileBirthDate') ?? '01-01-1995';
-    profileMobile = _prefs.getString('profileMobile') ?? '018xxxxxxxx';
+    profileBirthDate = _prefs.getString('profileBirthDate') ?? '০১-০১-১৯৯৫';
+    profileMobile = _prefs.getString('profileMobile') ?? '০১৮xxxxxxxx';
     profileImagePath = _prefs.getString('profileImagePath') ?? '';
     notifyListeners();
   }
@@ -288,6 +288,18 @@ class AppSettingsNotifier extends ChangeNotifier {
   ThemeMode get themeMode => _themeMode;
   String get language => _language;
   
+  // সংখ্যাকে বাংলা ডিজিটে রূপান্তর করার হেল্পার মেথড
+  String localizeNumber(dynamic number) {
+    String str = number.toString();
+    if (_language != 'Bangla') return str;
+    const EnglishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    const BanglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    for (int i = 0; i < EnglishDigits.length; i++) {
+      str = str.replaceAll(EnglishDigits[i], BanglaDigits[i]);
+    }
+    return str;
+  }
+
   String getAppTitle() {
     if (_language == 'Bangla') return 'হিসাবের খাতা';
     if (_language == 'Arabic') return 'دفتر الحسابات';
@@ -356,11 +368,10 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'End Date': return 'শেষ তারিখ';
         case 'Loan & Debt': return 'লোন ও দেনা';
         case 'Search (note, category)...': return 'অনুসন্ধান (নোট, ক্যাটাগরি)...';
-        case 'MD ALAMGIR HOSSAIN': return 'এম ডি আলমগীর হোসেন';
+        case 'মোহাম্মদ আলমগীর হোসেন': return 'মোহাম্মদ আলমগীর হোসেন';
         case 'Reports & Analysis': return 'রিপোর্ট ও বিশ্লেষণ';
         case 'Monthly Budget Overview': return 'মাসিক বাজেট সারসংক্ষেপ';
         case 'Expense Categories': return 'ব্যয়ের ক্যাটাগরি';
-        // নতুন যোগ করা কি-গুলো (Bangla)
         case 'All Transactions': return 'সকল লেনদেন';
         case 'All': return 'সকল';
         case 'Given': return 'প্রদত্ত';
@@ -393,6 +404,23 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Default': return 'ডিফল্ট';
         case 'App Chime': return 'অ্যাপ চाइम';
         case 'Custom from Device Memory': return 'ডিভাইস মেমোরি থেকে কাস্টম';
+        case 'Monthly Salary': return 'মাসিক বেতন';
+        case 'Evening snacks': return 'বিকেলের নাস্তা';
+        case 'Preferences': return 'পছন্দসমূহ';
+        case 'Male': return 'পুরুষ';
+        case 'Female': return 'মহিলা';
+        case 'Other': return 'অন্যny';
+        case 'Gender': return 'লিঙ্গ';
+        case 'DOB': return 'জন্মতারিখ';
+        case 'Mobile': return 'মোবাইল';
+        case 'Net Balance': return 'নিট ব্যালেন্স';
+        case 'Spent': return 'ব্যয় হয়েছে';
+        case 'Budget:': return 'বাজেট:';
+        case 'Spent:': return 'ব্যয়:';
+        case 'Total Income:': return 'মোট আয়:';
+        case 'Total Expense:': return 'মোট ব্যয়:';
+        case 'Rofiqul Islam': return 'রফিকুল ইসলাম';
+        case 'रফিকুল ইসলাম': return 'রফিকুল ইসলাম';
         default: return key;
       }
     } else if (_language == 'Arabic') {
@@ -456,11 +484,10 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'End Date': return 'تاريخ الانتهاء';
         case 'Loan & Debt': return 'القروض والديون';
         case 'Search (note, category)...': return 'بحث (ملاحظة، فئة)...';
-        case 'MD ALAMGIR HOSSAIN': return 'إم دي عالمجير حسين';
+        case 'মোহাম্মদ আলমগীর হোসেন': return 'محمد عالمجير حسين';
         case 'Reports & Analysis': return 'التقارير والتحليلات';
         case 'Monthly Budget Overview': return 'نظرة عامة على الميزانية الشهرية';
         case 'Expense Categories': return 'فئات المصروفات';
-        // নতুন যোগ করা কি-গুলো (Arabic)
         case 'All Transactions': return 'جميع المعاملات';
         case 'All': return 'الكل';
         case 'Given': return 'ممنوح';
@@ -493,6 +520,23 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Default': return 'افتراضي';
         case 'App Chime': return 'رنين التطبيق';
         case 'Custom from Device Memory': return 'مخصص من ذاكرة الجهاز';
+        case 'Monthly Salary': return 'راتب شهري';
+        case 'Evening snacks': return 'وجبة خفيفة المساء';
+        case 'Preferences': return 'التفضيلات';
+        case 'Male': return 'ذكر';
+        case 'Female': return 'أنثى';
+        case 'Other': return 'آخر';
+        case 'Gender': return 'الجنس';
+        case 'DOB': return 'تاريخ الميلاد';
+        case 'Mobile': return 'محمول';
+        case 'Net Balance': return 'الرصيد الصافي';
+        case 'Spent': return 'المصروف';
+        case 'Budget:': return 'الميزانية:';
+        case 'Spent:': return 'المصروف:';
+        case 'Total Income:': return 'إجمالي الدخل:';
+        case 'Total Expense:': return 'إجمالي المصروفات:';
+        case 'Rofiqul Islam': return 'رفيق الإسلام';
+        case 'রফিকুল ইসলাম': return 'رفيق الإسلام';
         default: return key;
       }
     }
@@ -1498,7 +1542,7 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                         },
                         child: AbsorbPointer(
                           child: TextField(
-                            controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.customStartDate.toString().substring(0, 10) : appSettings.translate('Start Date')),
+                            controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
                             decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
                           ),
                         ),
@@ -1522,7 +1566,7 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                         },
                         child: AbsorbPointer(
                           child: TextField(
-                            controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.customEndDate.toString().substring(0, 10) : appSettings.translate('End Date')),
+                            controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
                             decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
                           ),
                         ),
@@ -1542,7 +1586,7 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(appSettings.translate('Total Balance'), style: const TextStyle(color: Colors.grey)),
-                        Text('$balance $curr', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: balance >= 0 ? const Color(0xFF10B981) : Colors.redAccent)),
+                        Text('${appSettings.localizeNumber(balance)} $curr', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: balance >= 0 ? const Color(0xFF10B981) : Colors.redAccent)),
                       ],
                     ),
                     const Divider(height: 24),
@@ -1550,7 +1594,7 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(appSettings.translate('Total Income'), style: const TextStyle(color: Colors.grey)),
-                        Text('$income $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                        Text('${appSettings.localizeNumber(income)} $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -1558,7 +1602,7 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(appSettings.translate('Total Expense'), style: const TextStyle(color: Colors.grey)),
-                        Text('$expense $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
+                        Text('${appSettings.localizeNumber(expense)} $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
                       ],
                     ),
                   ],
@@ -1576,7 +1620,7 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(appSettings.translate('Total Loan Given'), style: const TextStyle(color: Colors.grey)),
-                        Text('$totalGiven $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                        Text('${appSettings.localizeNumber(totalGiven)} $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -1584,7 +1628,7 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(appSettings.translate('Total Loan Taken'), style: const TextStyle(color: Colors.grey)),
-                        Text('$totalTaken $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
+                        Text('${appSettings.localizeNumber(totalTaken)} $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
                       ],
                     ),
                   ],
@@ -1648,7 +1692,7 @@ class _CalculatorsHubScreenState extends State<CalculatorsHubScreen> {
           child: Container(
             alignment: Alignment.bottomRight,
             padding: const EdgeInsets.all(24),
-            child: Text(calcDisplay, style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold)),
+            child: Text(appSettings.localizeNumber(calcDisplay), style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold)),
           ),
         ),
         Container(
@@ -1725,7 +1769,7 @@ class _CalculatorsHubScreenState extends State<CalculatorsHubScreen> {
           }
         });
       },
-      child: Text(val, style: const TextStyle(fontSize: 20, color: Colors.white)),
+      child: Text(appSettings.localizeNumber(val), style: const TextStyle(fontSize: 20, color: Colors.white)),
     );
   }
 
@@ -1739,7 +1783,7 @@ class _CalculatorsHubScreenState extends State<CalculatorsHubScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Principal: $loanAmount'),
+              Text('Principal: ${appSettings.localizeNumber(loanAmount)}'),
               Row(
                 children: [
                   IconButton(icon: const Icon(Icons.remove_circle, color: Colors.red), onPressed: () => setState(() => loanAmount = (loanAmount - 5000).clamp(1000, 10000000))),
@@ -2081,7 +2125,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                       const SizedBox(height: 4),
                       Text(appSettings.translate(acc.type)),
                       const SizedBox(height: 2),
-                      Text(acc.details, style: const TextStyle(color: Colors.grey)),
+                      Text(appSettings.localizeNumber(acc.details), style: const TextStyle(color: Colors.grey)),
                     ],
                   ),
                   isThreeLine: true,
@@ -2212,7 +2256,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text('$curr ${b.amount}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
+                            Text('$curr ${appSettings.localizeNumber(b.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
                             const SizedBox(width: 8),
                             IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddEditBudgetDialog(index: index, budget: b)),
                             IconButton(
@@ -2428,7 +2472,7 @@ class _FundShoppingScreenState extends State<FundShoppingScreen> {
                           appSettings.translate(item.name),
                           style: TextStyle(decoration: item.isChecked ? TextDecoration.lineThrough : null),
                         ),
-                        subtitle: Text('$curr ${item.amount}'),
+                        subtitle: Text('$curr ${appSettings.localizeNumber(item.amount)}'),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -2551,11 +2595,11 @@ class _RemindersScreenState extends State<RemindersScreen> {
                       child: ListTile(
                         leading: const Icon(Icons.notifications_active, color: Color(0xFF10B981)),
                         title: Text(appSettings.translate(rem.title)),
-                        subtitle: Text('Due Day: ${rem.dueDate}'),
+                        subtitle: Text('Due Day: ${appSettings.localizeNumber(rem.dueDate)}'),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text('$curr ${rem.amount}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
+                            Text('$curr ${appSettings.localizeNumber(rem.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
                             const SizedBox(width: 8),
                             IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddReminderDialog(index: index, reminder: rem)),
                             IconButton(
@@ -2671,11 +2715,11 @@ class _RepeatedTransactionsScreenState extends State<RepeatedTransactionsScreen>
                 child: ListTile(
                   leading: const Icon(Icons.repeat, color: Color(0xFF10B981)),
                   title: Text(appSettings.translate(rep.title)),
-                  subtitle: Text('Day ${rep.frequency} of every month'),
+                  subtitle: Text('Day ${appSettings.localizeNumber(rep.frequency)} of every month'),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('$curr ${rep.amount}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
+                      Text('$curr ${appSettings.localizeNumber(rep.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
                       const SizedBox(width: 8),
                       IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddRepeatedDialog(index: index, repeated: rep)),
                       IconButton(
@@ -2778,11 +2822,11 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 child: ListTile(
                   leading: const Icon(Icons.savings, color: Color(0xFF10B981)),
                   title: Text(appSettings.translate(sav.title), style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text('Saved: ${sav.currentAmount} $curr'),
+                  subtitle: Text('Saved: ${appSettings.localizeNumber(sav.currentAmount)} $curr'),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('Target: ${sav.targetAmount} $curr', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                      Text('Target: ${appSettings.localizeNumber(sav.targetAmount)} $curr', style: const TextStyle(color: Colors.grey, fontSize: 12)),
                       const SizedBox(width: 8),
                       IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddSavingsDialog(index: index, savings: sav)),
                       IconButton(
@@ -2965,7 +3009,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                     children: [
                       Text(appSettings.translate('Current Balance'), style: const TextStyle(color: Colors.grey, fontSize: 13)),
                       const SizedBox(height: 8),
-                      Text('${appSettings.getTotalBalance()} $curr', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                      Text('${appSettings.localizeNumber(appSettings.getTotalBalance())} $curr', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
@@ -3036,7 +3080,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           value: appSettings.selectedYear,
                           dropdownColor: Theme.of(context).cardColor,
                           decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
-                          items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString()))).toList(),
+                          items: years.map((y) => DropdownMenuItem(value: y, child: Text(appSettings.localizeNumber(y)))).toList(),
                           onChanged: (val) { if (val != null) { appSettings.setMonthYear(appSettings.selectedMonthIndex, val); setState(() {}); } },
                         ),
                       ),
@@ -3047,7 +3091,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                     value: appSettings.selectedYear,
                     dropdownColor: Theme.of(context).cardColor,
                     decoration: const InputDecoration(labelText: 'Select Year', border: OutlineInputBorder()),
-                    items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString()))).toList(),
+                    items: years.map((y) => DropdownMenuItem(value: y, child: Text(appSettings.localizeNumber(y)))).toList(),
                     onChanged: (val) { if (val != null) { appSettings.setMonthYear(appSettings.selectedMonthIndex, val); setState(() {}); } },
                   ),
                 if (appSettings.timeFilter == 'Custom Range')
@@ -3070,7 +3114,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           },
                           child: AbsorbPointer(
                             child: TextField(
-                              controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.customStartDate.toString().substring(0, 10) : appSettings.translate('Start Date')),
+                              controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
                               decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
                             ),
                           ),
@@ -3094,7 +3138,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           },
                           child: AbsorbPointer(
                             child: TextField(
-                              controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.customEndDate.toString().substring(0, 10) : appSettings.translate('End Date')),
+                              controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
                               decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
                             ),
                           ),
@@ -3114,7 +3158,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           children: [
                             Text(appSettings.translate('Income'), style: const TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
                             const SizedBox(height: 4),
-                            Text('${appSettings.getTotalIncome()} $curr', style: const TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.bold)),
+                            Text('${appSettings.localizeNumber(appSettings.getTotalIncome())} $curr', style: const TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
@@ -3129,7 +3173,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           children: [
                             Text(appSettings.translate('Expense'), style: const TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.w600)),
                             const SizedBox(height: 4),
-                            Text('${appSettings.getTotalExpense()} $curr', style: const TextStyle(color: Colors.redAccent, fontSize: 16, fontWeight: FontWeight.bold)),
+                            Text('${appSettings.localizeNumber(appSettings.getTotalExpense())} $curr', style: const TextStyle(color: Colors.redAccent, fontSize: 16, fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
@@ -3174,7 +3218,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               title: Text('${appSettings.translate(txn.category)} (${appSettings.translate(txn.account)})'),
                               subtitle: Text(appSettings.translate(txn.description)),
                               trailing: Text(
-                                '${isIncome ? '+' : '-'} $curr ${txn.amount}',
+                                '${isIncome ? '+' : '-'} $curr ${appSettings.localizeNumber(txn.amount)}',
                                 style: TextStyle(color: isIncome ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 15),
                               ),
                             ),
@@ -3337,7 +3381,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                   children: [
                     Text(appSettings.translate('Net Balance'), style: const TextStyle(color: Colors.grey, fontSize: 14)),
                     const SizedBox(height: 6),
-                    Text('${appSettings.getNetBalance()} $curr', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)),
+                    Text('${appSettings.localizeNumber(appSettings.getNetBalance())} $curr', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)),
                     const Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Divider(color: Colors.grey)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -3346,7 +3390,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                           children: [
                             Row(children: [const Icon(Icons.arrow_downward, size: 14, color: Colors.green), const SizedBox(width: 4), Text(appSettings.translate('Given'), style: const TextStyle(color: Colors.green, fontWeight: FontWeight.w600))]),
                             const SizedBox(height: 4),
-                            Text('${appSettings.getTotalGiven()} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
+                            Text('${appSettings.localizeNumber(appSettings.getTotalGiven())} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
                           ],
                         ),
                         Container(height: 30, width: 1, color: Colors.grey),
@@ -3354,7 +3398,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                           children: [
                             Row(children: [const Icon(Icons.arrow_upward, size: 14, color: Colors.redAccent), const SizedBox(width: 4), Text(appSettings.translate('Taken'), style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w600))]),
                             const SizedBox(height: 4),
-                            Text('${appSettings.getTotalTaken()} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.redAccent)),
+                            Text('${appSettings.localizeNumber(appSettings.getTotalTaken())} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.redAccent)),
                           ],
                         ),
                       ],
@@ -3402,11 +3446,11 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                                 child: Icon(isGiven ? Icons.arrow_upward : Icons.arrow_downward, color: isGiven ? Colors.green : Colors.red),
                               ),
                               title: Text(appSettings.translate(loan.personName), style: TextStyle(fontWeight: FontWeight.bold, decoration: loan.isPaid ? TextDecoration.lineThrough : null)),
-                              subtitle: Text('${appSettings.translate(loan.type)} - ${loan.date.toString().substring(0, 10)}'),
+                              subtitle: Text('${appSettings.translate(loan.type)} - ${appSettings.localizeNumber(loan.date.toString().substring(0, 10))}'),
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text('$curr ${loan.amount}', style: TextStyle(color: isGiven ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold)),
+                                  Text('$curr ${appSettings.localizeNumber(loan.amount)}', style: TextStyle(color: isGiven ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold)),
                                   Checkbox(
                                     value: loan.isPaid,
                                     activeColor: const Color(0xFF10B981),
@@ -3694,7 +3738,7 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    '${isIncome ? '+' : '-'} $curr ${txn.amount}',
+                                    '${isIncome ? '+' : '-'} $curr ${appSettings.localizeNumber(txn.amount)}',
                                     style: TextStyle(color: isIncome ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold),
                                   ),
                                   IconButton(
@@ -3873,7 +3917,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                         value: appSettings.selectedYear,
                         dropdownColor: Theme.of(context).cardColor,
                         decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
-                        items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString()))).toList(),
+                        items: years.map((y) => DropdownMenuItem(value: y, child: Text(appSettings.localizeNumber(y)))).toList(),
                         onChanged: (val) { if (val != null) setState(() => appSettings.setMonthYear(appSettings.selectedMonthIndex, val)); },
                       ),
                     ),
@@ -3884,7 +3928,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   value: appSettings.selectedYear,
                   dropdownColor: Theme.of(context).cardColor,
                   decoration: const InputDecoration(labelText: 'Select Year', border: OutlineInputBorder()),
-                  items: years.map((y) => DropdownMenuItem(value: y, child: Text(y.toString()))).toList(),
+                  items: years.map((y) => DropdownMenuItem(value: y, child: Text(appSettings.localizeNumber(y)))).toList(),
                   onChanged: (val) { if (val != null) setState(() => appSettings.setMonthYear(appSettings.selectedMonthIndex, val)); },
                 ),
               if (currentFilterMode == 'Custom Range')
@@ -3907,7 +3951,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                         },
                         child: AbsorbPointer(
                           child: TextField(
-                            controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.customStartDate.toString().substring(0, 10) : appSettings.translate('Start Date')),
+                            controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
                             decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
                           ),
                         ),
@@ -3931,7 +3975,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                         },
                         child: AbsorbPointer(
                           child: TextField(
-                            controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.customEndDate.toString().substring(0, 10) : appSettings.translate('End Date')),
+                            controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
                             decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
                           ),
                         ),
@@ -3948,15 +3992,15 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   children: [
                     Text(appSettings.translate('Monthly Budget Overview'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                     const SizedBox(height: 8),
-                    Text('Budget: $budget $curr | Spent: $expense $curr', style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                    Text('${appSettings.translate('Budget:')} ${appSettings.localizeNumber(budget)} $curr | ${appSettings.translate('Spent:')} ${appSettings.localizeNumber(expense)} $curr', style: const TextStyle(color: Colors.grey, fontSize: 13)),
                     const SizedBox(height: 8),
                     LinearProgressIndicator(value: progress, color: const Color(0xFF10B981), backgroundColor: Colors.white12),
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Total Income: $income $curr', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-                        Text('Total Expense: $expense $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                        Text('${appSettings.translate('Total Income:')} ${appSettings.localizeNumber(income)} $curr', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                        Text('${appSettings.translate('Total Expense:')} ${appSettings.localizeNumber(expense)} $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ],
@@ -3987,9 +4031,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
                           color: Theme.of(context).cardColor,
                           margin: const EdgeInsets.only(bottom: 8),
                           child: ListTile(
-                            leading: CircleAvatar(backgroundColor: Colors.red[100], child: Icon(Icons.category, color: Colors.redAccent)),
+                            leading: CircleAvatar(backgroundColor: Colors.red[100], child: const Icon(Icons.category, color: Colors.redAccent)),
                             title: Text(appSettings.translate(catEntry.key), style: const TextStyle(fontWeight: FontWeight.bold)),
-                            trailing: Text('${catEntry.value} $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                            trailing: Text('${appSettings.localizeNumber(catEntry.value)} $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
                           ),
                         );
                       },
@@ -4322,7 +4366,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   value: ['Male', 'Female', 'Other'].contains(selectedGender) ? selectedGender : 'Male',
                   dropdownColor: Theme.of(context).cardColor,
                   decoration: const InputDecoration(labelText: 'Gender', border: OutlineInputBorder()),
-                  items: ['Male', 'Female', 'Other'].map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
+                  items: ['Male', 'Female', 'Other'].map((g) => DropdownMenuItem(value: g, child: Text(appSettings.translate(g)))).toList(),
                   onChanged: (val) { if (val != null) setStateDialog(() => selectedGender = val); },
                 ),
                 const SizedBox(height: 12),
@@ -4337,7 +4381,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     );
                     if (pickedDate != null) {
                       setStateDialog(() {
-                        birthDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                        String rawDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                        birthDate = appSettings.localizeNumber(rawDate);
                       });
                     }
                   },
@@ -4362,7 +4407,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   email: emailC.text,
                   gender: selectedGender,
                   birthDate: birthDate,
-                  mobile: mobileC.text,
+                  mobile: appSettings.localizeNumber(mobileC.text),
                 );
                 Navigator.pop(ctx);
                 setState(() {});
@@ -4421,9 +4466,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 4),
                   Text(appSettings.profileEmail, style: const TextStyle(color: Colors.white70, fontSize: 13)),
                   const SizedBox(height: 8),
-                  Text('Gender: ${appSettings.profileGender} | DOB: ${appSettings.profileBirthDate}', style: const TextStyle(color: Colors.white70, fontSize: 11)),
+                  Text('${appSettings.translate('Gender')}: ${appSettings.translate(appSettings.profileGender)} | ${appSettings.translate('DOB')}: ${appSettings.localizeNumber(appSettings.profileBirthDate)}', style: const TextStyle(color: Colors.white70, fontSize: 11)),
                   const SizedBox(height: 4),
-                  Text('Mobile: ${appSettings.profileMobile}', style: const TextStyle(color: Colors.white70, fontSize: 11)),
+                  Text('${appSettings.translate('Mobile')}: ${appSettings.localizeNumber(appSettings.profileMobile)}', style: const TextStyle(color: Colors.white70, fontSize: 11)),
                   const SizedBox(height: 14),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
