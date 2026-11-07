@@ -158,12 +158,12 @@ class AppSettingsNotifier extends ChangeNotifier {
   late SharedPreferences _prefs;
 
   ThemeMode _themeMode = ThemeMode.dark;
-  String _language = 'English'; // অ্যাপ শুরু হবে ইংরেজি ভাষায়
+  String _language = 'English'; 
   String currency = '৳';
   String timeFilter = 'This Month';
   String appPin = '1234';
 
-  String profileName = 'মোহাম্মদ আলমগীর হোসেন';
+  String profileName = 'Md. Alamgir Hossain';
   String profileEmail = 'alamgir@email.com';
   String profileGender = 'Male';
   String profileBirthDate = '01-01-1995';
@@ -224,7 +224,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   List<LoanItem> loans = [
     LoanItem(
       id: '101',
-      personName: 'রফিকুল ইসলাম',
+      personName: 'Rofiqul Islam',
       amount: 2000.0,
       type: 'Given',
       date: DateTime.now(),
@@ -264,7 +264,7 @@ class AppSettingsNotifier extends ChangeNotifier {
     else if (themeStr == 'system') _themeMode = ThemeMode.system;
     else _themeMode = ThemeMode.dark;
 
-    profileName = _prefs.getString('profileName') ?? 'মোহাম্মদ আলমগীর হোসেন';
+    profileName = _prefs.getString('profileName') ?? 'Md. Alamgir Hossain';
     profileEmail = _prefs.getString('profileEmail') ?? 'alamgir@email.com';
     profileGender = _prefs.getString('profileGender') ?? 'Male';
     profileBirthDate = _prefs.getString('profileBirthDate') ?? '01-01-1995';
@@ -432,7 +432,6 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Spent:': return 'ব্যয়:';
         case 'Total Income:': return 'মোট আয়:';
         case 'Total Expense:': return 'মোট ব্যয়:';
-        case 'Rofiqul Islam': return 'রফিকুল ইসলাম';
         case 'Cancel': return 'বাতিল';
         case 'Save': return 'সংরক্ষণ';
         default: return key;
@@ -552,7 +551,6 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Spent:': return 'المصروف:';
         case 'Total Income:': return 'إجمالي الدخل:';
         case 'Total Expense:': return 'إجمالي المصروفات:';
-        case 'Rofiqul Islam': return 'رفيق الإسلام';
         case 'Cancel': return 'إلغاء';
         case 'Save': return 'حفظ';
         default: return key;
@@ -1550,7 +1548,7 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                             initialDate: appSettings.customStartDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
                             lastDate: DateTime(2100),
-                            locale: appSettings.language == 'Bangla' ? const Locale('bn', 'BD') : (appSettings.language == 'Arabic' ? const Locale('ar', 'SA') : const Locale('en', 'US')),
+                            locale: const Locale('en', 'US'), // ফিক্সড ল্যাঙ্গুয়েজ লোকাল যাতে সাদা স্ক্রিন না হয়
                           );
                           if (picked != null) {
                             appSettings.setCustomDateRange(picked, appSettings.customEndDate ?? picked);
@@ -1581,7 +1579,7 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                             initialDate: appSettings.customEndDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
                             lastDate: DateTime(2100),
-                            locale: appSettings.language == 'Bangla' ? const Locale('bn', 'BD') : (appSettings.language == 'Arabic' ? const Locale('ar', 'SA') : const Locale('en', 'US')),
+                            locale: const Locale('en', 'US'), // ফিক্সড লোকাল ফিক্স
                           );
                           if (picked != null) {
                             appSettings.setCustomDateRange(appSettings.customStartDate ?? picked, picked);
@@ -1981,7 +1979,7 @@ class AppDrawer extends StatelessWidget {
           children: [
             UserAccountsDrawerHeader(
               decoration: const BoxDecoration(color: Color(0xFF10B981)),
-              accountName: Text(appSettings.translate(appSettings.profileName), style: const TextStyle(fontWeight: FontWeight.bold)),
+              accountName: Text(appSettings.profileName, style: const TextStyle(fontWeight: FontWeight.bold)),
               accountEmail: Text(appSettings.profileEmail),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
@@ -3135,7 +3133,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               initialDate: appSettings.customStartDate ?? DateTime.now(),
                               firstDate: DateTime(1990),
                               lastDate: DateTime(2100),
-                              locale: appSettings.language == 'Bangla' ? const Locale('bn', 'BD') : (appSettings.language == 'Arabic' ? const Locale('ar', 'SA') : const Locale('en', 'US')),
+                              locale: const Locale('en', 'US'), // ফিক্সড লোকাল
                             );
                             if (picked != null) {
                               appSettings.setCustomDateRange(picked, appSettings.customEndDate ?? picked);
@@ -3166,7 +3164,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               initialDate: appSettings.customEndDate ?? DateTime.now(),
                               firstDate: DateTime(1990),
                               lastDate: DateTime(2100),
-                              locale: appSettings.language == 'Bangla' ? const Locale('bn', 'BD') : (appSettings.language == 'Arabic' ? const Locale('ar', 'SA') : const Locale('en', 'US')),
+                              locale: const Locale('en', 'US'), // ফিক্সড লোকাল
                             );
                             if (picked != null) {
                               appSettings.setCustomDateRange(appSettings.customStartDate ?? picked, picked);
@@ -3489,7 +3487,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                                 backgroundColor: (isGiven ? Colors.green : Colors.red).withOpacity(0.2),
                                 child: Icon(isGiven ? Icons.arrow_upward : Icons.arrow_downward, color: isGiven ? Colors.green : Colors.red),
                               ),
-                              title: Text(appSettings.translate(loan.personName), style: TextStyle(fontWeight: FontWeight.bold, decoration: loan.isPaid ? TextDecoration.lineThrough : null)),
+                              title: Text(loan.personName, style: TextStyle(fontWeight: FontWeight.bold, decoration: loan.isPaid ? TextDecoration.lineThrough : null)),
                               subtitle: Text('${appSettings.translate(loan.type)} - ${appSettings.localizeNumber(loan.date.toString().substring(0, 10))}'),
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -3985,7 +3983,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                             initialDate: appSettings.customStartDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
                             lastDate: DateTime(2100),
-                            locale: appSettings.language == 'Bangla' ? const Locale('bn', 'BD') : (appSettings.language == 'Arabic' ? const Locale('ar', 'SA') : const Locale('en', 'US')),
+                            locale: const Locale('en', 'US'), // ফিক্সড লোকাল
                           );
                           if (picked != null) {
                             appSettings.setCustomDateRange(picked, appSettings.customEndDate ?? picked);
@@ -4016,7 +4014,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                             initialDate: appSettings.customEndDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
                             lastDate: DateTime(2100),
-                            locale: appSettings.language == 'Bangla' ? const Locale('bn', 'BD') : (appSettings.language == 'Arabic' ? const Locale('ar', 'SA') : const Locale('en', 'US')),
+                            locale: const Locale('en', 'US'), // ফিক্সড লোকাল
                           );
                           if (picked != null) {
                             appSettings.setCustomDateRange(appSettings.customStartDate ?? picked, picked);
@@ -4434,7 +4432,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       initialDate: DateTime(1995, 1, 1),
                       firstDate: DateTime(1900),
                       lastDate: DateTime.now(),
-                      locale: appSettings.language == 'Bangla' ? const Locale('bn', 'BD') : (appSettings.language == 'Arabic' ? const Locale('ar', 'SA') : const Locale('en', 'US')),
+                      locale: const Locale('en', 'US'), // ফিক্সড লোকাল
                     );
                     if (pickedDate != null) {
                       setStateDialog(() {
@@ -4526,7 +4524,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  Text(appSettings.translate(appSettings.profileName), style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(appSettings.profileName, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
                   Text(appSettings.profileEmail, style: const TextStyle(color: Colors.white70, fontSize: 13)),
                   const SizedBox(height: 8),
