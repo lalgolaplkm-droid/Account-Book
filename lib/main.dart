@@ -181,6 +181,8 @@ class AppSettingsNotifier extends ChangeNotifier {
   bool loanAlert = true;
   String notificationSound = 'Default';
 
+  bool hideBalance = false; // ব্যালেন্স হাইড/আনহাইড টগল
+
   int selectedMonthIndex = DateTime.now().month;
   int selectedYear = DateTime.now().year;
 
@@ -288,6 +290,11 @@ class AppSettingsNotifier extends ChangeNotifier {
   ThemeMode get themeMode => _themeMode;
   String get language => _language;
   
+  void toggleHideBalance() {
+    hideBalance = !hideBalance;
+    notifyListeners();
+  }
+
   String localizeNumber(dynamic number) {
     String str = number.toString();
     if (_language != 'Bangla') return str;
@@ -644,6 +651,21 @@ class AppSettingsNotifier extends ChangeNotifier {
   void removeTransaction(int index) {
     transactions.removeAt(index);
     notifyListeners();
+  }
+
+  // একটি নির্দিষ্ট অ্যাকাউন্টের বর্তমান ব্যালেন্স হিসাব করার মেথড
+  double getAccountBalance(String accountName) {
+    double balance = 0;
+    for (var txn in transactions) {
+      if (txn.account == accountName) {
+        if (txn.type == 'Income') {
+          balance += txn.amount;
+        } else if (txn.type == 'Expense') {
+          balance -= txn.amount;
+        }
+      }
+    }
+    return balance;
   }
 
   void addLoan(LoanItem loan) {
@@ -1615,7 +1637,10 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(appSettings.translate('Total Balance'), style: const TextStyle(color: Colors.grey)),
-                        Text('${appSettings.localizeNumber(balance)} $curr', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: balance >= 0 ? const Color(0xFF10B981) : Colors.redAccent)),
+                        Text(
+                          appSettings.hideBalance ? '********' : '${appSettings.localizeNumber(balance)} $curr', 
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: balance >= 0 ? const Color(0xFF10B981) : Colors.redAccent)
+                        ),
                       ],
                     ),
                     const Divider(height: 24),
@@ -1623,7 +1648,10 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(appSettings.translate('Total Income'), style: const TextStyle(color: Colors.grey)),
-                        Text('${appSettings.localizeNumber(income)} $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                        Text(
+                          appSettings.hideBalance ? '********' : '${appSettings.localizeNumber(income)} $curr', 
+                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)
+                        ),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -1631,7 +1659,10 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(appSettings.translate('Total Expense'), style: const TextStyle(color: Colors.grey)),
-                        Text('${appSettings.localizeNumber(expense)} $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
+                        Text(
+                          appSettings.hideBalance ? '********' : '${appSettings.localizeNumber(expense)} $curr', 
+                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)
+                        ),
                       ],
                     ),
                   ],
@@ -1649,7 +1680,10 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(appSettings.translate('Total Loan Given'), style: const TextStyle(color: Colors.grey)),
-                        Text('${appSettings.localizeNumber(totalGiven)} $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                        Text(
+                          appSettings.hideBalance ? '********' : '${appSettings.localizeNumber(totalGiven)} $curr', 
+                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)
+                        ),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -1657,7 +1691,10 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(appSettings.translate('Total Loan Taken'), style: const TextStyle(color: Colors.grey)),
-                        Text('${appSettings.localizeNumber(totalTaken)} $curr', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
+                        Text(
+                          appSettings.hideBalance ? '********' : '${appSettings.localizeNumber(totalTaken)} $curr', 
+                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)
+                        ),
                       ],
                     ),
                   ],
@@ -2116,12 +2153,18 @@ class _AccountsScreenState extends State<AccountsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String curr = appSettings.currency;
     return AnimatedBuilder(
       animation: appSettings,
       builder: (context, _) => Scaffold(
         appBar: AppBar(
           title: Text(appSettings.translate('Accounts')),
           actions: [
+            IconButton(
+              icon: Icon(appSettings.hideBalance ? Icons.visibility_off : Icons.visibility),
+              tooltip: 'Toggle Balance Visibility',
+              onPressed: () => appSettings.toggleHideBalance(),
+            ),
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
           ],
@@ -2132,6 +2175,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
             itemCount: appSettings.accounts.length,
             itemBuilder: (context, index) {
               final acc = appSettings.accounts[index];
+              double accBal = appSettings.getAccountBalance(acc.name);
               return Card(
                 color: Theme.of(context).cardColor,
                 margin: const EdgeInsets.only(bottom: 10),
@@ -2147,7 +2191,8 @@ class _AccountsScreenState extends State<AccountsScreen> {
                       color: acc.isDefault ? const Color(0xFF10B981) : Colors.grey,
                     ),
                   ),
-                  title: Text(appSettings.translate(acc.name) + (acc.isDefault ? ' [Default]' : ''), style: const TextStyle(fontWeight: FontWeight.bold)),
+                  // [Default] লেখা রিমুভ করা হয়েছে, শুধু চেকমার্ক/হাইলাইট দিয়ে ডিফল্ট বুঝানো হচ্ছে
+                  title: Text(appSettings.translate(acc.name), style: const TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -2155,6 +2200,11 @@ class _AccountsScreenState extends State<AccountsScreen> {
                       Text(appSettings.translate(acc.type)),
                       const SizedBox(height: 2),
                       Text(appSettings.localizeNumber(acc.details), style: const TextStyle(color: Colors.grey)),
+                      const SizedBox(height: 4),
+                      Text(
+                        appSettings.hideBalance ? 'Balance: ********' : 'Balance: ${appSettings.localizeNumber(accBal)} $curr',
+                        style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981)),
+                      ),
                     ],
                   ),
                   isThreeLine: true,
@@ -2285,7 +2335,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text('$curr ${appSettings.localizeNumber(b.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
+                            Text(appSettings.hideBalance ? '********' : '$curr ${appSettings.localizeNumber(b.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
                             const SizedBox(width: 8),
                             IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddEditBudgetDialog(index: index, budget: b)),
                             IconButton(
@@ -2501,7 +2551,7 @@ class _FundShoppingScreenState extends State<FundShoppingScreen> {
                           appSettings.translate(item.name),
                           style: TextStyle(decoration: item.isChecked ? TextDecoration.lineThrough : null),
                         ),
-                        subtitle: Text('$curr ${appSettings.localizeNumber(item.amount)}'),
+                        subtitle: Text(appSettings.hideBalance ? '********' : '$curr ${appSettings.localizeNumber(item.amount)}'),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -2628,7 +2678,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text('$curr ${appSettings.localizeNumber(rem.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
+                            Text(appSettings.hideBalance ? '********' : '$curr ${appSettings.localizeNumber(rem.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
                             const SizedBox(width: 8),
                             IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddReminderDialog(index: index, reminder: rem)),
                             IconButton(
@@ -2748,7 +2798,7 @@ class _RepeatedTransactionsScreenState extends State<RepeatedTransactionsScreen>
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('$curr ${appSettings.localizeNumber(rep.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
+                      Text(appSettings.hideBalance ? '********' : '$curr ${appSettings.localizeNumber(rep.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
                       const SizedBox(width: 8),
                       IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddRepeatedDialog(index: index, repeated: rep)),
                       IconButton(
@@ -2851,11 +2901,11 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 child: ListTile(
                   leading: const Icon(Icons.savings, color: Color(0xFF10B981)),
                   title: Text(appSettings.translate(sav.title), style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text('Saved: ${appSettings.localizeNumber(sav.currentAmount)} $curr'),
+                  subtitle: Text(appSettings.hideBalance ? 'Saved: ********' : 'Saved: ${appSettings.localizeNumber(sav.currentAmount)} $curr'),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('Target: ${appSettings.localizeNumber(sav.targetAmount)} $curr', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                      Text(appSettings.hideBalance ? 'Target: ********' : 'Target: ${appSettings.localizeNumber(sav.targetAmount)} $curr', style: const TextStyle(color: Colors.grey, fontSize: 12)),
                       const SizedBox(width: 8),
                       IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddSavingsDialog(index: index, savings: sav)),
                       IconButton(
@@ -2898,103 +2948,6 @@ class HomeScreenContent extends StatefulWidget {
 }
 
 class _HomeScreenContentState extends State<HomeScreenContent> {
-  void _showAddTransactionDialog(BuildContext context) {
-    String transactionType = 'Expense';
-    String selectedCategory = appSettings.categories[0];
-    String selectedAccount = appSettings.accounts.firstWhere((acc) => acc.isDefault, orElse: () => appSettings.accounts[0]).name;
-    
-    final TextEditingController amountController = TextEditingController();
-    final TextEditingController descController = TextEditingController();
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (ctx, setStateModal) {
-            return Padding(
-              padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Add New Transaction', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: transactionType == 'Income' ? Colors.green : const Color(0xFF1E293B)),
-                            onPressed: () => setStateModal(() => transactionType = 'Income'),
-                            child: const Text('Cash In'),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: transactionType == 'Expense' ? Colors.red : const Color(0xFF1E293B)),
-                            onPressed: () => setStateModal(() => transactionType = 'Expense'),
-                            child: const Text('Cash Out'),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    DropdownButtonFormField<String>(
-                      value: selectedAccount,
-                      dropdownColor: Theme.of(context).cardColor,
-                      decoration: const InputDecoration(labelText: 'Account', border: OutlineInputBorder()),
-                      items: appSettings.accounts.map((acc) => DropdownMenuItem(value: acc.name, child: Text(appSettings.translate(acc.name)))).toList(),
-                      onChanged: (val) { if (val != null) setStateModal(() => selectedAccount = val); },
-                    ),
-                    const SizedBox(height: 12),
-                    DropdownButtonFormField<String>(
-                      value: selectedCategory,
-                      dropdownColor: Theme.of(context).cardColor,
-                      decoration: const InputDecoration(labelText: 'Category', border: OutlineInputBorder()),
-                      items: appSettings.categories.map((cat) => DropdownMenuItem(value: cat, child: Text(appSettings.translate(cat)))).toList(),
-                      onChanged: (val) { if (val != null) setStateModal(() => selectedCategory = val); },
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(controller: amountController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Amount', border: OutlineInputBorder())),
-                    const SizedBox(height: 12),
-                    TextField(controller: descController, decoration: const InputDecoration(labelText: 'Description', border: OutlineInputBorder())),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
-                        onPressed: () {
-                          if (amountController.text.isNotEmpty) {
-                            double amount = double.tryParse(amountController.text) ?? 0.0;
-                            appSettings.addTransaction(TransactionItem(
-                              id: DateTime.now().toString(),
-                              type: transactionType,
-                              account: selectedAccount,
-                              category: selectedCategory,
-                              amount: amount,
-                              description: descController.text,
-                              date: DateTime.now(),
-                            ));
-                            Navigator.pop(ctx);
-                            setState(() {});
-                          }
-                        },
-                        child: const Text('Save', style: TextStyle(fontSize: 16)),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
   Widget _buildQuickAccessIcon(BuildContext context, IconData icon, String label, Widget targetScreen) {
     return InkWell(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => targetScreen)),
@@ -3021,7 +2974,16 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
       animation: appSettings,
       builder: (context, child) {
         return Scaffold(
-          appBar: AppBar(title: Text(appSettings.getAppTitle(), style: const TextStyle(fontWeight: FontWeight.bold))),
+          appBar: AppBar(
+            title: Text(appSettings.getAppTitle(), style: const TextStyle(fontWeight: FontWeight.bold)),
+            actions: [
+              IconButton(
+                icon: Icon(appSettings.hideBalance ? Icons.visibility_off : Icons.visibility),
+                tooltip: 'Toggle Balance Visibility',
+                onPressed: () => appSettings.toggleHideBalance(),
+              ),
+            ],
+          ),
           drawer: const AppDrawer(),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
@@ -3037,7 +2999,10 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                     children: [
                       Text(appSettings.translate('Current Balance'), style: const TextStyle(color: Colors.grey, fontSize: 13)),
                       const SizedBox(height: 8),
-                      Text('${appSettings.localizeNumber(appSettings.getTotalBalance())} $curr', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                      Text(
+                        appSettings.hideBalance ? '********' : '${appSettings.localizeNumber(appSettings.getTotalBalance())} $curr', 
+                        style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)
+                      ),
                     ],
                   ),
                 ),
@@ -3200,7 +3165,10 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           children: [
                             Text(appSettings.translate('Income'), style: const TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
                             const SizedBox(height: 4),
-                            Text('${appSettings.localizeNumber(appSettings.getTotalIncome())} $curr', style: const TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.bold)),
+                            Text(
+                              appSettings.hideBalance ? '********' : '${appSettings.localizeNumber(appSettings.getTotalIncome())} $curr', 
+                              style: const TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.bold)
+                            ),
                           ],
                         ),
                       ),
@@ -3215,7 +3183,10 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           children: [
                             Text(appSettings.translate('Expense'), style: const TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.w600)),
                             const SizedBox(height: 4),
-                            Text('${appSettings.localizeNumber(appSettings.getTotalExpense())} $curr', style: const TextStyle(color: Colors.redAccent, fontSize: 16, fontWeight: FontWeight.bold)),
+                            Text(
+                              appSettings.hideBalance ? '********' : '${appSettings.localizeNumber(appSettings.getTotalExpense())} $curr', 
+                              style: const TextStyle(color: Colors.redAccent, fontSize: 16, fontWeight: FontWeight.bold)
+                            ),
                           ],
                         ),
                       ),
@@ -3258,9 +3229,11 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                 child: Icon(isIncome ? Icons.add : Icons.remove, color: isIncome ? Colors.green : Colors.red),
                               ),
                               title: Text('${appSettings.translate(txn.category)} (${appSettings.translate(txn.account)})'),
-                              subtitle: Text(appSettings.translate(txn.description)),
+                              // ট্রানজেকশন কার্ডে ডেট ও টাইম (Date & Time) প্রদর্শন
+                              subtitle: Text('${appSettings.translate(txn.description)}\n${appSettings.localizeNumber(txn.date.toString().substring(0, 16))}'),
+                              isThreeLine: true,
                               trailing: Text(
-                                '${isIncome ? '+' : '-'} $curr ${appSettings.localizeNumber(txn.amount)}',
+                                appSettings.hideBalance ? '********' : '${isIncome ? '+' : '-'} $curr ${appSettings.localizeNumber(txn.amount)}',
                                 style: TextStyle(color: isIncome ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 15),
                               ),
                             ),
@@ -3270,11 +3243,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
               ],
             ),
           ),
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: const Color(0xFF10B981),
-            onPressed: () => _showAddTransactionDialog(context),
-            child: const Icon(Icons.add, color: Colors.white),
-          ),
+          // হোম স্ক্রিন থেকে অতিরিক্ত ফ্লোটিং অ্যাকশন বাটন (FAB) রিমুভ করা হয়েছে
         );
       },
     );
@@ -3380,6 +3349,11 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
         appBar: AppBar(
           title: Text(appSettings.translate('Loan & Debt')),
           actions: [
+            IconButton(
+              icon: Icon(appSettings.hideBalance ? Icons.visibility_off : Icons.visibility),
+              tooltip: 'Toggle Balance Visibility',
+              onPressed: () => appSettings.toggleHideBalance(),
+            ),
             Builder(
               builder: (ctx) => IconButton(
                 icon: const Icon(Icons.download),
@@ -3423,7 +3397,10 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                   children: [
                     Text(appSettings.translate('Net Balance'), style: const TextStyle(color: Colors.grey, fontSize: 14)),
                     const SizedBox(height: 6),
-                    Text('${appSettings.localizeNumber(appSettings.getNetBalance())} $curr', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)),
+                    Text(
+                      appSettings.hideBalance ? '********' : '${appSettings.localizeNumber(appSettings.getNetBalance())} $curr', 
+                      style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)
+                    ),
                     const Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Divider(color: Colors.grey)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -3432,7 +3409,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                           children: [
                             Row(children: [const Icon(Icons.arrow_downward, size: 14, color: Colors.green), const SizedBox(width: 4), Text(appSettings.translate('Given'), style: const TextStyle(color: Colors.green, fontWeight: FontWeight.w600))]),
                             const SizedBox(height: 4),
-                            Text('${appSettings.localizeNumber(appSettings.getTotalGiven())} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
+                            Text(appSettings.hideBalance ? '********' : '${appSettings.localizeNumber(appSettings.getTotalGiven())} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
                           ],
                         ),
                         Container(height: 30, width: 1, color: Colors.grey),
@@ -3440,7 +3417,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                           children: [
                             Row(children: [const Icon(Icons.arrow_upward, size: 14, color: Colors.redAccent), const SizedBox(width: 4), Text(appSettings.translate('Taken'), style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w600))]),
                             const SizedBox(height: 4),
-                            Text('${appSettings.localizeNumber(appSettings.getTotalTaken())} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.redAccent)),
+                            Text(appSettings.hideBalance ? '********' : '${appSettings.localizeNumber(appSettings.getTotalTaken())} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.redAccent)),
                           ],
                         ),
                       ],
@@ -3492,7 +3469,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text('$curr ${appSettings.localizeNumber(loan.amount)}', style: TextStyle(color: isGiven ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold)),
+                                  Text(appSettings.hideBalance ? '********' : '$curr ${appSettings.localizeNumber(loan.amount)}', style: TextStyle(color: isGiven ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold)),
                                   Checkbox(
                                     value: loan.isPaid,
                                     activeColor: const Color(0xFF10B981),
@@ -3595,11 +3572,18 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
+                    // অ্যাকাউন্ট ড্রপডাউনে প্রতিটি অ্যাকাউন্টের ব্যালেন্সসহ তালিকা প্রদর্শন
                     DropdownButtonFormField<String>(
                       value: selectedAccount,
                       dropdownColor: Theme.of(context).cardColor,
                       decoration: const InputDecoration(labelText: 'Account', border: OutlineInputBorder()),
-                      items: appSettings.accounts.map((acc) => DropdownMenuItem(value: acc.name, child: Text(appSettings.translate(acc.name)))).toList(),
+                      items: appSettings.accounts.map((acc) {
+                        double accBal = appSettings.getAccountBalance(acc.name);
+                        return DropdownMenuItem(
+                          value: acc.name, 
+                          child: Text('${appSettings.translate(acc.name)} (${appSettings.localizeNumber(accBal)} ${appSettings.currency})')
+                        );
+                      }).toList(),
                       onChanged: (val) { if (val != null) setStateModal(() => selectedAccount = val); },
                     ),
                     const SizedBox(height: 12),
@@ -3700,6 +3684,11 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
         appBar: AppBar(
           title: Text(appSettings.translate('All Transactions')),
           actions: [
+            IconButton(
+              icon: Icon(appSettings.hideBalance ? Icons.visibility_off : Icons.visibility),
+              tooltip: 'Toggle Balance Visibility',
+              onPressed: () => appSettings.toggleHideBalance(),
+            ),
             Builder(
               builder: (ctx) => IconButton(
                 icon: const Icon(Icons.download),
@@ -3775,12 +3764,13 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                                 child: Icon(isIncome ? Icons.add : Icons.remove, color: isIncome ? Colors.green : Colors.red),
                               ),
                               title: Text('${appSettings.translate(txn.category)} (${appSettings.translate(txn.account)})', style: const TextStyle(fontWeight: FontWeight.bold)),
-                              subtitle: Text(appSettings.translate(txn.description)),
+                              subtitle: Text('${appSettings.translate(txn.description)}\n${appSettings.localizeNumber(txn.date.toString().substring(0, 16))}'),
+                              isThreeLine: true,
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    '${isIncome ? '+' : '-'} $curr ${appSettings.localizeNumber(txn.amount)}',
+                                    appSettings.hideBalance ? '********' : '${isIncome ? '+' : '-'} $curr ${appSettings.localizeNumber(txn.amount)}',
                                     style: TextStyle(color: isIncome ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold),
                                   ),
                                   IconButton(
@@ -3863,6 +3853,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
         appBar: AppBar(
           title: Text(appSettings.translate('Reports & Analysis')),
           actions: [
+            IconButton(
+              icon: Icon(appSettings.hideBalance ? Icons.visibility_off : Icons.visibility),
+              tooltip: 'Toggle Balance Visibility',
+              onPressed: () => appSettings.toggleHideBalance(),
+            ),
             Builder(
               builder: (ctx) => IconButton(
                 icon: const Icon(Icons.download),
@@ -4047,15 +4042,15 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   children: [
                     Text(appSettings.translate('Monthly Budget Overview'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                     const SizedBox(height: 8),
-                    Text('${appSettings.translate('Budget:')} ${appSettings.localizeNumber(budget)} $curr | ${appSettings.translate('Spent:')} ${appSettings.localizeNumber(expense)} $curr', style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                    Text('${appSettings.translate('Budget:')} ${appSettings.hideBalance ? '********' : appSettings.localizeNumber(budget)} $curr | ${appSettings.translate('Spent:')} ${appSettings.hideBalance ? '********' : appSettings.localizeNumber(expense)} $curr', style: const TextStyle(color: Colors.grey, fontSize: 13)),
                     const SizedBox(height: 8),
                     LinearProgressIndicator(value: progress, color: const Color(0xFF10B981), backgroundColor: Colors.white12),
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('${appSettings.translate('Total Income:')} ${appSettings.localizeNumber(income)} $curr', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-                        Text('${appSettings.translate('Total Expense:')} ${appSettings.localizeNumber(expense)} $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                        Text('${appSettings.translate('Total Income:')} ${appSettings.hideBalance ? '********' : appSettings.localizeNumber(income)} $curr', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                        Text('${appSettings.translate('Total Expense:')} ${appSettings.hideBalance ? '********' : appSettings.localizeNumber(expense)} $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ],
@@ -4088,7 +4083,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                           child: ListTile(
                             leading: CircleAvatar(backgroundColor: Colors.red[100], child: const Icon(Icons.category, color: Colors.redAccent)),
                             title: Text(appSettings.translate(catEntry.key), style: const TextStyle(fontWeight: FontWeight.bold)),
-                            trailing: Text('${appSettings.localizeNumber(catEntry.value)} $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                            trailing: Text(appSettings.hideBalance ? '********' : '${appSettings.localizeNumber(catEntry.value)} $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
                           ),
                         );
                       },
