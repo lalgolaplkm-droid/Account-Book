@@ -3987,7 +3987,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                           color: Theme.of(context).cardColor,
                           margin: const EdgeInsets.only(bottom: 8),
                           child: ListTile(
-                            leading: const CircleAvatar(backgroundColor: Colors.red[100], child: Icon(Icons.category, color: Colors.redAccent)),
+                            leading: CircleAvatar(backgroundColor: Colors.red[100], child: Icon(Icons.category, color: Colors.redAccent)),
                             title: Text(appSettings.translate(catEntry.key), style: const TextStyle(fontWeight: FontWeight.bold)),
                             trailing: Text('${catEntry.value} $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
                           ),
