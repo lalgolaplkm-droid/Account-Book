@@ -1,4 +1,4 @@
-Import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -3585,7 +3585,6 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
     final TextEditingController amountController = TextEditingController(text: txn != null ? txn.amount.toString() : '');
     final TextEditingController descController = TextEditingController(text: txn?.description ?? '');
 
-    // ড্রপ-ডাউনের ভেতরে লোকাল ব্যালেন্স হাইড/শো করার জন্য আলাদা স্টেট ভেরিয়েবল
     bool isPopupBalanceHidden = appSettings.hideBalance;
 
     showModalBottomSheet(
@@ -3624,7 +3623,6 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    // ড্রপ-ডাউনে অ্যাকাউন্ট নাম, ব্যালেন্স ব্র্যাকেট সহ এবং আইকন ক্লিক করলে ইনস্ট্যান্ট আপডেট হওয়ার লজিক
                     DropdownButtonFormField<String>(
                       value: selectedAccount,
                       dropdownColor: Theme.of(context).cardColor,
