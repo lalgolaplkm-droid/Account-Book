@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+Import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -3585,6 +3585,9 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
     final TextEditingController amountController = TextEditingController(text: txn != null ? txn.amount.toString() : '');
     final TextEditingController descController = TextEditingController(text: txn?.description ?? '');
 
+    // ড্রপ-ডাউনের ভেতরে লোকাল ব্যালেন্স হাইড/শো করার জন্য আলাদা স্টেট ভেরিয়েবল
+    bool isPopupBalanceHidden = appSettings.hideBalance;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -3621,39 +3624,34 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    // ড্রপডাউনে বামে নাম, ডানে টাকার পরিমাণ এবং টাকার পরিমাণের ঠিক ডান পাশে আই-আইকন (একই সারিতে নিখুঁত অ্যালাইনমেন্ট)
+                    // ড্রপ-ডাউনে অ্যাকাউন্ট নাম, ব্যালেন্স ব্র্যাকেট সহ এবং আইকন ক্লিক করলে ইনস্ট্যান্ট আপডেট হওয়ার লজিক
                     DropdownButtonFormField<String>(
                       value: selectedAccount,
                       dropdownColor: Theme.of(context).cardColor,
                       decoration: InputDecoration(labelText: appSettings.translate('Account'), border: const OutlineInputBorder()),
                       items: appSettings.accounts.map((acc) {
                         double accBal = appSettings.getAccountBalance(acc.name);
+                        String displayBal = isPopupBalanceHidden ? '(৳ *****)' : '(৳ ${appSettings.localizeNumber(accBal)})';
                         return DropdownMenuItem(
                           value: acc.name, 
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(appSettings.translate(acc.name)),
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    appSettings.hideBalance ? '********' : '${appSettings.localizeNumber(accBal)} ${appSettings.currency}', 
-                                    style: const TextStyle(color: Colors.grey, fontSize: 13)
+                              Text('${appSettings.translate(acc.name)}  $displayBal'),
+                              InkWell(
+                                onTap: () {
+                                  setStateModal(() {
+                                    isPopupBalanceHidden = !isPopupBalanceHidden;
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(6.0),
+                                  child: Icon(
+                                    isPopupBalanceHidden ? Icons.visibility_off : Icons.visibility,
+                                    size: 18,
+                                    color: const Color(0xFF10B981),
                                   ),
-                                  const SizedBox(width: 8),
-                                  InkWell(
-                                    onTap: () {
-                                      appSettings.toggleHideBalance();
-                                      setStateModal(() {});
-                                    },
-                                    child: Icon(
-                                      appSettings.hideBalance ? Icons.visibility_off : Icons.visibility,
-                                      size: 18,
-                                      color: const Color(0xFF10B981),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                             ],
                           ),
