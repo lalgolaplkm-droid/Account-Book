@@ -3019,7 +3019,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
           appBar: AppBar(
             title: Text(appSettings.getAppTitle(), style: const TextStyle(fontWeight: FontWeight.bold)),
             actions: [
-              // বেল আইকন যথারীতি রাখা হয়েছে এবং তার ঠিক পাশেই আই-আইকন দিয়ে ব্যালেন্স হাইড/আনহাইড কন্ট্রোল রাখা হয়েছে
               IconButton(
                 icon: const Icon(Icons.notifications_outlined),
                 tooltip: 'Notifications',
@@ -3622,7 +3621,7 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    // ড্রপডাউনে বামে নাম এবং ডানে ব্যালেন্স বিন্যস্ত করা হয়েছে
+                    // ড্রপডাউনে বামে নাম, ডানে টাকার পরিমাণ এবং টাকার পরিমাণের ঠিক ডান পাশে আই-আইকন (একই সারিতে নিখুঁত অ্যালাইনমেন্ট)
                     DropdownButtonFormField<String>(
                       value: selectedAccount,
                       dropdownColor: Theme.of(context).cardColor,
@@ -3635,7 +3634,27 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(appSettings.translate(acc.name)),
-                              Text('${appSettings.localizeNumber(accBal)} ${appSettings.currency}', style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    appSettings.hideBalance ? '********' : '${appSettings.localizeNumber(accBal)} ${appSettings.currency}', 
+                                    style: const TextStyle(color: Colors.grey, fontSize: 13)
+                                  ),
+                                  const SizedBox(width: 8),
+                                  InkWell(
+                                    onTap: () {
+                                      appSettings.toggleHideBalance();
+                                      setStateModal(() {});
+                                    },
+                                    child: Icon(
+                                      appSettings.hideBalance ? Icons.visibility_off : Icons.visibility,
+                                      size: 18,
+                                      color: const Color(0xFF10B981),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         );
@@ -4585,7 +4604,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 8),
                   Text('${appSettings.translate('Gender')}: ${appSettings.translate(appSettings.profileGender)} | ${appSettings.translate('DOB')}: ${appSettings.localizeNumber(appSettings.profileBirthDate)}', style: const TextStyle(color: Colors.white70, fontSize: 11)),
                   const SizedBox(height: 4),
-                  // মোবাইল নম্বরের ভিতরের ডিজিটগুলো ভাষা অনুযায়ী লোকালাইজড (যেমন বাংলা হলে বাংলায় রূপান্তরিত) করা হয়েছে
                   Text('${appSettings.translate('Mobile')}: ${appSettings.localizeNumber(appSettings.profileMobile)}', style: const TextStyle(color: Colors.white70, fontSize: 11)),
                   const SizedBox(height: 14),
                   ElevatedButton.icon(
