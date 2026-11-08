@@ -181,7 +181,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   bool loanAlert = true;
   String notificationSound = 'Default';
 
-  bool hideBalance = false; // ব্যালেন্স হাইড/আনহাইড টগল
+  bool hideBalance = true; // ডিফল্টভাবে ব্যালেন্স হাইড বা গোপন থাকবে
 
   int selectedMonthIndex = DateTime.now().month;
   int selectedYear = DateTime.now().year;
@@ -405,17 +405,25 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Version 1.0.0': return 'সংস্করণ ১.০.০';
         case 'Security Options': return 'নিরাপত্তা অপশনসমূহ';
         case 'Face Unlock': return 'ফেস আনলক';
+        case 'Scan & unlock with camera': return 'ক্যামেরা স্ক্যান করে আনলক করুন';
         case 'Fingerprint Sensor': return 'ফিঙ্গারপ্রিন্ট সেন্সর';
+        case 'Unlock using device fingerprint': return 'ডিভাইস ফিঙ্গারপ্রিন্ট ব্যবহার করুন';
         case 'None (No Lock)': return 'কোনো লক নেই';
+        case 'Bypass lock screen security': return 'লক স্ক্রিন নিরাপত্তা বাইপাস করুন';
         case 'Pattern Lock': return 'প্যাটার্ন লক';
+        case 'Draw a secure pattern shape': return 'নিরাপদ প্যাটার্ন আঁকুন';
         case 'PIN Code Lock': return 'পিন কোড লক';
+        case 'Use a 4-digit numeric code': return '৪-সংখ্যার সংখ্যাসূচক কোড ব্যবহার করুন';
         case 'Change PIN Code': return 'পিন কোড পরিবর্তন করুন';
         case '4-Digit App PIN': return '৪-সংখ্যার অ্যাপ পিন';
         case 'Save Changes': return 'পরিবর্তন সংরক্ষণ করুন';
         case 'Manage App Alerts & Reminders': return 'অ্যাপ অ্যালার্ট ও রিমাইন্ডার ম্যানেজ করুন';
         case 'Daily Transaction Reminder': return 'দৈনিক লেনদেন রিমাইন্ডার';
+        case 'Get reminded to record daily expenses': return 'প্রতিদিনের খরচ রেকর্ড করার কথা মনে করিয়ে দিন';
         case 'Budget Limit Alert': return 'বাজেট সীমা অ্যালার্ট';
+        case 'Notify when expenses reach near budget limit': return 'ব্যয় বাজেট সীমার কাছাকাছি পৌঁছালে জানান';
         case 'Loan Payment Due Alert': return 'লোন পরিশোধের তারিখের অ্যালার্ট';
+        case 'Alert on upcoming loan settlement dates': return 'আসন্ন লোন পরিশোধের তারিখ সম্পর্কে সতর্ক করুন';
         case 'Notification Sound & Alert Tone': return 'নোটিফিকেশন সাউন্ড ও অ্যালার্ট টোন';
         case 'Default': return 'ডিফল্ট';
         case 'App Chime': return 'অ্যাপ চाइम';
@@ -441,6 +449,20 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Total Expense:': return 'মোট ব্যয়:';
         case 'Cancel': return 'বাতিল';
         case 'Save': return 'সংরক্ষণ';
+        case 'Add Account': return 'অ্যাকাউন্ট যোগ করুন';
+        case 'Edit Account': return 'অ্যাকাউন্ট সম্পাদনা';
+        case 'Account Name': return 'অ্যাকাউন্টের নাম';
+        case 'Type': return 'ধরন';
+        case 'Details / Account Number': return 'বিবরণ / অ্যাকাউন্ট নম্বর';
+        case 'Add New Transaction': return 'নতুন লেনদেন যোগ করুন';
+        case 'Edit Transaction': return 'লেনদেন সম্পাদনা';
+        case 'Cash In': return 'আয় (Cash In)';
+        case 'Cash Out': return 'ব্যয় (Cash Out)';
+        case 'Description': return 'বিবরণ';
+        case 'Amount': return 'পরিমাণ';
+        case 'Person Name': return 'ব্যক্তির নাম';
+        case 'Add New Loan / Debt': return 'নতুন লোন বা দেনা যোগ করুন';
+        case 'Edit Loan / Debt': return 'লোন বা দেনা সম্পাদনা করুন';
         default: return key;
       }
     } else if (_language == 'Arabic') {
@@ -524,17 +546,25 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Version 1.0.0': return 'الإصدار 1.0.0';
         case 'Security Options': return 'خيارات الأمان';
         case 'Face Unlock': return 'فتح القفل بالوجه';
+        case 'Scan & unlock with camera': return 'الفتح بالكاميرا';
         case 'Fingerprint Sensor': return 'مستشعر بصمة الإصبع';
+        case 'Unlock using device fingerprint': return 'فتح القفل باستخدام بصمة الجهاز';
         case 'None (No Lock)': return 'بلا (بدون قفل)';
+        case 'Bypass lock screen security': return 'تجاوز أمان شاشة القفل';
         case 'Pattern Lock': return 'قفل النمط';
+        case 'Draw a secure pattern shape': return 'رسم نمط آمن';
         case 'PIN Code Lock': return 'قفل رمز PIN';
+        case 'Use a 4-digit numeric code': return 'استخدام رمز مكون من 4 أرقام';
         case 'Change PIN Code': return 'تغيير رمز PIN';
         case '4-Digit App PIN': return 'رمز PIN للتطبيق مكون من 4 أرقام';
         case 'Save Changes': return 'حفظ التغييرات';
         case 'Manage App Alerts & Reminders': return 'إدارة تنبيهات وتذكيرات التطبيق';
         case 'Daily Transaction Reminder': return 'تذكير المعاملات اليومية';
+        case 'Get reminded to record daily expenses': return 'التذكير بتسجيل المصروفات اليومية';
         case 'Budget Limit Alert': return 'تنبيه حد الميزانية';
+        case 'Notify when expenses reach near budget limit': return 'التنبيه عند وصول المصروفات إلى حد الميزانية';
         case 'Loan Payment Due Alert': return 'تنبيه استحقاق سداد القرض';
+        case 'Alert on upcoming loan settlement dates': return 'التنبيه بمواعيد تسوية القروض القادمة';
         case 'Notification Sound & Alert Tone': return 'صوت الإشعار ونغمة التنبيه';
         case 'Default': return 'افتراضي';
         case 'App Chime': return 'رنين التطبيق';
@@ -560,6 +590,20 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Total Expense:': return 'إجمالي المصروفات:';
         case 'Cancel': return 'إلغاء';
         case 'Save': return 'حفظ';
+        case 'Add Account': return 'إضافة حساب';
+        case 'Edit Account': return 'تعديل الحساب';
+        case 'Account Name': return 'اسم الحساب';
+        case 'Type': return 'النوع';
+        case 'Details / Account Number': return 'التفاصيل / رقم الحساب';
+        case 'Add New Transaction': return 'إضافة معاملة جديدة';
+        case 'Edit Transaction': return 'تعديل المعاملة';
+        case 'Cash In': return 'إيداع';
+        case 'Cash Out': return 'سحب';
+        case 'Description': return 'الوصف';
+        case 'Amount': return 'المبلغ';
+        case 'PersonName': return 'اسم الشخص';
+        case 'Add New Loan / Debt': return 'إضافة قرض / دين جديد';
+        case 'Edit Loan / Debt': return 'تعديل القرض / الدين';
         default: return key;
       }
     }
@@ -653,7 +697,6 @@ class AppSettingsNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  // একটি নির্দিষ্ট অ্যাকাউন্টের বর্তমান ব্যালেন্স হিসাব করার মেথড
   double getAccountBalance(String accountName) {
     double balance = 0;
     for (var txn in transactions) {
@@ -2119,19 +2162,19 @@ class _AccountsScreenState extends State<AccountsScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(index == null ? 'Add Account' : 'Edit Account'),
+        title: Text(appSettings.translate(index == null ? 'Add Account' : 'Edit Account')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(controller: nameC, decoration: const InputDecoration(labelText: 'Account Name', border: OutlineInputBorder())),
+            TextField(controller: nameC, decoration: InputDecoration(labelText: appSettings.translate('Account Name'), border: const OutlineInputBorder())),
             const SizedBox(height: 10),
-            TextField(controller: typeC, decoration: const InputDecoration(labelText: 'Type', border: OutlineInputBorder())),
+            TextField(controller: typeC, decoration: InputDecoration(labelText: appSettings.translate('Type'), border: const OutlineInputBorder())),
             const SizedBox(height: 10),
-            TextField(controller: detC, decoration: const InputDecoration(labelText: 'Details / Account Number', border: OutlineInputBorder())),
+            TextField(controller: detC, decoration: InputDecoration(labelText: appSettings.translate('Details / Account Number'), border: const OutlineInputBorder())),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(appSettings.translate('Cancel'))),
           ElevatedButton(
             onPressed: () {
               if (nameC.text.isNotEmpty) {
@@ -2144,7 +2187,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                 setState(() {});
               }
             },
-            child: const Text('Save'),
+            child: Text(appSettings.translate('Save')),
           ),
         ],
       ),
@@ -2191,7 +2234,6 @@ class _AccountsScreenState extends State<AccountsScreen> {
                       color: acc.isDefault ? const Color(0xFF10B981) : Colors.grey,
                     ),
                   ),
-                  // [Default] লেখা রিমুভ করা হয়েছে, শুধু চেকমার্ক/হাইলাইট দিয়ে ডিফল্ট বুঝানো হচ্ছে
                   title: Text(appSettings.translate(acc.name), style: const TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -2977,6 +3019,16 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
           appBar: AppBar(
             title: Text(appSettings.getAppTitle(), style: const TextStyle(fontWeight: FontWeight.bold)),
             actions: [
+              // বেল আইকন যথারীতি রাখা হয়েছে এবং তার ঠিক পাশেই আই-আইকন দিয়ে ব্যালেন্স হাইড/আনহাইড কন্ট্রোল রাখা হয়েছে
+              IconButton(
+                icon: const Icon(Icons.notifications_outlined),
+                tooltip: 'Notifications',
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('No new notifications')),
+                  );
+                },
+              ),
               IconButton(
                 icon: Icon(appSettings.hideBalance ? Icons.visibility_off : Icons.visibility),
                 tooltip: 'Toggle Balance Visibility',
@@ -3229,7 +3281,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                 child: Icon(isIncome ? Icons.add : Icons.remove, color: isIncome ? Colors.green : Colors.red),
                               ),
                               title: Text('${appSettings.translate(txn.category)} (${appSettings.translate(txn.account)})'),
-                              // ট্রানজেকশন কার্ডে ডেট ও টাইম (Date & Time) প্রদর্শন
                               subtitle: Text('${appSettings.translate(txn.description)}\n${appSettings.localizeNumber(txn.date.toString().substring(0, 16))}'),
                               isThreeLine: true,
                               trailing: Text(
@@ -3243,7 +3294,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
               ],
             ),
           ),
-          // হোম স্ক্রিন থেকে অতিরিক্ত ফ্লোটিং অ্যাকশন বাটন (FAB) রিমুভ করা হয়েছে
         );
       },
     );
@@ -3550,7 +3600,7 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(index == null ? 'Add New Transaction' : 'Edit Transaction', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(appSettings.translate(index == null ? 'Add New Transaction' : 'Edit Transaction'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 16),
                     Row(
                       children: [
@@ -3558,7 +3608,7 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(backgroundColor: transactionType == 'Income' ? Colors.green : Theme.of(context).cardColor),
                             onPressed: () => setStateModal(() => transactionType = 'Income'),
-                            child: const Text('Cash In'),
+                            child: Text(appSettings.translate('Cash In')),
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -3566,22 +3616,28 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(backgroundColor: transactionType == 'Expense' ? Colors.red : Theme.of(context).cardColor),
                             onPressed: () => setStateModal(() => transactionType = 'Expense'),
-                            child: const Text('Cash Out'),
+                            child: Text(appSettings.translate('Cash Out')),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 16),
-                    // অ্যাকাউন্ট ড্রপডাউনে প্রতিটি অ্যাকাউন্টের ব্যালেন্সসহ তালিকা প্রদর্শন
+                    // ড্রপডাউনে বামে নাম এবং ডানে ব্যালেন্স বিন্যস্ত করা হয়েছে
                     DropdownButtonFormField<String>(
                       value: selectedAccount,
                       dropdownColor: Theme.of(context).cardColor,
-                      decoration: const InputDecoration(labelText: 'Account', border: OutlineInputBorder()),
+                      decoration: InputDecoration(labelText: appSettings.translate('Account'), border: const OutlineInputBorder()),
                       items: appSettings.accounts.map((acc) {
                         double accBal = appSettings.getAccountBalance(acc.name);
                         return DropdownMenuItem(
                           value: acc.name, 
-                          child: Text('${appSettings.translate(acc.name)} (${appSettings.localizeNumber(accBal)} ${appSettings.currency})')
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(appSettings.translate(acc.name)),
+                              Text('${appSettings.localizeNumber(accBal)} ${appSettings.currency}', style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                            ],
+                          ),
                         );
                       }).toList(),
                       onChanged: (val) { if (val != null) setStateModal(() => selectedAccount = val); },
@@ -3590,14 +3646,14 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                     DropdownButtonFormField<String>(
                       value: selectedCategory,
                       dropdownColor: Theme.of(context).cardColor,
-                      decoration: const InputDecoration(labelText: 'Category', border: OutlineInputBorder()),
+                      decoration: InputDecoration(labelText: appSettings.translate('Categories'), border: const OutlineInputBorder()),
                       items: appSettings.categories.map((cat) => DropdownMenuItem(value: cat, child: Text(appSettings.translate(cat)))).toList(),
                       onChanged: (val) { if (val != null) setStateModal(() => selectedCategory = val); },
                     ),
                     const SizedBox(height: 12),
-                    TextField(controller: amountController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Amount', border: OutlineInputBorder())),
+                    TextField(controller: amountController, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: appSettings.translate('Amount'), border: const OutlineInputBorder())),
                     const SizedBox(height: 12),
-                    TextField(controller: descController, decoration: const InputDecoration(labelText: 'Description', border: OutlineInputBorder())),
+                    TextField(controller: descController, decoration: InputDecoration(labelText: appSettings.translate('Description'), border: const OutlineInputBorder())),
                     const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
@@ -3631,7 +3687,7 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                             setState(() {});
                           }
                         },
-                        child: const Text('Save', style: TextStyle(fontSize: 16)),
+                        child: Text(appSettings.translate('Save'), style: const TextStyle(fontSize: 16)),
                       ),
                     ),
                   ],
@@ -4142,21 +4198,21 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                 children: [
                   SwitchListTile(
                     title: Text(appSettings.translate('Face Unlock')),
-                    subtitle: const Text('Scan & unlock with camera'),
+                    subtitle: Text(appSettings.translate('Scan & unlock with camera')),
                     value: _faceLock,
                     activeColor: const Color(0xFF10B981),
                     onChanged: (val) => setState(() { _faceLock = val; if (val) _noneLock = false; }),
                   ),
                   SwitchListTile(
                     title: Text(appSettings.translate('Fingerprint Sensor')),
-                    subtitle: const Text('Unlock using device fingerprint'),
+                    subtitle: Text(appSettings.translate('Unlock using device fingerprint')),
                     value: _fingerprint,
                     activeColor: const Color(0xFF10B981),
                     onChanged: (val) => setState(() { _fingerprint = val; if (val) _noneLock = false; }),
                   ),
                   SwitchListTile(
                     title: Text(appSettings.translate('None (No Lock)')),
-                    subtitle: const Text('Bypass lock screen security'),
+                    subtitle: Text(appSettings.translate('Bypass lock screen security')),
                     value: _noneLock,
                     activeColor: const Color(0xFF10B981),
                     onChanged: (val) => setState(() {
@@ -4166,14 +4222,14 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                   ),
                   SwitchListTile(
                     title: Text(appSettings.translate('Pattern Lock')),
-                    subtitle: const Text('Draw a secure pattern shape'),
+                    subtitle: Text(appSettings.translate('Draw a secure pattern shape')),
                     value: _patternLock,
                     activeColor: const Color(0xFF10B981),
                     onChanged: (val) => setState(() { _patternLock = val; if (val) _noneLock = false; }),
                   ),
                   SwitchListTile(
                     title: Text(appSettings.translate('PIN Code Lock')),
-                    subtitle: const Text('Use a 4-digit numeric code'),
+                    subtitle: Text(appSettings.translate('Use a 4-digit numeric code')),
                     value: _pinLock,
                     activeColor: const Color(0xFF10B981),
                     onChanged: (val) => setState(() { _pinLock = val; if (val) _noneLock = false; }),
@@ -4278,21 +4334,21 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                 children: [
                   SwitchListTile(
                     title: Text(appSettings.translate('Daily Transaction Reminder')),
-                    subtitle: const Text('Get reminded to record daily expenses'),
+                    subtitle: Text(appSettings.translate('Get reminded to record daily expenses')),
                     value: daily,
                     activeColor: const Color(0xFF10B981),
                     onChanged: (val) => setState(() => daily = val),
                   ),
                   SwitchListTile(
                     title: Text(appSettings.translate('Budget Limit Alert')),
-                    subtitle: const Text('Notify when expenses reach near budget limit'),
+                    subtitle: Text(appSettings.translate('Notify when expenses reach near budget limit')),
                     value: budget,
                     activeColor: const Color(0xFF10B981),
                     onChanged: (val) => setState(() => budget = val),
                   ),
                   SwitchListTile(
                     title: Text(appSettings.translate('Loan Payment Due Alert')),
-                    subtitle: const Text('Alert on upcoming loan settlement dates'),
+                    subtitle: Text(appSettings.translate('Alert on upcoming loan settlement dates')),
                     value: loan,
                     activeColor: const Color(0xFF10B981),
                     onChanged: (val) => setState(() => loan = val),
@@ -4529,6 +4585,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 8),
                   Text('${appSettings.translate('Gender')}: ${appSettings.translate(appSettings.profileGender)} | ${appSettings.translate('DOB')}: ${appSettings.localizeNumber(appSettings.profileBirthDate)}', style: const TextStyle(color: Colors.white70, fontSize: 11)),
                   const SizedBox(height: 4),
+                  // মোবাইল নম্বরের ভিতরের ডিজিটগুলো ভাষা অনুযায়ী লোকালাইজড (যেমন বাংলা হলে বাংলায় রূপান্তরিত) করা হয়েছে
                   Text('${appSettings.translate('Mobile')}: ${appSettings.localizeNumber(appSettings.profileMobile)}', style: const TextStyle(color: Colors.white70, fontSize: 11)),
                   const SizedBox(height: 14),
                   ElevatedButton.icon(
