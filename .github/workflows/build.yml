@@ -21,9 +21,6 @@ jobs:
         with:
           flutter-version: '3.19.6'
           channel: 'stable'
-          cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
-          cache-path: "~/.pub-cache"
 
       - name: Install Dependencies
         run: flutter pub get
