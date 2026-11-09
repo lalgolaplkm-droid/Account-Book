@@ -25,7 +25,18 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
+      - name: Clean and Recreate Android Files
+        run: |
+          rm -rf android
+          flutter create . --platforms=android --project-name=account_book
+
       - name: Build Release APK
         run: flutter build apk --release --verbose
         env:
           JAVA_OPTS: "-Xmx3g"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
