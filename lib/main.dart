@@ -608,15 +608,6 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Account Name': return 'اسم الحساب';
         case 'Type': return 'النوع';
         case 'Details / Account Number': return 'التفاصيل / رقم الحساب';
-        case 'Add New Transaction': return 'إضافة معاملة جديدة';
-        case 'Edit Transaction': return 'تعديل المعاملة';
-        case 'Cash In': return 'إيداع';
-        case 'Cash Out': return 'سحب';
-        case 'Description': return 'الوصف';
-        case 'Amount': return 'المبلغ';
-        case 'Person Name': return 'اسم الشخص';
-        case 'Add New Loan / Debt': return 'إضافة قرض / دين جديد';
-        case 'Edit Loan / Debt': return 'تعديل القرض / الدين';
         default: return key;
       }
     }
@@ -1040,6 +1031,7 @@ Future<DateTime?> showLocalizedDatePicker({
   required DateTime lastDate,
 }) {
   Locale? currentLocale = appSettings.getLocale();
+  bool isDark = Theme.of(context).brightness == Brightness.dark;
   return showDatePicker(
     context: context,
     initialDate: initialDate,
@@ -1052,9 +1044,20 @@ Future<DateTime?> showLocalizedDatePicker({
         locale: currentLocale ?? Localizations.localeOf(context),
         child: Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).brightness == Brightness.dark
-                ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
-                : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
+            colorScheme: isDark
+                ? const ColorScheme.dark(
+                    primary: Color(0xFF10B981),
+                    onPrimary: Colors.white,
+                    surface: Color(0xFF1E293B),
+                    onSurface: Colors.white,
+                  )
+                : const ColorScheme.light(
+                    primary: Color(0xFF10B981),
+                    onPrimary: Colors.white,
+                    surface: Colors.white,
+                    onSurface: Colors.black,
+                  ),
+            dialogBackgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
           ),
           child: child!,
         ),
@@ -1267,19 +1270,6 @@ class _PinLockScreenState extends State<PinLockScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   RadioListTile<String>(
-                    title: const Text('System Default'),
-                    value: 'System Default',
-                    groupValue: appSettings.language,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) {
-                      if (val != null) {
-                        appSettings.setLanguage(val);
-                        setStateDialog(() {});
-                        setState(() {});
-                      }
-                    },
-                  ),
-                  RadioListTile<String>(
                     title: const Text('Arabic (العربية)'),
                     value: 'Arabic',
                     groupValue: appSettings.language,
@@ -1308,6 +1298,19 @@ class _PinLockScreenState extends State<PinLockScreen> {
                   RadioListTile<String>(
                     title: const Text('English'),
                     value: 'English',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage(val);
+                        setStateDialog(() {});
+                        setState(() {});
+                      }
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: const Text('System Default'),
+                    value: 'System Default',
                     groupValue: appSettings.language,
                     activeColor: const Color(0xFF10B981),
                     onChanged: (val) {
@@ -2019,18 +2022,6 @@ class AppDrawer extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   RadioListTile<String>(
-                    title: const Text('System Default'),
-                    value: 'System Default',
-                    groupValue: appSettings.language,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) {
-                      if (val != null) {
-                        appSettings.setLanguage(val);
-                        setStateDialog(() {});
-                      }
-                    },
-                  ),
-                  RadioListTile<String>(
                     title: const Text('Arabic (العربية)'),
                     value: 'Arabic',
                     groupValue: appSettings.language,
@@ -2057,6 +2048,18 @@ class AppDrawer extends StatelessWidget {
                   RadioListTile<String>(
                     title: const Text('English'),
                     value: 'English',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage(val);
+                        setStateDialog(() {});
+                      }
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: const Text('System Default'),
+                    value: 'System Default',
                     groupValue: appSettings.language,
                     activeColor: const Color(0xFF10B981),
                     onChanged: (val) {
@@ -2859,7 +2862,7 @@ class _RepeatedTransactionsScreenState extends State<RepeatedTransactionsScreen>
           title: Text(appSettings.translate('Repeat')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
           ],
         ),
         body: Padding(
@@ -2966,7 +2969,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
           title: Text(appSettings.translate('Savings')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
           ],
         ),
         body: Padding(
