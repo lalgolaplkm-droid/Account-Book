@@ -159,7 +159,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   late SharedPreferences _prefs;
 
   ThemeMode _themeMode = ThemeMode.dark;
-  String _language = 'System Default'; 
+  String _language = 'English'; // শুরুতে ইংলিশ ডিফল্ট করা হলো
   String currency = '৳';
   String timeFilter = 'This Month';
   String appPin = '1234';
@@ -270,7 +270,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   Future<void> initPrefs() async {
     _prefs = await SharedPreferences.getInstance();
     appPin = _prefs.getString('appPin') ?? '1234';
-    _language = _prefs.getString('language') ?? 'System Default'; 
+    _language = _prefs.getString('language') ?? 'English'; // ফার্স্ট টাইমে ইংলিশ লোড হবে
     String themeStr = _prefs.getString('themeMode') ?? 'dark';
     if (themeStr == 'light') _themeMode = ThemeMode.light;
     else if (themeStr == 'system') _themeMode = ThemeMode.system;
@@ -768,7 +768,7 @@ class AppSettingsNotifier extends ChangeNotifier {
     } else if (criteria.contains('A-Z')) {
       transactions.sort((a, b) => a.category.compareTo(b.category));
     } else if (criteria.contains('Z-A')) {
-      transactions.sort((a, b) => a.category.compareTo(b.category));
+      transactions.sort((a, b) => b.category.compareTo(b.category));
     } else if (criteria.contains('Number Large-Small')) {
       transactions.sort((a, b) => b.amount.compareTo(a.amount));
     } else if (criteria.contains('Number Small-Large')) {
@@ -2764,7 +2764,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                     final rem = appSettings.reminders[index];
                     return Card(
                       color: Theme.of(context).cardColor,
-                      margin: constizedBox(height: 8),
+                      margin: const EdgeInsets.only(bottom: 8),
                       child: ListTile(
                         leading: const Icon(Icons.notifications_active, color: Color(0xFF10B981)),
                         title: Text(appSettings.translate(rem.title)),
@@ -3026,7 +3026,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: const Color(0xFF10B981),
           onPressed: () => _showAddSavingsDialog(),
-          child: constIcon(Icons.add, color: Colors.white),
+          child: const Icon(Icons.add, color: Colors.white),
         ),
       ),
     );
@@ -3573,7 +3573,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                                     onPressed: () => _showAddEditLoanDialog(context, index: index, loan: loan),
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.delete, code: Colors.redAccent, size: 20), // (Fixed below)
+                                    icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20),
                                     onPressed: () {
                                       showLocalizedDeleteDialog(
                                         context: context,
@@ -3881,7 +3881,7 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                             margin: const EdgeInsets.only(bottom: 8),
                             child: ListTile(
                               leading: CircleAvatar(
-                                backgroundColor: (isIncome ? Colors.green : Colors.red).watchOpacity(0.2), // (Fixed below)
+                                backgroundColor: (isIncome ? Colors.green : Colors.red).withOpacity(0.2),
                                 child: Icon(isIncome ? Icons.add : Icons.remove, color: isIncome ? Colors.green : Colors.red),
                               ),
                               title: Text('${appSettings.translate(txn.category)} (${appSettings.translate(txn.account)})', style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -4648,7 +4648,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: ListTile(
                 leading: const Icon(Icons.lock_outline, color: Color(0xFF10B981)),
                 title: Text(appSettings.translate('Privacy & Security')),
-                trailing: const Icon(Icons.chevron_root, color: Colors.grey), // (Fixed below if needed, but standard is chevron_right)
+                trailing: const Icon(Icons.chevron_right, color: Colors.grey),
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PrivacySecurityScreen())),
               ),
             ),
@@ -4661,7 +4661,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 leading: const Icon(Icons.notifications_none, color: Color(0xFF10B981)),
                 title: Text(appSettings.translate('Notification Settings')),
                 trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-                onTap: () => Navigator.push(context, MaterialPropertyPageRoute(builder: (context) => const NotificationSettingsScreen())),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationSettingsScreen())),
               ),
             ),
             const SizedBox(height: 16),
@@ -4718,7 +4718,7 @@ class _MainHomeScreenState extends State<MainHomeScreen> {
           backgroundColor: Theme.of(context).cardColor,
           items: [
             BottomNavigationBarItem(icon: const Icon(Icons.home), label: appSettings.translate('Account')),
-            BottomNavigatorItem(icon: const Icon(Icons.money), label: appSettings.translate('Loan')),
+            BottomNavigationBarItem(icon: const Icon(Icons.money), label: appSettings.translate('Loan')),
             BottomNavigationBarItem(icon: const Icon(Icons.list_alt), label: appSettings.translate('Transactions')),
             BottomNavigationBarItem(icon: const Icon(Icons.bar_chart), label: appSettings.translate('Report')),
             BottomNavigationBarItem(icon: const Icon(Icons.person), label: appSettings.translate('Profile')),
