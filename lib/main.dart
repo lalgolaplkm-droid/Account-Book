@@ -158,7 +158,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   late SharedPreferences _prefs;
 
   ThemeMode _themeMode = ThemeMode.dark;
-  String _language = 'English'; 
+  String _language = 'System Default'; 
   String currency = '৳';
   String timeFilter = 'This Month';
   String appPin = '1234';
@@ -269,7 +269,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   Future<void> initPrefs() async {
     _prefs = await SharedPreferences.getInstance();
     appPin = _prefs.getString('appPin') ?? '1234';
-    _language = _prefs.getString('language') ?? 'English'; 
+    _language = _prefs.getString('language') ?? 'System Default'; 
     String themeStr = _prefs.getString('themeMode') ?? 'dark';
     if (themeStr == 'light') _themeMode = ThemeMode.light;
     else if (themeStr == 'system') _themeMode = ThemeMode.system;
@@ -298,6 +298,13 @@ class AppSettingsNotifier extends ChangeNotifier {
 
   ThemeMode get themeMode => _themeMode;
   String get language => _language;
+
+  Locale? getLocale() {
+    if (_language == 'Bangla') return const Locale('bn', 'BD');
+    if (_language == 'Arabic') return const Locale('ar', 'AE');
+    if (_language == 'English') return const Locale('en', 'US');
+    return null; // System Default
+  }
 
   String localizeNumber(dynamic number) {
     String str = number.toString();
@@ -336,6 +343,7 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Accounts': return 'অ্যাকাউন্ট সমূহ';
         case 'Theme': return 'থিম';
         case 'Language': return 'ভাষা';
+        case 'System Default': return 'সিস্টেম ডিফল্ট';
         case 'About App': return 'অ্যাপ সম্পর্কে';
         case 'Current Balance': return 'বর্তমান ব্যালেন্স';
         case 'Month': return 'মাস';
@@ -477,6 +485,7 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Accounts': return 'الحسابات';
         case 'Theme': return 'المظهر';
         case 'Language': return 'اللغة';
+        case 'System Default': return 'النظام الافتراضي';
         case 'About App': return 'حول التطبيق';
         case 'Current Balance': return 'الرصيد الحالي';
         case 'Month': return 'شهر';
@@ -1023,23 +1032,24 @@ class AppSettingsNotifier extends ChangeNotifier {
 
 final appSettings = AppSettingsNotifier();
 
-// ----------------- Helper for Always-English DatePicker -----------------
-Future<DateTime?> showAlwaysEnglishDatePicker({
+// ----------------- Helper for Language-Adaptive DatePicker -----------------
+Future<DateTime?> showLocalizedDatePicker({
   required BuildContext context,
   required DateTime initialDate,
   required DateTime firstDate,
   required DateTime lastDate,
 }) {
+  Locale? currentLocale = appSettings.getLocale();
   return showDatePicker(
     context: context,
     initialDate: initialDate,
     firstDate: firstDate,
     lastDate: lastDate,
-    locale: const Locale('en', 'US'),
+    locale: currentLocale,
     builder: (context, child) {
       return Localizations.override(
         context: context,
-        locale: const Locale('en', 'US'),
+        locale: currentLocale ?? Localizations.localeOf(context),
         child: Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).brightness == Brightness.dark
@@ -1066,6 +1076,7 @@ class AccountBookApp extends StatelessWidget {
           title: appSettings.getAppTitle(),
           debugShowCheckedModeBanner: false,
           themeMode: appSettings.themeMode,
+          locale: appSettings.getLocale(),
           theme: ThemeData(
             brightness: Brightness.light,
             scaffoldBackgroundColor: const Color(0xFFF3F4F6),
@@ -1255,6 +1266,19 @@ class _PinLockScreenState extends State<PinLockScreen> {
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  RadioListTile<String>(
+                    title: const Text('System Default'),
+                    value: 'System Default',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage(val);
+                        setStateDialog(() {});
+                        setState(() {});
+                      }
+                    },
+                  ),
                   RadioListTile<String>(
                     title: const Text('Arabic (العربية)'),
                     value: 'Arabic',
@@ -1629,7 +1653,7 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
-                          DateTime? picked = await showAlwaysEnglishDatePicker(
+                          DateTime? picked = await showLocalizedDatePicker(
                             context: context,
                             initialDate: appSettings.customStartDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
@@ -1652,7 +1676,7 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
-                          DateTime? picked = await showAlwaysEnglishDatePicker(
+                          DateTime? picked = await showLocalizedDatePicker(
                             context: context,
                             initialDate: appSettings.customEndDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
@@ -1994,6 +2018,18 @@ class AppDrawer extends StatelessWidget {
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  RadioListTile<String>(
+                    title: const Text('System Default'),
+                    value: 'System Default',
+                    groupValue: appSettings.language,
+                    activeColor: const Color(0xFF10B981),
+                    onChanged: (val) {
+                      if (val != null) {
+                        appSettings.setLanguage(val);
+                        setStateDialog(() {});
+                      }
+                    },
+                  ),
                   RadioListTile<String>(
                     title: const Text('Arabic (العربية)'),
                     value: 'Arabic',
@@ -2701,7 +2737,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
           title: Text(appSettings.translate('Reminder')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
           ],
         ),
         body: Padding(
@@ -2823,7 +2859,7 @@ class _RepeatedTransactionsScreenState extends State<RepeatedTransactionsScreen>
           title: Text(appSettings.translate('Repeat')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
           ],
         ),
         body: Padding(
@@ -2930,7 +2966,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
           title: Text(appSettings.translate('Savings')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
           ],
         ),
         body: Padding(
@@ -3154,7 +3190,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () async {
-                            DateTime? picked = await showAlwaysEnglishDatePicker(
+                            DateTime? picked = await showLocalizedDatePicker(
                               context: context,
                               initialDate: appSettings.customStartDate ?? DateTime.now(),
                               firstDate: DateTime(1990),
@@ -3177,7 +3213,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () async {
-                            DateTime? picked = await showAlwaysEnglishDatePicker(
+                            DateTime? picked = await showLocalizedDatePicker(
                               context: context,
                               initialDate: appSettings.customEndDate ?? DateTime.now(),
                               firstDate: DateTime(1990),
@@ -3613,7 +3649,6 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Custom Dropdown Builder: Box only shows Account Name, Dropdown list shows Amount & Eye Icon on Left
                     DropdownButtonFormField<String>(
                       value: selectedAccount,
                       dropdownColor: Theme.of(context).cardColor,
@@ -4040,7 +4075,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
-                          DateTime? picked = await showAlwaysEnglishDatePicker(
+                          DateTime? picked = await showLocalizedDatePicker(
                             context: context,
                             initialDate: appSettings.customStartDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
@@ -4063,7 +4098,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
-                          DateTime? picked = await showAlwaysEnglishDatePicker(
+                          DateTime? picked = await showLocalizedDatePicker(
                             context: context,
                             initialDate: appSettings.customEndDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
@@ -4474,7 +4509,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 12),
                 GestureDetector(
                   onTap: () async {
-                    DateTime? pickedDate = await showAlwaysEnglishDatePicker(
+                    DateTime? pickedDate = await showLocalizedDatePicker(
                       context: context,
                       initialDate: DateTime(1995, 1, 1),
                       firstDate: DateTime(1900),
