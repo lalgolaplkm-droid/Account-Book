@@ -153,7 +153,7 @@ class ReminderModel {
   factory ReminderModel.fromJson(Map<String, dynamic> json) => ReminderModel(title: json['title'], amount: json['amount'], dueDate: json['dueDate']);
 }
 
-// ----------------- State Management with Persistent Storage -----------------
+// ----------------- State Management -----------------
 class AppSettingsNotifier extends ChangeNotifier {
   late SharedPreferences _prefs;
 
@@ -1023,6 +1023,36 @@ class AppSettingsNotifier extends ChangeNotifier {
 
 final appSettings = AppSettingsNotifier();
 
+// ----------------- Helper for Always-English DatePicker -----------------
+Future<DateTime?> showAlwaysEnglishDatePicker({
+  required BuildContext context,
+  required DateTime initialDate,
+  required DateTime firstDate,
+  required DateTime lastDate,
+}) {
+  return showDatePicker(
+    context: context,
+    initialDate: initialDate,
+    firstDate: firstDate,
+    lastDate: lastDate,
+    locale: const Locale('en', 'US'),
+    builder: (context, child) {
+      return Localizations.override(
+        context: context,
+        locale: const Locale('en', 'US'),
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).brightness == Brightness.dark
+                ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
+                : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
+          ),
+          child: child!,
+        ),
+      );
+    },
+  );
+}
+
 // ----------------- App Entry Point -----------------
 class AccountBookApp extends StatelessWidget {
   const AccountBookApp({super.key});
@@ -1067,7 +1097,7 @@ class AccountBookApp extends StatelessWidget {
   }
 }
 
-// ----------------- Standard Menus & Helpers -----------------
+// ----------------- Menus & Helpers -----------------
 void showStandardDownloadMenu(BuildContext context, Offset offset) {
   String lang = appSettings.language;
   String previewText = lang == 'Bangla' ? 'প্রিভিউ' : (lang == 'Arabic' ? 'معاينة' : 'Preview');
@@ -1599,12 +1629,11 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
-                          DateTime? picked = await showDatePicker(
+                          DateTime? picked = await showAlwaysEnglishDatePicker(
                             context: context,
                             initialDate: appSettings.customStartDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
                             lastDate: DateTime(2100),
-                            locale: const Locale('en', 'US'),
                           );
                           if (picked != null) {
                             appSettings.setCustomDateRange(picked, appSettings.customEndDate ?? picked);
@@ -1612,16 +1641,9 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                           }
                         },
                         child: AbsorbPointer(
-                          child: Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: Theme.of(context).brightness == Brightness.dark
-                                  ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
-                                  : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
-                            ),
-                            child: TextField(
-                              controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
-                              decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
-                            ),
+                          child: TextField(
+                            controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
+                            decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
                           ),
                         ),
                       ),
@@ -1630,12 +1652,11 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
-                          DateTime? picked = await showDatePicker(
+                          DateTime? picked = await showAlwaysEnglishDatePicker(
                             context: context,
                             initialDate: appSettings.customEndDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
                             lastDate: DateTime(2100),
-                            locale: const Locale('en', 'US'),
                           );
                           if (picked != null) {
                             appSettings.setCustomDateRange(appSettings.customStartDate ?? picked, picked);
@@ -1643,16 +1664,9 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                           }
                         },
                         child: AbsorbPointer(
-                          child: Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: Theme.of(context).brightness == Brightness.dark
-                                  ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
-                                  : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
-                            ),
-                            child: TextField(
-                              controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
-                              decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
-                            ),
+                          child: TextField(
+                            controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
+                            decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
                           ),
                         ),
                       ),
@@ -1670,22 +1684,9 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Text(appSettings.translate('Total Balance'), style: const TextStyle(color: Colors.grey)),
-                            const SizedBox(width: 8),
-                            InkWell(
-                              onTap: () => appSettings.toggleHide('dash_total_bal'),
-                              child: Icon(
-                                appSettings.isHidden('dash_total_bal') ? Icons.visibility_off : Icons.visibility,
-                                size: 18,
-                                color: const Color(0xFF10B981),
-                              ),
-                            ),
-                          ],
-                        ),
+                        Text(appSettings.translate('Total Balance'), style: const TextStyle(color: Colors.grey)),
                         Text(
-                          appSettings.isHidden('dash_total_bal') ? '********' : '${appSettings.localizeNumber(balance)} $curr', 
+                          '${appSettings.localizeNumber(balance)} $curr', 
                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: balance >= 0 ? const Color(0xFF10B981) : Colors.redAccent)
                         ),
                       ],
@@ -1694,22 +1695,9 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Text(appSettings.translate('Total Income'), style: const TextStyle(color: Colors.grey)),
-                            const SizedBox(width: 8),
-                            InkWell(
-                              onTap: () => appSettings.toggleHide('dash_total_inc'),
-                              child: Icon(
-                                appSettings.isHidden('dash_total_inc') ? Icons.visibility_off : Icons.visibility,
-                                size: 18,
-                                color: const Color(0xFF10B981),
-                              ),
-                            ),
-                          ],
-                        ),
+                        Text(appSettings.translate('Total Income'), style: const TextStyle(color: Colors.grey)),
                         Text(
-                          appSettings.isHidden('dash_total_inc') ? '********' : '${appSettings.localizeNumber(income)} $curr', 
+                          '${appSettings.localizeNumber(income)} $curr', 
                           style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)
                         ),
                       ],
@@ -1718,22 +1706,9 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Text(appSettings.translate('Total Expense'), style: const TextStyle(color: Colors.grey)),
-                            const SizedBox(width: 8),
-                            InkWell(
-                              onTap: () => appSettings.toggleHide('dash_total_exp'),
-                              child: Icon(
-                                appSettings.isHidden('dash_total_exp') ? Icons.visibility_off : Icons.visibility,
-                                size: 18,
-                                color: const Color(0xFF10B981),
-                              ),
-                            ),
-                          ],
-                        ),
+                        Text(appSettings.translate('Total Expense'), style: const TextStyle(color: Colors.grey)),
                         Text(
-                          appSettings.isHidden('dash_total_exp') ? '********' : '${appSettings.localizeNumber(expense)} $curr', 
+                          '${appSettings.localizeNumber(expense)} $curr', 
                           style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)
                         ),
                       ],
@@ -1752,22 +1727,9 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Text(appSettings.translate('Total Loan Given'), style: const TextStyle(color: Colors.grey)),
-                            const SizedBox(width: 8),
-                            InkWell(
-                              onTap: () => appSettings.toggleHide('dash_loan_given'),
-                              child: Icon(
-                                appSettings.isHidden('dash_loan_given') ? Icons.visibility_off : Icons.visibility,
-                                size: 18,
-                                color: const Color(0xFF10B981),
-                              ),
-                            ),
-                          ],
-                        ),
+                        Text(appSettings.translate('Total Loan Given'), style: const TextStyle(color: Colors.grey)),
                         Text(
-                          appSettings.isHidden('dash_loan_given') ? '********' : '${appSettings.localizeNumber(totalGiven)} $curr', 
+                          '${appSettings.localizeNumber(totalGiven)} $curr', 
                           style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)
                         ),
                       ],
@@ -1776,22 +1738,9 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Text(appSettings.translate('Total Loan Taken'), style: const TextStyle(color: Colors.grey)),
-                            const SizedBox(width: 8),
-                            InkWell(
-                              onTap: () => appSettings.toggleHide('dash_loan_taken'),
-                              child: Icon(
-                                appSettings.isHidden('dash_loan_taken') ? Icons.visibility_off : Icons.visibility,
-                                size: 18,
-                                color: const Color(0xFF10B981),
-                              ),
-                            ),
-                          ],
-                        ),
+                        Text(appSettings.translate('Total Loan Taken'), style: const TextStyle(color: Colors.grey)),
                         Text(
-                          appSettings.isHidden('dash_loan_taken') ? '********' : '${appSettings.localizeNumber(totalTaken)} $curr', 
+                          '${appSettings.localizeNumber(totalTaken)} $curr', 
                           style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)
                         ),
                       ],
@@ -1971,7 +1920,7 @@ class _CalculatorsHubScreenState extends State<CalculatorsHubScreen> {
   }
 }
 
-// ----------------- App Drawer Widget -----------------
+// ----------------- App Drawer -----------------
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
@@ -2190,9 +2139,9 @@ class AppDrawer extends StatelessWidget {
   }
 }
 
-// ----------------- Quick Access Interactive Screens -----------------
+// ----------------- Quick Access Screens -----------------
 
-// 1. Accounts Screen
+// 1. Accounts Screen (Single Common Eye Icon at Header)
 class AccountsScreen extends StatefulWidget {
   const AccountsScreen({super.key});
   @override
@@ -2241,12 +2190,25 @@ class _AccountsScreenState extends State<AccountsScreen> {
   @override
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
+    bool isAllAccountsHidden = appSettings.isHidden('common_accounts_visibility');
+
     return AnimatedBuilder(
       animation: appSettings,
       builder: (context, _) => Scaffold(
         appBar: AppBar(
           title: Text(appSettings.translate('Accounts')),
           actions: [
+            IconButton(
+              icon: Icon(
+                isAllAccountsHidden ? Icons.visibility_off : Icons.visibility,
+                color: const Color(0xFF10B981),
+              ),
+              tooltip: 'Toggle Balances Visibility',
+              onPressed: () {
+                appSettings.toggleHide('common_accounts_visibility');
+                setState(() {});
+              },
+            ),
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
           ],
@@ -2258,8 +2220,6 @@ class _AccountsScreenState extends State<AccountsScreen> {
             itemBuilder: (context, index) {
               final acc = appSettings.accounts[index];
               double accBal = appSettings.getAccountBalance(acc.name);
-              String hideKey = 'account_${acc.name}';
-              bool hidden = appSettings.isHidden(hideKey);
 
               return Card(
                 color: Theme.of(context).cardColor,
@@ -2285,22 +2245,9 @@ class _AccountsScreenState extends State<AccountsScreen> {
                       const SizedBox(height: 2),
                       Text(appSettings.localizeNumber(acc.details), style: const TextStyle(color: Colors.grey)),
                       const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Text(
-                            hidden ? 'Balance: ********' : 'Balance: ${appSettings.localizeNumber(accBal)} $curr',
-                            style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981)),
-                          ),
-                          const SizedBox(width: 8),
-                          InkWell(
-                            onTap: () => appSettings.toggleHide(hideKey),
-                            child: Icon(
-                              hidden ? Icons.visibility_off : Icons.visibility,
-                              size: 16,
-                              color: const Color(0xFF10B981),
-                            ),
-                          ),
-                        ],
+                      Text(
+                        isAllAccountsHidden ? 'Balance: ********' : 'Balance: ${appSettings.localizeNumber(accBal)} $curr',
+                        style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981)),
                       ),
                     ],
                   ),
@@ -2423,9 +2370,6 @@ class _BudgetScreenState extends State<BudgetScreen> {
                   itemCount: appSettings.budgets.length,
                   itemBuilder: (context, index) {
                     final b = appSettings.budgets[index];
-                    String hideKey = 'budget_${b.category}_$index';
-                    bool hidden = appSettings.isHidden(hideKey);
-
                     return Card(
                       color: Theme.of(context).cardColor,
                       margin: const EdgeInsets.only(bottom: 8),
@@ -2435,16 +2379,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Row(
-                              children: [
-                                Text(hidden ? '********' : '$curr ${appSettings.localizeNumber(b.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
-                                const SizedBox(width: 8),
-                                InkWell(
-                                  onTap: () => appSettings.toggleHide(hideKey),
-                                  child: Icon(hidden ? Icons.visibility_off : Icons.visibility, size: 16, color: const Color(0xFF10B981)),
-                                ),
-                              ],
-                            ),
+                            Text('$curr ${appSettings.localizeNumber(b.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
                             const SizedBox(width: 8),
                             IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddEditBudgetDialog(index: index, budget: b)),
                             IconButton(
@@ -2644,9 +2579,6 @@ class _FundShoppingScreenState extends State<FundShoppingScreen> {
                   itemCount: appSettings.shoppingList.length,
                   itemBuilder: (context, index) {
                     final item = appSettings.shoppingList[index];
-                    String hideKey = 'shopping_${item.name}_$index';
-                    bool hidden = appSettings.isHidden(hideKey);
-
                     return Card(
                       color: Theme.of(context).cardColor,
                       margin: const EdgeInsets.only(bottom: 8),
@@ -2663,16 +2595,7 @@ class _FundShoppingScreenState extends State<FundShoppingScreen> {
                           appSettings.translate(item.name),
                           style: TextStyle(decoration: item.isChecked ? TextDecoration.lineThrough : null),
                         ),
-                        subtitle: Row(
-                          children: [
-                            Text(hidden ? '********' : '$curr ${appSettings.localizeNumber(item.amount)}'),
-                            const SizedBox(width: 8),
-                            InkWell(
-                              onTap: () => appSettings.toggleHide(hideKey),
-                              child: Icon(hidden ? Icons.visibility_off : Icons.visibility, size: 16, color: const Color(0xFF10B981)),
-                            ),
-                          ],
-                        ),
+                        subtitle: Text('$curr ${appSettings.localizeNumber(item.amount)}'),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -2789,9 +2712,6 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   itemCount: appSettings.reminders.length,
                   itemBuilder: (context, index) {
                     final rem = appSettings.reminders[index];
-                    String hideKey = 'reminder_${rem.title}_$index';
-                    bool hidden = appSettings.isHidden(hideKey);
-
                     return Card(
                       color: Theme.of(context).cardColor,
                       margin: const EdgeInsets.only(bottom: 8),
@@ -2802,16 +2722,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Row(
-                              children: [
-                                Text(hidden ? '********' : '$curr ${appSettings.localizeNumber(rem.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
-                                const SizedBox(width: 8),
-                                InkWell(
-                                  onTap: () => appSettings.toggleHide(hideKey),
-                                  child: Icon(hidden ? Icons.visibility_off : Icons.visibility, size: 16, color: const Color(0xFF10B981)),
-                                ),
-                              ],
-                            ),
+                            Text('$curr ${appSettings.localizeNumber(rem.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
                             const SizedBox(width: 8),
                             IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddReminderDialog(index: index, reminder: rem)),
                             IconButton(
@@ -2921,9 +2832,6 @@ class _RepeatedTransactionsScreenState extends State<RepeatedTransactionsScreen>
             itemCount: appSettings.repeatedTransactions.length,
             itemBuilder: (context, index) {
               final rep = appSettings.repeatedTransactions[index];
-              String hideKey = 'repeated_${rep.title}_$index';
-              bool hidden = appSettings.isHidden(hideKey);
-
               return Card(
                 color: Theme.of(context).cardColor,
                 margin: const EdgeInsets.only(bottom: 8),
@@ -2934,16 +2842,7 @@ class _RepeatedTransactionsScreenState extends State<RepeatedTransactionsScreen>
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Row(
-                        children: [
-                          Text(hidden ? '********' : '$curr ${appSettings.localizeNumber(rep.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
-                          const SizedBox(width: 8),
-                          InkWell(
-                            onTap: () => appSettings.toggleHide(hideKey),
-                            child: Icon(hidden ? Icons.visibility_off : Icons.visibility, size: 16, color: const Color(0xFF10B981)),
-                          ),
-                        ],
-                      ),
+                      Text('$curr ${appSettings.localizeNumber(rep.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
                       const SizedBox(width: 8),
                       IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddRepeatedDialog(index: index, repeated: rep)),
                       IconButton(
@@ -3040,29 +2939,17 @@ class _SavingsScreenState extends State<SavingsScreen> {
             itemCount: appSettings.savingsList.length,
             itemBuilder: (context, index) {
               final sav = appSettings.savingsList[index];
-              String hideKey = 'savings_${sav.title}_$index';
-              bool hidden = appSettings.isHidden(hideKey);
-
               return Card(
                 color: Theme.of(context).cardColor,
                 margin: const EdgeInsets.only(bottom: 8),
                 child: ListTile(
                   leading: const Icon(Icons.savings, color: Color(0xFF10B981)),
                   title: Text(appSettings.translate(sav.title), style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Row(
-                    children: [
-                      Text(hidden ? 'Saved: ********' : 'Saved: ${appSettings.localizeNumber(sav.currentAmount)} $curr'),
-                      const SizedBox(width: 8),
-                      InkWell(
-                        onTap: () => appSettings.toggleHide(hideKey),
-                        child: Icon(hidden ? Icons.visibility_off : Icons.visibility, size: 16, color: const Color(0xFF10B981)),
-                      ),
-                    ],
-                  ),
+                  subtitle: Text('Saved: ${appSettings.localizeNumber(sav.currentAmount)} $curr'),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(hidden ? 'Target: ********' : 'Target: ${appSettings.localizeNumber(sav.targetAmount)} $curr', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                      Text('Target: ${appSettings.localizeNumber(sav.targetAmount)} $curr', style: const TextStyle(color: Colors.grey, fontSize: 12)),
                       const SizedBox(width: 8),
                       IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddSavingsDialog(index: index, savings: sav)),
                       IconButton(
@@ -3267,12 +3154,11 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () async {
-                            DateTime? picked = await showDatePicker(
+                            DateTime? picked = await showAlwaysEnglishDatePicker(
                               context: context,
                               initialDate: appSettings.customStartDate ?? DateTime.now(),
                               firstDate: DateTime(1990),
                               lastDate: DateTime(2100),
-                              locale: const Locale('en', 'US'),
                             );
                             if (picked != null) {
                               appSettings.setCustomDateRange(picked, appSettings.customEndDate ?? picked);
@@ -3280,16 +3166,9 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                             }
                           },
                           child: AbsorbPointer(
-                            child: Theme(
-                              data: Theme.of(context).copyWith(
-                                colorScheme: Theme.of(context).brightness == Brightness.dark
-                                    ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
-                                    : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
-                              ),
-                              child: TextField(
-                                controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
-                                decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
-                              ),
+                            child: TextField(
+                              controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
+                              decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
                             ),
                           ),
                         ),
@@ -3298,12 +3177,11 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () async {
-                            DateTime? picked = await showDatePicker(
+                            DateTime? picked = await showAlwaysEnglishDatePicker(
                               context: context,
                               initialDate: appSettings.customEndDate ?? DateTime.now(),
                               firstDate: DateTime(1990),
                               lastDate: DateTime(2100),
-                              locale: const Locale('en', 'US'),
                             );
                             if (picked != null) {
                               appSettings.setCustomDateRange(appSettings.customStartDate ?? picked, picked);
@@ -3311,16 +3189,9 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                             }
                           },
                           child: AbsorbPointer(
-                            child: Theme(
-                              data: Theme.of(context).copyWith(
-                                colorScheme: Theme.of(context).brightness == Brightness.dark
-                                    ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
-                                    : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
-                              ),
-                              child: TextField(
-                                controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
-                                decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
-                              ),
+                            child: TextField(
+                              controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
+                              decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
                             ),
                           ),
                         ),
@@ -3337,19 +3208,10 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(appSettings.translate('Income'), style: const TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
-                                InkWell(
-                                  onTap: () => appSettings.toggleHide('home_income'),
-                                  child: Icon(appSettings.isHidden('home_income') ? Icons.visibility_off : Icons.visibility, size: 14, color: Colors.green),
-                                ),
-                              ],
-                            ),
+                            Text(appSettings.translate('Income'), style: const TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
                             const SizedBox(height: 4),
                             Text(
-                              appSettings.isHidden('home_income') ? '********' : '${appSettings.localizeNumber(appSettings.getTotalIncome())} $curr', 
+                              '${appSettings.localizeNumber(appSettings.getTotalIncome())} $curr', 
                               style: const TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.bold)
                             ),
                           ],
@@ -3364,19 +3226,10 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(appSettings.translate('Expense'), style: const TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.w600)),
-                                InkWell(
-                                  onTap: () => appSettings.toggleHide('home_expense'),
-                                  child: Icon(appSettings.isHidden('home_expense') ? Icons.visibility_off : Icons.visibility, size: 14, color: Colors.redAccent),
-                                ),
-                              ],
-                            ),
+                            Text(appSettings.translate('Expense'), style: const TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.w600)),
                             const SizedBox(height: 4),
                             Text(
-                              appSettings.isHidden('home_expense') ? '********' : '${appSettings.localizeNumber(appSettings.getTotalExpense())} $curr', 
+                              '${appSettings.localizeNumber(appSettings.getTotalExpense())} $curr', 
                               style: const TextStyle(color: Colors.redAccent, fontSize: 16, fontWeight: FontWeight.bold)
                             ),
                           ],
@@ -3412,8 +3265,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                         itemBuilder: (context, index) {
                           final txn = appSettings.transactions[index];
                           bool isIncome = txn.type == 'Income';
-                          String hideKey = 'txn_${txn.id}';
-                          bool hidden = appSettings.isHidden(hideKey);
 
                           return Container(
                             margin: const EdgeInsets.only(bottom: 10),
@@ -3426,19 +3277,9 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               title: Text('${appSettings.translate(txn.category)} (${appSettings.translate(txn.account)})'),
                               subtitle: Text('${appSettings.translate(txn.description)}\n${appSettings.localizeNumber(txn.date.toString().substring(0, 16))}'),
                               isThreeLine: true,
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    hidden ? '********' : '${isIncome ? '+' : '-'} $curr ${appSettings.localizeNumber(txn.amount)}',
-                                    style: TextStyle(color: isIncome ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 15),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  InkWell(
-                                    onTap: () => appSettings.toggleHide(hideKey),
-                                    child: Icon(hidden ? Icons.visibility_off : Icons.visibility, size: 16, color: const Color(0xFF10B981)),
-                                  ),
-                                ],
+                              trailing: Text(
+                                '${isIncome ? '+' : '-'} $curr ${appSettings.localizeNumber(txn.amount)}',
+                                style: TextStyle(color: isIncome ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 15),
                               ),
                             ),
                           );
@@ -3593,20 +3434,10 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                 ),
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(appSettings.translate('Net Balance'), style: const TextStyle(color: Colors.grey, fontSize: 14)),
-                        const SizedBox(width: 8),
-                        InkWell(
-                          onTap: () => appSettings.toggleHide('loan_net_bal'),
-                          child: Icon(appSettings.isHidden('loan_net_bal') ? Icons.visibility_off : Icons.visibility, size: 18, color: const Color(0xFF10B981)),
-                        ),
-                      ],
-                    ),
+                    Text(appSettings.translate('Net Balance'), style: const TextStyle(color: Colors.grey, fontSize: 14)),
                     const SizedBox(height: 6),
                     Text(
-                      appSettings.isHidden('loan_net_bal') ? '********' : '${appSettings.localizeNumber(appSettings.getNetBalance())} $curr', 
+                      '${appSettings.localizeNumber(appSettings.getNetBalance())} $curr', 
                       style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)
                     ),
                     const Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Divider(color: Colors.grey)),
@@ -3617,16 +3448,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                           children: [
                             Row(children: [const Icon(Icons.arrow_downward, size: 14, color: Colors.green), const SizedBox(width: 4), Text(appSettings.translate('Given'), style: const TextStyle(color: Colors.green, fontWeight: FontWeight.w600))]),
                             const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                Text(appSettings.isHidden('loan_given') ? '********' : '${appSettings.localizeNumber(appSettings.getTotalGiven())} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
-                                const SizedBox(width: 4),
-                                InkWell(
-                                  onTap: () => appSettings.toggleHide('loan_given'),
-                                  child: Icon(appSettings.isHidden('loan_given') ? Icons.visibility_off : Icons.visibility, size: 14, color: Colors.green),
-                                ),
-                              ],
-                            ),
+                            Text('${appSettings.localizeNumber(appSettings.getTotalGiven())} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
                           ],
                         ),
                         Container(height: 30, width: 1, color: Colors.grey),
@@ -3634,16 +3456,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                           children: [
                             Row(children: [const Icon(Icons.arrow_upward, size: 14, color: Colors.redAccent), const SizedBox(width: 4), Text(appSettings.translate('Taken'), style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w600))]),
                             const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                Text(appSettings.isHidden('loan_taken') ? '********' : '${appSettings.localizeNumber(appSettings.getTotalTaken())} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.redAccent)),
-                                const SizedBox(width: 4),
-                                InkWell(
-                                  onTap: () => appSettings.toggleHide('loan_taken'),
-                                  child: Icon(appSettings.isHidden('loan_taken') ? Icons.visibility_off : Icons.visibility, size: 14, color: Colors.redAccent),
-                                ),
-                              ],
-                            ),
+                            Text('${appSettings.localizeNumber(appSettings.getTotalTaken())} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.redAccent)),
                           ],
                         ),
                       ],
@@ -3682,8 +3495,6 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                         itemBuilder: (context, index) {
                           final loan = filteredLoans[index];
                           bool isGiven = loan.type == 'Given';
-                          String hideKey = 'loan_item_${loan.id}';
-                          bool hidden = appSettings.isHidden(hideKey);
 
                           return Card(
                             color: Theme.of(context).cardColor,
@@ -3698,16 +3509,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Row(
-                                    children: [
-                                      Text(hidden ? '********' : '$curr ${appSettings.localizeNumber(loan.amount)}', style: TextStyle(color: isGiven ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold)),
-                                      const SizedBox(width: 4),
-                                      InkWell(
-                                        onTap: () => appSettings.toggleHide(hideKey),
-                                        child: Icon(hidden ? Icons.visibility_off : Icons.visibility, size: 14, color: const Color(0xFF10B981)),
-                                      ),
-                                    ],
-                                  ),
+                                  Text('$curr ${appSettings.localizeNumber(loan.amount)}', style: TextStyle(color: isGiven ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold)),
                                   Checkbox(
                                     value: loan.isPaid,
                                     activeColor: const Color(0xFF10B981),
@@ -3810,10 +3612,17 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
+
+                    // Custom Dropdown Builder: Box only shows Account Name, Dropdown list shows Amount & Eye Icon on Left
                     DropdownButtonFormField<String>(
                       value: selectedAccount,
                       dropdownColor: Theme.of(context).cardColor,
                       decoration: InputDecoration(labelText: appSettings.translate('Account'), border: const OutlineInputBorder()),
+                      selectedItemBuilder: (BuildContext context) {
+                        return appSettings.accounts.map<Widget>((acc) {
+                          return Text(appSettings.translate(acc.name));
+                        }).toList();
+                      },
                       items: appSettings.accounts.map((acc) {
                         double accBal = appSettings.getAccountBalance(acc.name);
                         String popupHideKey = 'popup_acc_${acc.name}';
@@ -3825,11 +3634,9 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(appSettings.translate(acc.name)),
                               Row(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(displayBal, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                                  const SizedBox(width: 8),
                                   InkWell(
                                     onTap: () {
                                       appSettings.toggleHide(popupHideKey);
@@ -3844,8 +3651,11 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                                       ),
                                     ),
                                   ),
+                                  const SizedBox(width: 6),
+                                  Text(displayBal, style: const TextStyle(fontSize: 12, color: Colors.grey)),
                                 ],
                               ),
+                              Text(appSettings.translate(acc.name)),
                             ],
                           ),
                         );
@@ -4016,8 +3826,6 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                         itemBuilder: (context, index) {
                           final txn = list[index];
                           bool isIncome = txn.type == 'Income';
-                          String hideKey = 'all_txn_${txn.id}';
-                          bool hidden = appSettings.isHidden(hideKey);
 
                           return Card(
                             color: Theme.of(context).cardColor,
@@ -4033,18 +3841,9 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        hidden ? '********' : '${isIncome ? '+' : '-'} $curr ${appSettings.localizeNumber(txn.amount)}',
-                                        style: TextStyle(color: isIncome ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      InkWell(
-                                        onTap: () => appSettings.toggleHide(hideKey),
-                                        child: Icon(hidden ? Icons.visibility_off : Icons.visibility, size: 14, color: const Color(0xFF10B981)),
-                                      ),
-                                    ],
+                                  Text(
+                                    '${isIncome ? '+' : '-'} $curr ${appSettings.localizeNumber(txn.amount)}',
+                                    style: TextStyle(color: isIncome ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold),
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20),
@@ -4241,12 +4040,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
-                          DateTime? picked = await showDatePicker(
+                          DateTime? picked = await showAlwaysEnglishDatePicker(
                             context: context,
                             initialDate: appSettings.customStartDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
                             lastDate: DateTime(2100),
-                            locale: const Locale('en', 'US'),
                           );
                           if (picked != null) {
                             appSettings.setCustomDateRange(picked, appSettings.customEndDate ?? picked);
@@ -4254,16 +4052,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
                           }
                         },
                         child: AbsorbPointer(
-                          child: Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: Theme.of(context).brightness == Brightness.dark
-                                  ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
-                                  : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
-                            ),
-                            child: TextField(
-                              controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
-                              decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
-                            ),
+                          child: TextField(
+                            controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
+                            decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
                           ),
                         ),
                       ),
@@ -4272,12 +4063,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
-                          DateTime? picked = await showDatePicker(
+                          DateTime? picked = await showAlwaysEnglishDatePicker(
                             context: context,
                             initialDate: appSettings.customEndDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
                             lastDate: DateTime(2100),
-                            locale: const Locale('en', 'US'),
                           );
                           if (picked != null) {
                             appSettings.setCustomDateRange(appSettings.customStartDate ?? picked, picked);
@@ -4285,16 +4075,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
                           }
                         },
                         child: AbsorbPointer(
-                          child: Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: Theme.of(context).brightness == Brightness.dark
-                                  ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
-                                  : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
-                            ),
-                            child: TextField(
-                              controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
-                              decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
-                            ),
+                          child: TextField(
+                            controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
+                            decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
                           ),
                         ),
                       ),
@@ -4308,34 +4091,17 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(appSettings.translate('Monthly Budget Overview'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                        InkWell(
-                          onTap: () => appSettings.toggleHide('rep_budget_overview'),
-                          child: Icon(appSettings.isHidden('rep_budget_overview') ? Icons.visibility_off : Icons.visibility, size: 16, color: const Color(0xFF10B981)),
-                        ),
-                      ],
-                    ),
+                    Text(appSettings.translate('Monthly Budget Overview'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                     const SizedBox(height: 8),
-                    Text('${appSettings.translate('Budget:')} ${appSettings.isHidden('rep_budget_overview') ? '********' : appSettings.localizeNumber(budget)} $curr | ${appSettings.translate('Spent:')} ${appSettings.isHidden('rep_budget_overview') ? '********' : appSettings.localizeNumber(expense)} $curr', style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                    Text('${appSettings.translate('Budget:')} ${appSettings.localizeNumber(budget)} $curr | ${appSettings.translate('Spent:')} ${appSettings.localizeNumber(expense)} $curr', style: const TextStyle(color: Colors.grey, fontSize: 13)),
                     const SizedBox(height: 8),
                     LinearProgressIndicator(value: progress, color: const Color(0xFF10B981), backgroundColor: Colors.white12),
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Text('${appSettings.translate('Total Income:')} ${appSettings.isHidden('rep_budget_overview') ? '********' : appSettings.localizeNumber(income)} $curr', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text('${appSettings.translate('Total Expense:')} ${appSettings.isHidden('rep_budget_overview') ? '********' : appSettings.localizeNumber(expense)} $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
-                          ],
-                        ),
+                        Text('${appSettings.translate('Total Income:')} ${appSettings.localizeNumber(income)} $curr', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                        Text('${appSettings.translate('Total Expense:')} ${appSettings.localizeNumber(expense)} $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ],
@@ -4362,8 +4128,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
                       itemCount: categoryList.length,
                       itemBuilder: (context, index) {
                         final catEntry = categoryList[index];
-                        String hideKey = 'rep_cat_${catEntry.key}';
-                        bool hidden = appSettings.isHidden(hideKey);
 
                         return Card(
                           color: Theme.of(context).cardColor,
@@ -4371,17 +4135,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                           child: ListTile(
                             leading: CircleAvatar(backgroundColor: Colors.red[100], child: const Icon(Icons.category, color: Colors.redAccent)),
                             title: Text(appSettings.translate(catEntry.key), style: const TextStyle(fontWeight: FontWeight.bold)),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(hidden ? '********' : '${appSettings.localizeNumber(catEntry.value)} $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
-                                const SizedBox(width: 8),
-                                InkWell(
-                                  onTap: () => appSettings.toggleHide(hideKey),
-                                  child: Icon(hidden ? Icons.visibility_off : Icons.visibility, size: 16, color: const Color(0xFF10B981)),
-                                ),
-                              ],
-                            ),
+                            trailing: Text('${appSettings.localizeNumber(catEntry.value)} $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
                           ),
                         );
                       },
@@ -4720,12 +4474,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 12),
                 GestureDetector(
                   onTap: () async {
-                    DateTime? pickedDate = await showDatePicker(
+                    DateTime? pickedDate = await showAlwaysEnglishDatePicker(
                       context: context,
                       initialDate: DateTime(1995, 1, 1),
                       firstDate: DateTime(1900),
                       lastDate: DateTime.now(),
-                      locale: const Locale('en', 'US'),
                     );
                     if (pickedDate != null) {
                       setStateDialog(() {
@@ -4735,16 +4488,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     }
                   },
                   child: AbsorbPointer(
-                    child: Theme(
-                      data: Theme.of(context).copyWith(
-                        colorScheme: Theme.of(context).brightness == Brightness.dark
-                            ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
-                            : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
-                      ),
-                      child: TextField(
-                        controller: TextEditingController(text: appSettings.localizeNumber(birthDate)),
-                        decoration: InputDecoration(labelText: appSettings.translate('Birth Date (DD-MM-YYYY)'), border: const OutlineInputBorder(), suffixIcon: const Icon(Icons.calendar_today)),
-                      ),
+                    child: TextField(
+                      controller: TextEditingController(text: appSettings.localizeNumber(birthDate)),
+                      decoration: InputDecoration(labelText: appSettings.translate('Birth Date (DD-MM-YYYY)'), border: const OutlineInputBorder(), suffixIcon: const Icon(Icons.calendar_today)),
                     ),
                   ),
                 ),
@@ -4887,7 +4633,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-// ----------------- Main Navigation Container -----------------
+// ----------------- Main Navigation -----------------
 class MainHomeScreen extends StatefulWidget {
   const MainHomeScreen({super.key});
 
