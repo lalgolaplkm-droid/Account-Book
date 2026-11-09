@@ -303,7 +303,7 @@ class AppSettingsNotifier extends ChangeNotifier {
     if (_language == 'Bangla') return const Locale('bn', 'BD');
     if (_language == 'Arabic') return const Locale('ar', 'AE');
     if (_language == 'English') return const Locale('en', 'US');
-    return null; // System Default
+    return null; 
   }
 
   String localizeNumber(dynamic number) {
@@ -2737,7 +2737,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
           title: Text(appSettings.translate('Reminder')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
           ],
         ),
         body: Padding(
@@ -2859,7 +2859,7 @@ class _RepeatedTransactionsScreenState extends State<RepeatedTransactionsScreen>
           title: Text(appSettings.translate('Repeat')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
           ],
         ),
         body: Padding(
@@ -2966,7 +2966,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
           title: Text(appSettings.translate('Savings')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
           ],
         ),
         body: Padding(
