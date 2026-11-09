@@ -2398,7 +2398,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
           title: Text(appSettings.translate('Budget')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
           ],
         ),
         body: Padding(
@@ -2496,7 +2496,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           title: Text(appSettings.translate('Categories')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
           ],
         ),
         body: Padding(
@@ -2607,7 +2607,7 @@ class _FundShoppingScreenState extends State<FundShoppingScreen> {
           title: Text(appSettings.translate('Shopping')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
           ],
         ),
         body: Padding(
@@ -3016,6 +3016,91 @@ class _SavingsScreenState extends State<SavingsScreen> {
           backgroundColor: const Color(0xFF10B981),
           onPressed: () => _showAddSavingsDialog(),
           child: const Icon(Icons.add, color: Colors.white),
+        ),
+      ),
+    );
+  }
+}
+
+// ----------------- App Drawer -----------------
+class AppDrawer extends StatelessWidget {
+  const AppDrawer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: appSettings,
+      builder: (context, _) => Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            UserAccountsDrawerHeader(
+              decoration: const BoxDecoration(color: Color(0xFF10B981)),
+              accountName: Text(appSettings.profileName, style: const TextStyle(fontWeight: FontWeight.bold)),
+              accountEmail: Text(appSettings.profileEmail),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white,
+                backgroundImage: appSettings.profileImagePath.isNotEmpty ? FileImage(File(appSettings.profileImagePath)) : null,
+                child: appSettings.profileImagePath.isEmpty ? const Icon(Icons.person, size: 40, color: Color(0xFF10B981)) : null,
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.dashboard),
+              title: Text(appSettings.translate('Dashboard Analytics')),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const DashboardAnalyticsScreen()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.track_changes),
+              title: Text(appSettings.translate('Goals')),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const SavingsScreen()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.calculate),
+              title: Text(appSettings.translate('Calculators')),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const CalculatorsHubScreen()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.category),
+              title: Text(appSettings.translate('Categories')),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const CategoriesScreen()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.account_balance),
+              title: Text(appSettings.translate('Accounts')),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountsScreen()));
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.info),
+              title: Text(appSettings.translate('About App')),
+              onTap: () {
+                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: Text(appSettings.translate('About App')),
+                    content: const Text('Account Book v1.0.0\nDeveloped for daily financial ledger & transaction management.'),
+                    actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close'))],
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
