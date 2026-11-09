@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart'; // লোকাল ডেলিগেটস নিশ্চিত করতে
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -1029,19 +1030,19 @@ Future<DateTime?> showLocalizedDatePicker({
   required DateTime initialDate,
   required DateTime firstDate,
   required DateTime lastDate,
-}) {
+}) async {
   Locale? currentLocale = appSettings.getLocale();
   bool isDark = Theme.of(context).brightness == Brightness.dark;
-  return showDatePicker(
+  return await showDatePicker(
     context: context,
     initialDate: initialDate,
     firstDate: firstDate,
     lastDate: lastDate,
-    locale: currentLocale,
+    locale: currentLocale ?? const Locale('en', 'US'),
     builder: (context, child) {
       return Localizations.override(
         context: context,
-        locale: currentLocale ?? Localizations.localeOf(context),
+        locale: currentLocale ?? const Locale('en', 'US'),
         child: Theme(
           data: Theme.of(context).copyWith(
             colorScheme: isDark
@@ -1059,7 +1060,7 @@ Future<DateTime?> showLocalizedDatePicker({
                   ),
             dialogBackgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
           ),
-          child: child!,
+          child: child ?? const SizedBox(),
         ),
       );
     },
@@ -1080,6 +1081,17 @@ class AccountBookApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           themeMode: appSettings.themeMode,
           locale: appSettings.getLocale(),
+          // ডেট পিকার ও ভাষা ক্র্যাশ রোধ করতে এই ডেলিগেটসগুলো আবশ্যিক
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en', 'US'),
+            Locale('bn', 'BD'),
+            Locale('ar', 'AE'),
+          ],
           theme: ThemeData(
             brightness: Brightness.light,
             scaffoldBackgroundColor: const Color(0xFFF3F4F6),
@@ -3672,9 +3684,14 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              // বামে অ্যাকাউন্টের নাম
+                              Text(appSettings.translate(acc.name), style: const TextStyle(fontWeight: FontWeight.w500)),
+                              // ডানে ব্যালেন্স এবং তার ডানে আইকন (স্বাধীন কন্ট্রোল)
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
+                                  Text(displayBal, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                  const SizedBox(width: 8),
                                   InkWell(
                                     onTap: () {
                                       appSettings.toggleHide(popupHideKey);
@@ -3689,11 +3706,8 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 6),
-                                  Text(displayBal, style: const TextStyle(fontSize: 12, color: Colors.grey)),
                                 ],
                               ),
-                              Text(appSettings.translate(acc.name)),
                             ],
                           ),
                         );
@@ -4031,10 +4045,12 @@ class _ReportsScreenState extends State<ReportsScreen> {
                       label: Text(appSettings.translate('Custom Range')),
                       selected: currentFilterMode == 'Custom Range',
                       selectedColor: const Color(0xFF10B981),
-                      onSelected: (val) => setState(() {
-                        currentFilterMode = 'Custom Range';
-                        appSettings.setTimeFilter('Custom Range');
-                      }),
+                      onSelected: (val) {
+                        setState(() {
+                          currentFilterMode = 'Custom Range';
+                          appSettings.setTimeFilter('Custom Range');
+                        });
+                      },
                     ),
                   ],
                 ),
