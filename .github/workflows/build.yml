@@ -22,10 +22,6 @@ jobs:
           flutter-version: '3.19.6'
           channel: 'stable'
 
-      # এই নতুন লাইনটি যুক্ত করুন, যা আপনার অ্যান্ড্রয়েড ও গ্রেডল ফোল্ডারকে গিটহাবের উপযোগী করে রিফ্রেশ করে নেবে:
-      - name: Regenerate Android Files
-        run: flutter create . --platforms=android --org com.account.book
-
       - name: Install Dependencies
         run: flutter pub get
 
