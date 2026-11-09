@@ -25,6 +25,12 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
+      # এই দুটি লাইন পুরোনো ও নষ্ট গ্রেডল ফাইলগুলো মুছে ফেলবে এবং একদম ফ্রেশ অ্যান্ড্রয়েড ফোল্ডার তৈরি করে নেবে:
+      - name: Clean and Recreate Android
+        run: |
+          rm -rf android
+          flutter create . --platforms=android --project-name=account_book
+
       - name: Build Release APK
         run: flutter build apk --release --verbose
 
