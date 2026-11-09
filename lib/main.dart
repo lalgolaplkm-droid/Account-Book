@@ -56,6 +56,7 @@ class LoanItem {
   String personName;
   double amount;
   String type;
+  String account; // লোন ট্রানজ্যাকশনের জন্য অ্যাকাউন্ট ফিল্ড
   DateTime date;
   bool isPaid;
 
@@ -64,6 +65,7 @@ class LoanItem {
     required this.personName,
     required this.amount,
     required this.type,
+    required this.account,
     required this.date,
     this.isPaid = false,
   });
@@ -73,6 +75,7 @@ class LoanItem {
     'personName': personName,
     'amount': amount,
     'type': type,
+    'account': account,
     'date': date.toIso8601String(),
     'isPaid': isPaid,
   };
@@ -82,6 +85,7 @@ class LoanItem {
     personName: json['personName'],
     amount: json['amount'],
     type: json['type'],
+    account: json['account'] ?? 'Cash in Hand',
     date: DateTime.parse(json['date']),
     isPaid: json['isPaid'],
   );
@@ -115,6 +119,16 @@ class SavingsModel {
 
   Map<String, dynamic> toJson() => {'title': title, 'targetAmount': targetAmount, 'currentAmount': currentAmount, 'isCompleted': isCompleted};
   factory SavingsModel.fromJson(Map<String, dynamic> json) => SavingsModel(title: json['title'], targetAmount: json['targetAmount'], currentAmount: json['currentAmount'], isCompleted: json['isCompleted']);
+}
+
+class GoalModel {
+  String title;
+  double targetAmount;
+  double currentAmount;
+  GoalModel({required this.title, required this.targetAmount, required this.currentAmount});
+
+  Map<String, dynamic> toJson() => {'title': title, 'targetAmount': targetAmount, 'currentAmount': currentAmount};
+  factory GoalModel.fromJson(Map<String, dynamic> json) => GoalModel(title: json['title'], targetAmount: json['targetAmount'], currentAmount: json['currentAmount']);
 }
 
 class AccountModel {
@@ -159,7 +173,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   late SharedPreferences _prefs;
 
   ThemeMode _themeMode = ThemeMode.dark;
-  String _language = 'English'; // শুরুতে ইংলিশ ডিফল্ট করা হলো
+  String _language = 'English'; 
   String currency = '৳';
   String timeFilter = 'This Month';
   String appPin = '1234';
@@ -239,9 +253,15 @@ class AppSettingsNotifier extends ChangeNotifier {
       personName: 'Rofiqul Islam',
       amount: 2000.0,
       type: 'Given',
+      account: 'Cash in Hand',
       date: DateTime.now(),
       isPaid: false,
     ),
+  ];
+
+  List<GoalModel> goalsList = [
+    GoalModel(title: 'Motorcycle', targetAmount: 150000, currentAmount: 30000),
+    GoalModel(title: 'Smartphone', targetAmount: 30000, currentAmount: 10000),
   ];
 
   List<ShoppingItem> shoppingList = [
@@ -255,7 +275,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   ];
 
   List<SavingsModel> savingsList = [
-    SavingsModel(title: 'Arufa Savings', targetAmount: 500000, currentAmount: 25000)
+    SavingsModel(title: 'Daughter Savings', targetAmount: 500000, currentAmount: 25000)
   ];
 
   List<RepeatedTransactionModel> repeatedTransactions = [
@@ -270,7 +290,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   Future<void> initPrefs() async {
     _prefs = await SharedPreferences.getInstance();
     appPin = _prefs.getString('appPin') ?? '1234';
-    _language = _prefs.getString('language') ?? 'English'; // ফার্স্ট টাইমে ইংলিশ লোড হবে
+    _language = _prefs.getString('language') ?? 'English'; 
     String themeStr = _prefs.getString('themeMode') ?? 'dark';
     if (themeStr == 'light') _themeMode = ThemeMode.light;
     else if (themeStr == 'system') _themeMode = ThemeMode.system;
@@ -347,6 +367,7 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'System Default': return 'সিস্টেম ডিফল্ট';
         case 'About App': return 'অ্যাপ সম্পর্কে';
         case 'Current Balance': return 'বর্তমান ব্যালেন্স';
+        case 'Goals': return 'লক্ষ্য';
         case 'Month': return 'মাস';
         case 'Year': return 'বছর';
         case 'Income': return 'আয়';
@@ -378,7 +399,6 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Cash': return 'নগদ';
         case 'Bank': return 'ব্যাংক';
         case 'Settings': return 'সেটিংস';
-        case 'Goals': return 'লক্ষ্য';
         case 'Calculators': return 'ক্যালকুলেটর হাব';
         case 'Enter Your PIN': return 'আপনার পিন লিখুন';
         case 'Unlock': return 'আনলক করুন';
@@ -454,7 +474,7 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Mobile Number': return 'মোবাইল নম্বর';
         case 'Name': return 'নাম';
         case 'Email': return 'ইমেল';
-        case 'Net Balance': return 'নিট ব্যালেন্স';
+        case 'Net Balance': return 'বর্তমান ব্যালেন্স';
         case 'Spent': return 'ব্যয় হয়েছে';
         case 'Budget:': return 'বাজেট:';
         case 'Spent:': return 'ব্যয়:';
@@ -489,6 +509,7 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'System Default': return 'النظام الافتراضي';
         case 'About App': return 'حول التطبيق';
         case 'Current Balance': return 'الرصيد الحالي';
+        case 'Goals': return 'الأهداف';
         case 'Month': return 'شهر';
         case 'Year': return 'سنة';
         case 'Income': return 'إيرادات';
@@ -520,7 +541,6 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Cash': return 'نقدي';
         case 'Bank': return 'بنك';
         case 'Settings': return 'الإعدادات';
-        case 'Goals': return 'الأهداف';
         case 'Calculators': return 'الحاسبات';
         case 'Enter Your PIN': return 'أدخل رقم التعريف الشخصي';
         case 'Unlock': return 'فتح القفل';
@@ -530,7 +550,7 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Custom Years': return 'سنوات مخصصة';
         case 'Custom Range': return 'نطاق مخصص';
         case 'Financial Overview Summary': return 'ملخص النظرة العامة المالية';
-        case 'Total Balance': return 'الإجمالي الكلي';
+        case 'Total Balance': return 'الرصيد الحالي';
         case 'Total Income': return 'إجمالي الدخل';
         case 'Total Expense': return 'إجمالي المصروفات';
         case 'Loan & Debt Overview': return 'نظرة عامة على القروض والديون';
@@ -596,7 +616,7 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Mobile Number': return 'رقم الهاتف المحمول';
         case 'Name': return 'الاسم';
         case 'Email': return 'البريد الإلكتروني';
-        case 'Net Balance': return 'الرصيد الصافي';
+        case 'Net Balance': return 'الرصيد الحالي';
         case 'Spent': return 'المصروف';
         case 'Budget:': return 'الميزانية:';
         case 'Spent:': return 'المصروف:';
@@ -721,10 +741,11 @@ class AppSettingsNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateLoan(int index, String personName, double amount, String type) {
+  void updateLoan(int index, String personName, double amount, String type, String account) {
     loans[index].personName = personName;
     loans[index].amount = amount;
     loans[index].type = type;
+    loans[index].account = account;
     notifyListeners();
   }
 
@@ -768,7 +789,7 @@ class AppSettingsNotifier extends ChangeNotifier {
     } else if (criteria.contains('A-Z')) {
       transactions.sort((a, b) => a.category.compareTo(b.category));
     } else if (criteria.contains('Z-A')) {
-      transactions.sort((a, b) => b.category.compareTo(b.category));
+      transactions.sort((a, b) => a.category.compareTo(b.category));
     } else if (criteria.contains('Number Large-Small')) {
       transactions.sort((a, b) => b.amount.compareTo(a.amount));
     } else if (criteria.contains('Number Small-Large')) {
@@ -900,6 +921,24 @@ class AppSettingsNotifier extends ChangeNotifier {
 
   void removeBudget(int index) {
     budgets.removeAt(index);
+    notifyListeners();
+  }
+
+  void addGoal(String title, double target) {
+    goalsList.add(GoalModel(title: title, targetAmount: target, currentAmount: 0));
+    goalsList.sort((a, b) => a.title.compareTo(b.title));
+    notifyListeners();
+  }
+
+  void updateGoal(int index, String title, double targetAmount) {
+    goalsList[index].title = title;
+    goalsList[index].targetAmount = targetAmount;
+    goalsList.sort((a, b) => a.title.compareTo(b.title));
+    notifyListeners();
+  }
+
+  void removeGoal(int index) {
+    goalsList.removeAt(index);
     notifyListeners();
   }
 
@@ -1255,7 +1294,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
   final TextEditingController _pinController = TextEditingController();
 
   void _verifyPin(BuildContext context) {
-    if (_pinController.text == appSettings.appPin || appSettings.useNoneLock) {
+    if (appSettings.useNoneLock || _pinController.text == appSettings.appPin) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const MainHomeScreen()),
@@ -1434,6 +1473,16 @@ class _PinLockScreenState extends State<PinLockScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // যদি কোনো সিকিউরিটি লক সেট করা না থাকে (বা None সিলেক্টেড থাকে), তবে স্বয়ংক্রিয়ভাবে মেইন স্ক্রিনে চলে যাবে
+    if (appSettings.useNoneLock) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainHomeScreen()),
+        );
+      });
+    }
+
     return AnimatedBuilder(
       animation: appSettings,
       builder: (context, _) => Scaffold(
@@ -1460,56 +1509,76 @@ class _PinLockScreenState extends State<PinLockScreen> {
                     style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 0.5),
                   ),
                   const SizedBox(height: 24),
-                  Text(appSettings.translate('Enter Your PIN'), style: TextStyle(fontSize: 16, color: Colors.grey.shade400)),
-                  const SizedBox(height: 24),
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(4, (index) {
-                          return Container(
-                            width: 55,
-                            height: 55,
-                            margin: const EdgeInsets.symmetric(horizontal: 6),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF1E293B),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: const Color(0xFF10B981), width: 1.5),
-                            ),
-                            child: Center(
-                              child: Text(_pinController.text.length > index ? '•' : '', style: const TextStyle(color: Colors.white, fontSize: 28)),
-                            ),
-                          );
-                        }),
-                      ),
-                      SizedBox(
-                        width: 250,
-                        height: 60,
-                        child: TextField(
-                          controller: _pinController,
-                          keyboardType: TextInputType.number,
-                          maxLength: 4,
-                          style: const TextStyle(color: Colors.transparent),
-                          cursorColor: Colors.transparent,
-                          decoration: const InputDecoration(counterText: '', border: InputBorder.none),
-                          onChanged: (value) {
-                            setState(() {});
-                            if (value.length == 4) _verifyPin(context);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 30),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28))),
-                      onPressed: () => _verifyPin(context),
-                      child: Text(appSettings.translate('Unlock'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  if (appSettings.useFaceLock || appSettings.useFingerprint || appSettings.usePatternLock) ...[
+                    const Icon(Icons.security, size: 48, color: Color(0xFF38BDF8)),
+                    const SizedBox(height: 12),
+                    Text(
+                      appSettings.useFaceLock 
+                          ? 'Face Authentication Required' 
+                          : (appSettings.useFingerprint ? 'Fingerprint Authentication Required' : 'Pattern Authentication Required'),
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
+                      textAlign: TextAlign.center,
                     ),
-                  ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.lock_open),
+                      onPressed: () => _verifyPin(context),
+                      label: const Text('Authenticate & Unlock'),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                  if (appSettings.usePinLock) ...[
+                    Text(appSettings.translate('Enter Your PIN'), style: TextStyle(fontSize: 16, color: Colors.grey.shade400)),
+                    const SizedBox(height: 24),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(4, (index) {
+                            return Container(
+                              width: 55,
+                              height: 55,
+                              margin: const EdgeInsets.symmetric(horizontal: 6),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF1E293B),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: const Color(0xFF10B981), width: 1.5),
+                              ),
+                              child: Center(
+                                child: Text(_pinController.text.length > index ? '•' : '', style: const TextStyle(color: Colors.white, fontSize: 28)),
+                              ),
+                            );
+                          }),
+                        ),
+                        SizedBox(
+                          width: 250,
+                          height: 60,
+                          child: TextField(
+                            controller: _pinController,
+                            keyboardType: TextInputType.number,
+                            maxLength: 4,
+                            style: const TextStyle(color: Colors.transparent),
+                            cursorColor: Colors.transparent,
+                            decoration: const InputDecoration(counterText: '', border: InputBorder.none),
+                            onChanged: (value) {
+                              setState(() {});
+                              if (value.length == 4) _verifyPin(context);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 30),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28))),
+                        onPressed: () => _verifyPin(context),
+                        child: Text(appSettings.translate('Unlock'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 20),
                   TextButton(
                     onPressed: () => _showForgotPinDialog(context),
@@ -1571,6 +1640,8 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
     double totalTaken = appSettings.getTotalTaken();
 
     List<int> years = List.generate(110, (index) => 1990 + index);
+    bool isBalHidden = appSettings.isHidden('dashboard_current_balance');
+    String displayBal = isBalHidden ? '********' : '${appSettings.localizeNumber(balance)} $curr';
 
     return AnimatedBuilder(
       animation: appSettings,
@@ -1722,10 +1793,26 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(appSettings.translate('Total Balance'), style: const TextStyle(color: Colors.grey)),
-                        Text(
-                          '${appSettings.localizeNumber(balance)} $curr', 
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: balance >= 0 ? const Color(0xFF10B981) : Colors.redAccent)
+                        Text(appSettings.translate('Current Balance'), style: const TextStyle(color: Colors.grey)),
+                        Row(
+                          children: [
+                            Text(
+                              displayBal, 
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: balance >= 0 ? const Color(0xFF10B981) : Colors.redAccent)
+                            ),
+                            const SizedBox(width: 8),
+                            InkWell(
+                              onTap: () {
+                                appSettings.toggleHide('dashboard_current_balance');
+                                setState(() {});
+                              },
+                              child: Icon(
+                                isBalHidden ? Icons.visibility_off : Icons.visibility,
+                                size: 18,
+                                color: const Color(0xFF10B981),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -1958,6 +2045,110 @@ class _CalculatorsHubScreenState extends State<CalculatorsHubScreen> {
   }
 }
 
+// ----------------- Goals / লক্ষ্য Screen -----------------
+class GoalsScreen extends StatefulWidget {
+  const GoalsScreen({super.key});
+
+  @override
+  State<GoalsScreen> createState() => _GoalsScreenState();
+}
+
+class _GoalsScreenState extends State<GoalsScreen> {
+  void _showAddEditGoalDialog({int? index, GoalModel? goal}) {
+    final titleC = TextEditingController(text: goal?.title ?? '');
+    final targetC = TextEditingController(text: goal != null ? goal.targetAmount.toString() : '');
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(index == null ? 'Add Goal ( লক্ষ্য )' : 'Edit Goal'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(controller: titleC, decoration: const InputDecoration(labelText: 'Goal Title (e.g., Motorcycle, Phone)', border: OutlineInputBorder())),
+            const SizedBox(height: 12),
+            TextField(controller: targetC, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Target Amount', border: OutlineInputBorder())),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () {
+              if (titleC.text.isNotEmpty && targetC.text.isNotEmpty) {
+                double target = double.tryParse(targetC.text) ?? 0.0;
+                if (index == null) {
+                  appSettings.addGoal(titleC.text, target);
+                } else {
+                  appSettings.updateGoal(index, titleC.text, target);
+                }
+                Navigator.pop(ctx);
+                setState(() {});
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String curr = appSettings.currency;
+    return AnimatedBuilder(
+      animation: appSettings,
+      builder: (context, _) => Scaffold(
+        appBar: AppBar(title: Text(appSettings.translate('Goals'))),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: appSettings.goalsList.isEmpty
+              ? const Center(child: Text('No goals added yet', style: TextStyle(color: Colors.grey)))
+              : ListView.builder(
+                  itemCount: appSettings.goalsList.length,
+                  itemBuilder: (context, index) {
+                    final goal = appSettings.goalsList[index];
+                    return Card(
+                      color: Theme.of(context).cardColor,
+                      margin: const EdgeInsets.only(bottom: 10),
+                      child: ListTile(
+                        leading: const Icon(Icons.flag, color: Color(0xFF10B981)),
+                        title: Text(goal.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        subtitle: Text('Target: ${appSettings.localizeNumber(goal.targetAmount)} $curr'),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddEditGoalDialog(index: index, goal: goal)),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20),
+                              onPressed: () {
+                                showLocalizedDeleteDialog(
+                                  context: context,
+                                  isImportant: false,
+                                  itemName: goal.title,
+                                  onDeleteConfirmed: () {
+                                    appSettings.removeGoal(index);
+                                    setState(() {});
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: const Color(0xFF10B981),
+          onPressed: () => _showAddEditGoalDialog(),
+          child: const Icon(Icons.add, color: Colors.white),
+        ),
+      ),
+    );
+  }
+}
+
 // ----------------- App Drawer -----------------
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -2119,11 +2310,11 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.track_changes),
+              leading: const Icon(Icons.flag),
               title: Text(appSettings.translate('Goals')),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const SavingsScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const GoalsScreen()));
               },
             ),
             ListTile(
@@ -2618,7 +2809,7 @@ class _FundShoppingScreenState extends State<FundShoppingScreen> {
           title: Text(appSettings.translate('Shopping')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
           ],
         ),
         body: Padding(
@@ -2751,7 +2942,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
           title: Text(appSettings.translate('Reminder')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
           ],
         ),
         body: Padding(
@@ -2873,7 +3064,7 @@ class _RepeatedTransactionsScreenState extends State<RepeatedTransactionsScreen>
           title: Text(appSettings.translate('Repeat')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
           ],
         ),
         body: Padding(
@@ -2980,7 +3171,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
           title: Text(appSettings.translate('Savings')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
           ],
         ),
         body: Padding(
@@ -3063,6 +3254,8 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
     List<int> years = List.generate(110, (index) => 1990 + index);
+    bool isBalHidden = appSettings.isHidden('home_current_balance');
+    String displayBal = isBalHidden ? '********' : '${appSettings.localizeNumber(appSettings.getTotalBalance())} $curr';
 
     return AnimatedBuilder(
       animation: appSettings,
@@ -3102,7 +3295,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           InkWell(
                             onTap: () => appSettings.toggleHide('home_current_balance'),
                             child: Icon(
-                              appSettings.isHidden('home_current_balance') ? Icons.visibility_off : Icons.visibility,
+                              isBalHidden ? Icons.visibility_off : Icons.visibility,
                               size: 20,
                               color: const Color(0xFF10B981),
                             ),
@@ -3111,7 +3304,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        appSettings.isHidden('home_current_balance') ? '********' : '${appSettings.localizeNumber(appSettings.getTotalBalance())} $curr', 
+                        displayBal, 
                         style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)
                       ),
                     ],
@@ -3357,6 +3550,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
 
   void _showAddEditLoanDialog(BuildContext context, {int? index, LoanItem? loan}) {
     String loanType = loan?.type ?? 'Given';
+    String selectedAccount = loan?.account ?? appSettings.accounts.firstWhere((acc) => acc.isDefault, orElse: () => appSettings.accounts[0]).name;
     final TextEditingController nameController = TextEditingController(text: loan?.personName ?? '');
     final TextEditingController amountController = TextEditingController(text: loan != null ? loan.amount.toString() : '');
 
@@ -3365,35 +3559,76 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
       builder: (ctx) {
         return StatefulBuilder(
           builder: (ctx, setStateModal) {
+            bool isAllAccHidden = appSettings.isHidden('popup_loan_accounts_visibility');
             return AlertDialog(
               title: Text(appSettings.translate(index == null ? 'Add New Loan / Debt' : 'Edit Loan / Debt')),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(backgroundColor: loanType == 'Given' ? Colors.green : Theme.of(context).cardColor),
-                          onPressed: () => setStateModal(() => loanType = 'Given'),
-                          child: Text(appSettings.translate('Given'), style: const TextStyle(fontSize: 11)),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(backgroundColor: loanType == 'Given' ? Colors.green : Theme.of(context).cardColor),
+                            onPressed: () => setStateModal(() => loanType = 'Given'),
+                            child: Text(appSettings.translate('Given'), style: const TextStyle(fontSize: 11)),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(backgroundColor: loanType == 'Taken' ? Colors.red : Theme.of(context).cardColor),
+                            onPressed: () => setStateModal(() => loanType = 'Taken'),
+                            child: Text(appSettings.translate('Taken'), style: const TextStyle(fontSize: 11)),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    // অ্যাকাউন্ট ড্রপডাউন উইথ গ্লোবাল আইকন
+                    DropdownButtonFormField<String>(
+                      value: selectedAccount,
+                      dropdownColor: Theme.of(context).cardColor,
+                      decoration: InputDecoration(
+                        labelText: appSettings.translate('Account'), 
+                        border: const OutlineInputBorder(),
+                        suffixIcon: IconButton(
+                          icon: Icon(isAllAccHidden ? Icons.visibility_off : Icons.visibility, color: const Color(0xFF10B981)),
+                          onPressed: () {
+                            appSettings.toggleHide('popup_loan_accounts_visibility');
+                            setStateModal(() {});
+                          },
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(backgroundColor: loanType == 'Taken' ? Colors.red : Theme.of(context).cardColor),
-                          onPressed: () => setStateModal(() => loanType = 'Taken'),
-                          child: Text(appSettings.translate('Taken'), style: const TextStyle(fontSize: 11)),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(controller: nameController, decoration: InputDecoration(labelText: appSettings.translate('Person Name'), border: const OutlineInputBorder())),
-                  const SizedBox(height: 12),
-                  TextField(controller: amountController, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: appSettings.translate('Amount'), border: const OutlineInputBorder())),
-                ],
+                      selectedItemBuilder: (BuildContext context) {
+                        return appSettings.accounts.map<Widget>((acc) {
+                          return Text(appSettings.translate(acc.name));
+                        }).toList();
+                      },
+                      items: appSettings.accounts.map((acc) {
+                        double accBal = appSettings.getAccountBalance(acc.name);
+                        String displayBal = isAllAccHidden ? '৳ *****' : '৳ ${appSettings.localizeNumber(accBal)}';
+
+                        return DropdownMenuItem(
+                          value: acc.name, 
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(appSettings.translate(acc.name), style: const TextStyle(fontWeight: FontWeight.w500)),
+                              Text(displayBal, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (val) { if (val != null) setStateModal(() => selectedAccount = val); },
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(controller: nameController, decoration: InputDecoration(labelText: appSettings.translate('Person Name'), border: const OutlineInputBorder())),
+                    const SizedBox(height: 12),
+                    TextField(controller: amountController, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: appSettings.translate('Amount'), border: const OutlineInputBorder())),
+                  ],
+                ),
               ),
               actions: [
                 TextButton(onPressed: () => Navigator.pop(ctx), child: Text(appSettings.translate('Cancel'))),
@@ -3407,10 +3642,11 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                           personName: nameController.text,
                           amount: amt,
                           type: loanType,
+                          account: selectedAccount,
                           date: DateTime.now(),
                         ));
                       } else {
-                        appSettings.updateLoan(index, nameController.text, amt, loanType);
+                        appSettings.updateLoan(index, nameController.text, amt, loanType, selectedAccount);
                       }
                       Navigator.pop(ctx);
                       setState(() {});
@@ -3429,6 +3665,8 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
   @override
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
+    bool isNetBalHidden = appSettings.isHidden('loan_net_balance');
+    String displayNetBal = isNetBalHidden ? '********' : '${appSettings.localizeNumber(appSettings.getNetBalance())} $curr';
 
     var filteredLoans = appSettings.loans.where((loan) {
       if (selectedFilter == 'Given') return loan.type == 'Given' && !loan.isPaid;
@@ -3484,10 +3722,26 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                 ),
                 child: Column(
                   children: [
-                    Text(appSettings.translate('Net Balance'), style: const TextStyle(color: Colors.grey, fontSize: 14)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(appSettings.translate('Current Balance'), style: const TextStyle(color: Colors.grey, fontSize: 14)),
+                        InkWell(
+                          onTap: () {
+                            appSettings.toggleHide('loan_net_balance');
+                            setState(() {});
+                          },
+                          child: Icon(
+                            isNetBalHidden ? Icons.visibility_off : Icons.visibility,
+                            size: 18,
+                            color: const Color(0xFF10B981),
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 6),
                     Text(
-                      '${appSettings.localizeNumber(appSettings.getNetBalance())} $curr', 
+                      displayNetBal, 
                       style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)
                     ),
                     const Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Divider(color: Colors.grey)),
@@ -3555,7 +3809,7 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                                 child: Icon(isGiven ? Icons.arrow_upward : Icons.arrow_downward, color: isGiven ? Colors.green : Colors.red),
                               ),
                               title: Text(loan.personName, style: TextStyle(fontWeight: FontWeight.bold, decoration: loan.isPaid ? TextDecoration.lineThrough : null)),
-                              subtitle: Text('${appSettings.translate(loan.type)} - ${appSettings.localizeNumber(loan.date.toString().substring(0, 10))}'),
+                              subtitle: Text('${appSettings.translate(loan.type)} (${appSettings.translate(loan.account)}) - ${appSettings.localizeNumber(loan.date.toString().substring(0, 10))}'),
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -3633,6 +3887,7 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
       builder: (ctx) {
         return StatefulBuilder(
           builder: (ctx, setStateModal) {
+            bool isAllAccHidden = appSettings.isHidden('popup_transaction_accounts_visibility');
             return Padding(
               padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
               child: SingleChildScrollView(
@@ -3666,7 +3921,17 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                     DropdownButtonFormField<String>(
                       value: selectedAccount,
                       dropdownColor: Theme.of(context).cardColor,
-                      decoration: InputDecoration(labelText: appSettings.translate('Account'), border: const OutlineInputBorder()),
+                      decoration: InputDecoration(
+                        labelText: appSettings.translate('Account'), 
+                        border: const OutlineInputBorder(),
+                        suffixIcon: IconButton(
+                          icon: Icon(isAllAccHidden ? Icons.visibility_off : Icons.visibility, color: const Color(0xFF10B981)),
+                          onPressed: () {
+                            appSettings.toggleHide('popup_transaction_accounts_visibility');
+                            setStateModal(() {});
+                          },
+                        ),
+                      ),
                       selectedItemBuilder: (BuildContext context) {
                         return appSettings.accounts.map<Widget>((acc) {
                           return Text(appSettings.translate(acc.name));
@@ -3674,9 +3939,7 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                       },
                       items: appSettings.accounts.map((acc) {
                         double accBal = appSettings.getAccountBalance(acc.name);
-                        String popupHideKey = 'popup_acc_${acc.name}';
-                        bool isHidden = appSettings.isHidden(popupHideKey);
-                        String displayBal = isHidden ? '৳ *****' : '৳ ${appSettings.localizeNumber(accBal)}';
+                        String displayBal = isAllAccHidden ? '৳ *****' : '৳ ${appSettings.localizeNumber(accBal)}';
 
                         return DropdownMenuItem(
                           value: acc.name, 
@@ -3684,27 +3947,7 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(appSettings.translate(acc.name), style: const TextStyle(fontWeight: FontWeight.w500)),
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(displayBal, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                                  const SizedBox(width: 8),
-                                  InkWell(
-                                    onTap: () {
-                                      appSettings.toggleHide(popupHideKey);
-                                      setStateModal(() {});
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: Icon(
-                                        isHidden ? Icons.visibility_off : Icons.visibility,
-                                        size: 16,
-                                        color: const Color(0xFF10B981),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              Text(displayBal, style: const TextStyle(fontSize: 12, color: Colors.grey)),
                             ],
                           ),
                         );
@@ -3724,40 +3967,54 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                     const SizedBox(height: 12),
                     TextField(controller: descController, decoration: InputDecoration(labelText: appSettings.translate('Description'), border: const OutlineInputBorder())),
                     const SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
-                        onPressed: () {
-                          if (amountController.text.isNotEmpty) {
-                            double amount = double.tryParse(amountController.text) ?? 0.0;
-                            if (index == null) {
-                              appSettings.addTransaction(TransactionItem(
-                                id: DateTime.now().toString(),
-                                type: transactionType,
-                                account: selectedAccount,
-                                category: selectedCategory,
-                                amount: amount,
-                                description: descController.text,
-                                date: DateTime.now(),
-                              ));
-                            } else {
-                              appSettings.updateTransaction(index, TransactionItem(
-                                id: txn!.id,
-                                type: transactionType,
-                                account: selectedAccount,
-                                category: selectedCategory,
-                                amount: amount,
-                                description: descController.text,
-                                date: txn.date,
-                              ));
-                            }
-                            Navigator.pop(ctx);
-                            setState(() {});
-                          }
-                        },
-                        child: Text(appSettings.translate('Save'), style: const TextStyle(fontSize: 16)),
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              side: const BorderSide(color: Colors.grey),
+                            ),
+                            onPressed: () => Navigator.pop(ctx),
+                            child: Text(appSettings.translate('Cancel'), style: const TextStyle(fontSize: 16, color: Colors.grey)),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+                            onPressed: () {
+                              if (amountController.text.isNotEmpty) {
+                                double amount = double.tryParse(amountController.text) ?? 0.0;
+                                if (index == null) {
+                                  appSettings.addTransaction(TransactionItem(
+                                    id: DateTime.now().toString(),
+                                    type: transactionType,
+                                    account: selectedAccount,
+                                    category: selectedCategory,
+                                    amount: amount,
+                                    description: descController.text,
+                                    date: DateTime.now(),
+                                  ));
+                                } else {
+                                  appSettings.updateTransaction(index, TransactionItem(
+                                    id: txn!.id,
+                                    type: transactionType,
+                                    account: selectedAccount,
+                                    category: selectedCategory,
+                                    amount: amount,
+                                    description: descController.text,
+                                    date: txn.date,
+                                  ));
+                                }
+                                Navigator.pop(ctx);
+                                setState(() {});
+                              }
+                            },
+                            child: Text(appSettings.translate('Save'), style: const TextStyle(fontSize: 16)),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -3770,961 +4027,4 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
   }
 
   void _showFilterDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Filter Transactions'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: ['All', 'Income', 'Expense'].map((type) {
-            return ListTile(
-              title: Text(type),
-              onTap: () {
-                setState(() => filterType = type);
-                Navigator.pop(ctx);
-              },
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    String curr = appSettings.currency;
-
-    var list = appSettings.transactions.where((txn) {
-      bool matchesSearch = txn.category.toLowerCase().contains(searchQuery.toLowerCase()) ||
-          txn.description.toLowerCase().contains(searchQuery.toLowerCase()) ||
-          txn.account.toLowerCase().contains(searchQuery.toLowerCase());
-      if (filterType == 'Income') return matchesSearch && txn.type == 'Income';
-      if (filterType == 'Expense') return matchesSearch && txn.type == 'Expense';
-      return matchesSearch;
-    }).toList();
-
-    return AnimatedBuilder(
-      animation: appSettings,
-      builder: (context, _) => Scaffold(
-        appBar: AppBar(
-          title: Text(appSettings.translate('All Transactions')),
-          actions: [
-            Builder(
-              builder: (ctx) => IconButton(
-                icon: const Icon(Icons.download),
-                tooltip: 'Download',
-                onPressed: () {
-                  final RenderBox box = ctx.findRenderObject() as RenderBox;
-                  final offset = box.localToGlobal(Offset.zero);
-                  showStandardDownloadMenu(context, offset);
-                },
-              ),
-            ),
-            Builder(
-              builder: (ctx) => IconButton(
-                icon: const Icon(Icons.sort),
-                tooltip: 'Sort Transactions',
-                onPressed: () {
-                  final RenderBox box = ctx.findRenderObject() as RenderBox;
-                  final offset = box.localToGlobal(Offset.zero);
-                  showStandardSortMenu(context, offset, (val) {
-                    appSettings.sortTransactions(val);
-                    setState(() {});
-                  });
-                },
-              ),
-            ),
-          ],
-        ),
-        drawer: const AppDrawer(),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      onChanged: (val) => setState(() => searchQuery = val),
-                      decoration: InputDecoration(
-                        hintText: appSettings.translate('Search (note, category)...'),
-                        prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                        filled: true,
-                        fillColor: Theme.of(context).cardColor,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  InkWell(
-                    onTap: () => _showFilterDialog(context),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
-                      child: const Icon(Icons.filter_list, color: Color(0xFF10B981)),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: list.isEmpty
-                    ? const Center(child: Text('No transactions found', style: TextStyle(color: Colors.grey)))
-                    : ListView.builder(
-                        itemCount: list.length,
-                        itemBuilder: (context, index) {
-                          final txn = list[index];
-                          bool isIncome = txn.type == 'Income';
-
-                          return Card(
-                            color: Theme.of(context).cardColor,
-                            margin: const EdgeInsets.only(bottom: 8),
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: (isIncome ? Colors.green : Colors.red).withOpacity(0.2),
-                                child: Icon(isIncome ? Icons.add : Icons.remove, color: isIncome ? Colors.green : Colors.red),
-                              ),
-                              title: Text('${appSettings.translate(txn.category)} (${appSettings.translate(txn.account)})', style: const TextStyle(fontWeight: FontWeight.bold)),
-                              subtitle: Text('${appSettings.translate(txn.description)}\n${appSettings.localizeNumber(txn.date.toString().substring(0, 16))}'),
-                              isThreeLine: true,
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    '${isIncome ? '+' : '-'} $curr ${appSettings.localizeNumber(txn.amount)}',
-                                    style: TextStyle(color: isIncome ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20),
-                                    onPressed: () => _showAddEditTransactionDialog(context, index: index, txn: txn),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20),
-                                    onPressed: () {
-                                      showLocalizedDeleteDialog(
-                                        context: context,
-                                        isImportant: true,
-                                        itemName: txn.category,
-                                        onDeleteConfirmed: () {
-                                          appSettings.removeTransaction(index);
-                                          setState(() {});
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-              ),
-            ],
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: const Color(0xFF10B981),
-          onPressed: () => _showAddEditTransactionDialog(context),
-          child: const Icon(Icons.add, color: Colors.white),
-        ),
-      ),
-    );
-  }
-}
-
-// ----------------- Reports & Analysis Screen -----------------
-class ReportsScreen extends StatefulWidget {
-  const ReportsScreen({super.key});
-
-  @override
-  State<ReportsScreen> createState() => _ReportsScreenState();
-}
-
-class _ReportsScreenState extends State<ReportsScreen> {
-  bool isSortedAscending = true;
-  String currentFilterMode = 'This Month';
-
-  @override
-  Widget build(BuildContext context) {
-    String curr = appSettings.currency;
-    double income = appSettings.getTotalIncome();
-    double expense = appSettings.getTotalExpense();
-    double budget = appSettings.monthlyBudget;
-    double progress = budget > 0 ? (expense / budget).clamp(0.0, 1.0) : 0.0;
-
-    List<int> years = List.generate(110, (index) => 1990 + index);
-
-    Map<String, double> categoryExpenses = {};
-    for (var txn in appSettings.getFilteredTransactions()) {
-      if (txn.type == 'Expense') {
-        categoryExpenses[txn.category] = (categoryExpenses[txn.category] ?? 0.0) + txn.amount;
-      }
-    }
-
-    var categoryList = categoryExpenses.entries.toList();
-    if (isSortedAscending) {
-      categoryList.sort((a, b) => a.value.compareTo(b.value));
-    } else {
-      categoryList.sort((a, b) => b.value.compareTo(a.value));
-    }
-
-    return AnimatedBuilder(
-      animation: appSettings,
-      builder: (context, _) => Scaffold(
-        appBar: AppBar(
-          title: Text(appSettings.translate('Reports & Analysis')),
-          actions: [
-            Builder(
-              builder: (ctx) => IconButton(
-                icon: const Icon(Icons.download),
-                tooltip: 'Download',
-                onPressed: () {
-                  final RenderBox box = ctx.findRenderObject() as RenderBox;
-                  final offset = box.localToGlobal(Offset.zero);
-                  showStandardDownloadMenu(context, offset);
-                },
-              ),
-            ),
-            Builder(
-              builder: (ctx) => IconButton(
-                icon: const Icon(Icons.sort),
-                tooltip: 'Sort Categories',
-                onPressed: () {
-                  final RenderBox box = ctx.findRenderObject() as RenderBox;
-                  final offset = box.localToGlobal(Offset.zero);
-                  showStandardSortMenu(context, offset, (val) {
-                    setState(() => isSortedAscending = val.contains('Small-Large') || val.contains('A-Z') || val.contains('Old-New'));
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Report Sorted by: $val')));
-                  });
-                },
-              ),
-            ),
-          ],
-        ),
-        drawer: const AppDrawer(),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    ChoiceChip(
-                      label: Text(appSettings.translate('This Month')),
-                      selected: currentFilterMode == 'This Month',
-                      selectedColor: const Color(0xFF10B981),
-                      onSelected: (val) {
-                        setState(() {
-                          currentFilterMode = 'This Month';
-                          appSettings.setTimeFilter('Month');
-                          appSettings.setMonthYear(DateTime.now().month, DateTime.now().year);
-                        });
-                      },
-                    ),
-                    const SizedBox(width: 8),
-                    ChoiceChip(
-                      label: Text(appSettings.translate('Custom Months')),
-                      selected: currentFilterMode == 'Custom Months',
-                      selectedColor: const Color(0xFF10B981),
-                      onSelected: (val) => setState(() => currentFilterMode = 'Custom Months'),
-                    ),
-                    const SizedBox(width: 8),
-                    ChoiceChip(
-                      label: Text(appSettings.translate('Custom Years')),
-                      selected: currentFilterMode == 'Custom Years',
-                      selectedColor: const Color(0xFF10B981),
-                      onSelected: (val) => setState(() => currentFilterMode = 'Custom Years'),
-                    ),
-                    const SizedBox(width: 8),
-                    ChoiceChip(
-                      label: Text(appSettings.translate('Custom Range')),
-                      selected: currentFilterMode == 'Custom Range',
-                      selectedColor: const Color(0xFF10B981),
-                      onSelected: (val) {
-                        setState(() {
-                          currentFilterMode = 'Custom Range';
-                          appSettings.setTimeFilter('Custom Range');
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-              if (currentFilterMode == 'Custom Months' || currentFilterMode == 'This Month')
-                Row(
-                  children: [
-                    Expanded(
-                      child: DropdownButtonFormField<int>(
-                        value: appSettings.selectedMonthIndex,
-                        dropdownColor: Theme.of(context).cardColor,
-                        decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
-                        items: List.generate(12, (i) => DropdownMenuItem(value: i + 1, child: Text(appSettings.getLocalizedMonth(i + 1)))),
-                        onChanged: (val) { if (val != null) setState(() => appSettings.setMonthYear(val, appSettings.selectedYear)); },
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: DropdownButtonFormField<int>(
-                        value: appSettings.selectedYear,
-                        dropdownColor: Theme.of(context).cardColor,
-                        decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8)),
-                        items: years.map((y) => DropdownMenuItem(value: y, child: Text(appSettings.localizeNumber(y)))).toList(),
-                        onChanged: (val) { if (val != null) setState(() => appSettings.setMonthYear(appSettings.selectedMonthIndex, val)); },
-                      ),
-                    ),
-                  ],
-                ),
-              if (currentFilterMode == 'Custom Years')
-                DropdownButtonFormField<int>(
-                  value: appSettings.selectedYear,
-                  dropdownColor: Theme.of(context).cardColor,
-                  decoration: InputDecoration(labelText: appSettings.translate('Year'), border: const OutlineInputBorder()),
-                  items: years.map((y) => DropdownMenuItem(value: y, child: Text(appSettings.localizeNumber(y)))).toList(),
-                  onChanged: (val) { if (val != null) setState(() => appSettings.setMonthYear(appSettings.selectedMonthIndex, val)); },
-                ),
-              if (currentFilterMode == 'Custom Range')
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () async {
-                          DateTime? picked = await showLocalizedDatePicker(
-                            context: context,
-                            initialDate: appSettings.customStartDate ?? DateTime.now(),
-                            firstDate: DateTime(1990),
-                            lastDate: DateTime(2100),
-                          );
-                          if (picked != null) {
-                            appSettings.setCustomDateRange(picked, appSettings.customEndDate ?? picked);
-                            setState(() {});
-                          }
-                        },
-                        child: AbsorbPointer(
-                          child: TextField(
-                            controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
-                            decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () async {
-                          DateTime? picked = await showLocalizedDatePicker(
-                            context: context,
-                            initialDate: appSettings.customEndDate ?? DateTime.now(),
-                            firstDate: DateTime(1990),
-                            lastDate: DateTime(2100),
-                          );
-                          if (picked != null) {
-                            appSettings.setCustomDateRange(appSettings.customStartDate ?? picked, picked);
-                            setState(() {});
-                          }
-                        },
-                        child: AbsorbPointer(
-                          child: TextField(
-                            controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
-                            decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(appSettings.translate('Monthly Budget Overview'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                    const SizedBox(height: 8),
-                    Text('${appSettings.translate('Budget:')} ${appSettings.localizeNumber(budget)} $curr | ${appSettings.translate('Spent:')} ${appSettings.localizeNumber(expense)} $curr', style: const TextStyle(color: Colors.grey, fontSize: 13)),
-                    const SizedBox(height: 8),
-                    LinearProgressIndicator(value: progress, color: const Color(0xFF10B981), backgroundColor: Colors.white12),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('${appSettings.translate('Total Income:')} ${appSettings.localizeNumber(income)} $curr', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-                        Text('${appSettings.translate('Total Expense:')} ${appSettings.localizeNumber(expense)} $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(appSettings.translate('Expense Categories'), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  TextButton.icon(
-                    onPressed: () => setState(() => isSortedAscending = !isSortedAscending),
-                    icon: const Icon(Icons.sort, size: 16, color: Color(0xFF10B981)),
-                    label: Text(isSortedAscending ? appSettings.translate('Sort: Low-High') : appSettings.translate('Sort: High-Low'), style: const TextStyle(fontSize: 12, color: Color(0xFF10B981))),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              categoryList.isEmpty
-                  ? const Padding(padding: EdgeInsets.all(20.0), child: Center(child: Text('No expense categories found', style: TextStyle(color: Colors.grey))))
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: categoryList.length,
-                      itemBuilder: (context, index) {
-                        final catEntry = categoryList[index];
-
-                        return Card(
-                          color: Theme.of(context).cardColor,
-                          margin: const EdgeInsets.only(bottom: 8),
-                          child: ListTile(
-                            leading: CircleAvatar(backgroundColor: Colors.red[100], child: const Icon(Icons.category, color: Colors.redAccent)),
-                            title: Text(appSettings.translate(catEntry.key), style: const TextStyle(fontWeight: FontWeight.bold)),
-                            trailing: Text('${appSettings.localizeNumber(catEntry.value)} $curr', style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
-                          ),
-                        );
-                      },
-                    ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ----------------- Privacy & Security Screen -----------------
-class PrivacySecurityScreen extends StatefulWidget {
-  const PrivacySecurityScreen({super.key});
-
-  @override
-  State<PrivacySecurityScreen> createState() => _PrivacySecurityScreenState();
-}
-
-class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
-  late TextEditingController _pinController;
-  bool _obscurePin = true;
-
-  bool _faceLock = false;
-  bool _fingerprint = false;
-  bool _noneLock = false;
-  bool _patternLock = false;
-  bool _pinLock = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _pinController = TextEditingController(text: appSettings.appPin);
-    _faceLock = appSettings.useFaceLock;
-    _fingerprint = appSettings.useFingerprint;
-    _noneLock = appSettings.useNoneLock;
-    _patternLock = appSettings.usePatternLock;
-    _pinLock = appSettings.usePinLock;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: appSettings,
-      builder: (context, _) => Scaffold(
-        appBar: AppBar(title: Text(appSettings.translate('Privacy & Security'))),
-        body: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            Text(appSettings.translate('Security Options'), style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            Card(
-              color: Theme.of(context).cardColor,
-              child: Column(
-                children: [
-                  SwitchListTile(
-                    title: Text(appSettings.translate('Face Unlock')),
-                    subtitle: Text(appSettings.translate('Scan & unlock with camera')),
-                    value: _faceLock,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) => setState(() { _faceLock = val; if (val) _noneLock = false; }),
-                  ),
-                  SwitchListTile(
-                    title: Text(appSettings.translate('Fingerprint Sensor')),
-                    subtitle: Text(appSettings.translate('Unlock using device fingerprint')),
-                    value: _fingerprint,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) => setState(() { _fingerprint = val; if (val) _noneLock = false; }),
-                  ),
-                  SwitchListTile(
-                    title: Text(appSettings.translate('None (No Lock)')),
-                    subtitle: Text(appSettings.translate('Bypass lock screen security')),
-                    value: _noneLock,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) => setState(() {
-                      _noneLock = val;
-                      if (val) { _faceLock = false; _fingerprint = false; _patternLock = false; _pinLock = false; }
-                    }),
-                  ),
-                  SwitchListTile(
-                    title: Text(appSettings.translate('Pattern Lock')),
-                    subtitle: Text(appSettings.translate('Draw a secure pattern shape')),
-                    value: _patternLock,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) => setState(() { _patternLock = val; if (val) _noneLock = false; }),
-                  ),
-                  SwitchListTile(
-                    title: Text(appSettings.translate('PIN Code Lock')),
-                    subtitle: Text(appSettings.translate('Use a 4-digit numeric code')),
-                    value: _pinLock,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) => setState(() { _pinLock = val; if (val) _noneLock = false; }),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            if (_pinLock) ...[
-              Text(appSettings.translate('Change PIN Code'), style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              Card(
-                color: Theme.of(context).cardColor,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: TextField(
-                    controller: _pinController,
-                    keyboardType: TextInputType.number,
-                    maxLength: 4,
-                    obscureText: _obscurePin,
-                    decoration: InputDecoration(
-                      labelText: appSettings.translate('4-Digit App PIN'),
-                      border: const OutlineInputBorder(),
-                      counterText: '',
-                      suffixIcon: IconButton(
-                        icon: Icon(_obscurePin ? Icons.visibility : Icons.visibility_off),
-                        onPressed: () => setState(() => _obscurePin = !_obscurePin),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-            const SizedBox(height: 30),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                onPressed: () {
-                  if (_pinController.text.length == 4 || _noneLock || !_pinLock) {
-                    if (_pinLock) appSettings.updatePin(_pinController.text);
-                    appSettings.updateSecurityToggles(
-                      face: _faceLock,
-                      fingerprint: _fingerprint,
-                      none: _noneLock,
-                      pattern: _patternLock,
-                      pin: _pinLock,
-                    );
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Security settings updated successfully!')));
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('PIN must be exactly 4 digits!')));
-                  }
-                },
-                child: Text(appSettings.translate('Save Changes'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ----------------- Notification Settings Screen -----------------
-class NotificationSettingsScreen extends StatefulWidget {
-  const NotificationSettingsScreen({super.key});
-
-  @override
-  State<NotificationSettingsScreen> createState() => _NotificationSettingsScreenState();
-}
-
-class _NotificationSettingsScreenState extends State<NotificationSettingsScreen> {
-  late bool daily;
-  late bool budget;
-  late bool loan;
-  String selectedSound = 'Default';
-
-  @override
-  void initState() {
-    super.initState();
-    daily = appSettings.dailyReminder;
-    budget = appSettings.budgetAlert;
-    loan = appSettings.loanAlert;
-    selectedSound = appSettings.notificationSound;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: appSettings,
-      builder: (context, _) => Scaffold(
-        appBar: AppBar(title: Text(appSettings.translate('Notification Settings'))),
-        body: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            Text(appSettings.translate('Manage App Alerts & Reminders'), style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            Card(
-              color: Theme.of(context).cardColor,
-              child: Column(
-                children: [
-                  SwitchListTile(
-                    title: Text(appSettings.translate('Daily Transaction Reminder')),
-                    subtitle: Text(appSettings.translate('Get reminded to record daily expenses')),
-                    value: daily,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) => setState(() => daily = val),
-                  ),
-                  SwitchListTile(
-                    title: Text(appSettings.translate('Budget Limit Alert')),
-                    subtitle: Text(appSettings.translate('Notify when expenses reach near budget limit')),
-                    value: budget,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) => setState(() => budget = val),
-                  ),
-                  SwitchListTile(
-                    title: Text(appSettings.translate('Loan Payment Due Alert')),
-                    subtitle: Text(appSettings.translate('Alert on upcoming loan settlement dates')),
-                    value: loan,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) => setState(() => loan = val),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(appSettings.translate('Notification Sound & Alert Tone'), style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              value: selectedSound,
-              dropdownColor: Theme.of(context).cardColor,
-              decoration: const InputDecoration(border: OutlineInputBorder()),
-              items: ['Default', 'App Chime', 'Custom from Device Memory'].map((s) => DropdownMenuItem(value: s, child: Text(appSettings.translate(s)))).toList(),
-              onChanged: (val) { if (val != null) setState(() => selectedSound = val); },
-            ),
-            const SizedBox(height: 30),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                onPressed: () {
-                  appSettings.toggleNotification('daily', daily);
-                  appSettings.toggleNotification('budget', budget);
-                  appSettings.toggleNotification('loan', loan);
-                  appSettings.setNotificationSound(selectedSound);
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Notification settings updated successfully!')));
-                },
-                child: Text(appSettings.translate('Save Changes'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ----------------- Profile & Settings Screen -----------------
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
-
-  @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
-  final ImagePicker _picker = ImagePicker();
-
-  void _showProfileImagePicker() {
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => Wrap(
-        children: [
-          ListTile(
-            leading: const Icon(Icons.camera_alt, color: Color(0xFF10B981)),
-            title: const Text('Take Photo with Camera'),
-            onTap: () async {
-              Navigator.pop(ctx);
-              final XFile? image = await _picker.pickImage(source: ImageSource.camera);
-              if (image != null) {
-                appSettings.updateProfile(
-                  name: appSettings.profileName,
-                  email: appSettings.profileEmail,
-                  gender: appSettings.profileGender,
-                  birthDate: appSettings.profileBirthDate,
-                  mobile: appSettings.profileMobile,
-                  imagePath: image.path,
-                );
-                setState(() {});
-              }
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.photo_library, color: Color(0xFF10B981)),
-            title: const Text('Choose from Gallery'),
-            onTap: () async {
-              Navigator.pop(ctx);
-              final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-              if (image != null) {
-                appSettings.updateProfile(
-                  name: appSettings.profileName,
-                  email: appSettings.profileEmail,
-                  gender: appSettings.profileGender,
-                  birthDate: appSettings.profileBirthDate,
-                  mobile: appSettings.profileMobile,
-                  imagePath: image.path,
-                );
-                setState(() {});
-              }
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showEditProfileDialog(BuildContext context) {
-    final nameC = TextEditingController(text: appSettings.profileName);
-    final emailC = TextEditingController(text: appSettings.profileEmail);
-    String selectedGender = appSettings.profileGender;
-    String birthDate = appSettings.profileBirthDate;
-    final mobileC = TextEditingController(text: appSettings.profileMobile);
-
-    showDialog(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setStateDialog) => AlertDialog(
-          title: Text(appSettings.translate('Edit Profile')),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(controller: nameC, decoration: InputDecoration(labelText: appSettings.translate('Name'), border: const OutlineInputBorder())),
-                const SizedBox(height: 12),
-                TextField(controller: emailC, decoration: InputDecoration(labelText: appSettings.translate('Email'), border: const OutlineInputBorder())),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  value: ['Male', 'Female', 'Other'].contains(selectedGender) ? selectedGender : 'Male',
-                  dropdownColor: Theme.of(context).cardColor,
-                  decoration: InputDecoration(labelText: appSettings.translate('Gender'), border: const OutlineInputBorder()),
-                  items: ['Male', 'Female', 'Other'].map((g) => DropdownMenuItem(value: g, child: Text(appSettings.translate(g)))).toList(),
-                  onChanged: (val) { if (val != null) setStateDialog(() => selectedGender = val); },
-                ),
-                const SizedBox(height: 12),
-                GestureDetector(
-                  onTap: () async {
-                    DateTime? pickedDate = await showLocalizedDatePicker(
-                      context: context,
-                      initialDate: DateTime(1995, 1, 1),
-                      firstDate: DateTime(1900),
-                      lastDate: DateTime.now(),
-                    );
-                    if (pickedDate != null) {
-                      setStateDialog(() {
-                        String rawDate = "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                        birthDate = appSettings.localizeNumber(rawDate);
-                      });
-                    }
-                  },
-                  child: AbsorbPointer(
-                    child: TextField(
-                      controller: TextEditingController(text: appSettings.localizeNumber(birthDate)),
-                      decoration: InputDecoration(labelText: appSettings.translate('Birth Date (DD-MM-YYYY)'), border: const OutlineInputBorder(), suffixIcon: const Icon(Icons.calendar_today)),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: mobileC, 
-                  keyboardType: TextInputType.phone, 
-                  decoration: InputDecoration(labelText: appSettings.translate('Mobile Number'), border: const OutlineInputBorder())
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(appSettings.translate('Cancel'))),
-            ElevatedButton(
-              onPressed: () {
-                appSettings.updateProfile(
-                  name: nameC.text,
-                  email: emailC.text,
-                  gender: selectedGender,
-                  birthDate: appSettings.localizeNumber(birthDate),
-                  mobile: appSettings.localizeNumber(mobileC.text),
-                );
-                Navigator.pop(ctx);
-                setState(() {});
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile updated successfully!')));
-              },
-              child: Text(appSettings.translate('Save')),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: appSettings,
-      builder: (context, _) => Scaffold(
-        appBar: AppBar(title: Text(appSettings.translate('Profile & Settings'))),
-        drawer: const AppDrawer(),
-        body: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: const Color(0xFF10B981),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                children: [
-                  Stack(
-                    children: [
-                      CircleAvatar(
-                        radius: 35,
-                        backgroundColor: Colors.white,
-                        backgroundImage: appSettings.profileImagePath.isNotEmpty ? FileImage(File(appSettings.profileImagePath)) : null,
-                        child: appSettings.profileImagePath.isEmpty ? const Icon(Icons.person, size: 45, color: Color(0xFF10B981)) : null,
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: InkWell(
-                          onTap: _showProfileImagePicker,
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black),
-                            child: const Icon(Icons.edit, size: 14, color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(appSettings.profileName, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 4),
-                  Text(appSettings.profileEmail, style: const TextStyle(color: Colors.white70, fontSize: 13)),
-                  const SizedBox(height: 8),
-                  Text('${appSettings.translate('Gender')}: ${appSettings.translate(appSettings.profileGender)} | ${appSettings.translate('DOB')}: ${appSettings.localizeNumber(appSettings.profileBirthDate)}', style: const TextStyle(color: Colors.white70, fontSize: 11)),
-                  const SizedBox(height: 4),
-                  Text('${appSettings.translate('Mobile')}: ${appSettings.localizeNumber(appSettings.profileMobile)}', style: const TextStyle(color: Colors.white70, fontSize: 11)),
-                  const SizedBox(height: 14),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black26,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    ),
-                    onPressed: () => _showEditProfileDialog(context),
-                    icon: const Icon(Icons.edit, size: 16),
-                    label: Text(appSettings.translate('Edit Profile')),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(appSettings.translate('Account'), style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            Card(
-              color: Theme.of(context).cardColor,
-              child: ListTile(
-                leading: const Icon(Icons.lock_outline, color: Color(0xFF10B981)),
-                title: Text(appSettings.translate('Privacy & Security')),
-                trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PrivacySecurityScreen())),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(appSettings.translate('Preferences'), style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            Card(
-              color: Theme.of(context).cardColor,
-              child: ListTile(
-                leading: const Icon(Icons.notifications_none, color: Color(0xFF10B981)),
-                title: Text(appSettings.translate('Notification Settings')),
-                trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationSettingsScreen())),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Card(
-              color: Theme.of(context).cardColor,
-              child: ListTile(
-                leading: const Icon(Icons.logout, color: Colors.redAccent),
-                title: Text(appSettings.translate('Sign Out'), style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
-                onTap: () {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const PinLockScreen()));
-                },
-              ),
-            ),
-            const SizedBox(height: 20),
-            Center(child: Text(appSettings.translate('Version 1.0.0'), style: const TextStyle(color: Colors.grey, fontSize: 12))),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ----------------- Main Navigation -----------------
-class MainHomeScreen extends StatefulWidget {
-  const MainHomeScreen({super.key});
-
-  @override
-  State<MainHomeScreen> createState() => _MainHomeScreenState();
-}
-
-class _MainHomeScreenState extends State<MainHomeScreen> {
-  int _currentIndex = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    final List<Widget> pages = [
-      const HomeScreenContent(),
-      const LoanDebtScreen(),
-      const AllTransactionsScreen(), 
-      const ReportsScreen(),
-      const ProfileScreen(),
-    ];
-
-    return AnimatedBuilder(
-      animation: appSettings,
-      builder: (context, _) => Scaffold(
-        body: pages[_currentIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) => setState(() => _currentIndex = index),
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: const Color(0xFF10B981),
-          unselectedItemColor: Colors.grey,
-          backgroundColor: Theme.of(context).cardColor,
-          items: [
-            BottomNavigationBarItem(icon: const Icon(Icons.home), label: appSettings.translate('Account')),
-            BottomNavigationBarItem(icon: const Icon(Icons.money), label: appSettings.translate('Loan')),
-            BottomNavigationBarItem(icon: const Icon(Icons.list_alt), label: appSettings.translate('Transactions')),
-            BottomNavigationBarItem(icon: const Icon(Icons.bar_chart), label: appSettings.translate('Report')),
-            BottomNavigationBarItem(icon: const Icon(Icons.person), label: appSettings.translate('Profile')),
-          ],
-        ),
-      ),
-    );
-  }
-}
+    show
