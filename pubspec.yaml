@@ -1,7 +1,6 @@
 name: account_book
-description: "A new Flutter project for managing daily financial ledger and transactions."
-publish_to: 'none' 
-
+description: A professional financial ledger and transaction management application.
+publish_to: 'none'
 version: 1.0.0+1
 
 environment:
@@ -10,15 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
-  # বাংলা এবং অন্যান্য ভাষা ও ক্যালেন্ডার লোকাললাইজেশনের জন্য আবশ্যিক:
-  flutter_localizations:
-    sdk: flutter
-  intl: ^0.18.0
-
-  # আপনার কোডে ব্যবহৃত অন্যান্য প্যাকেজসমূহ:
   shared_preferences: ^2.2.2
-  image_picker: ^1.0.4
+  image_picker: ^1.0.7
+  flutter_local_notifications: ^17.0.0
 
 dev_dependencies:
   flutter_test:
