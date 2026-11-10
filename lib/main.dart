@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+Import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -56,7 +55,6 @@ class LoanItem {
   String personName;
   double amount;
   String type;
-  String account; // লোন ট্রানজ্যাকশনের জন্য অ্যাকাউন্ট ফিল্ড
   DateTime date;
   bool isPaid;
 
@@ -65,7 +63,6 @@ class LoanItem {
     required this.personName,
     required this.amount,
     required this.type,
-    required this.account,
     required this.date,
     this.isPaid = false,
   });
@@ -75,7 +72,6 @@ class LoanItem {
     'personName': personName,
     'amount': amount,
     'type': type,
-    'account': account,
     'date': date.toIso8601String(),
     'isPaid': isPaid,
   };
@@ -85,7 +81,6 @@ class LoanItem {
     personName: json['personName'],
     amount: json['amount'],
     type: json['type'],
-    account: json['account'] ?? 'Cash in Hand',
     date: DateTime.parse(json['date']),
     isPaid: json['isPaid'],
   );
@@ -119,16 +114,6 @@ class SavingsModel {
 
   Map<String, dynamic> toJson() => {'title': title, 'targetAmount': targetAmount, 'currentAmount': currentAmount, 'isCompleted': isCompleted};
   factory SavingsModel.fromJson(Map<String, dynamic> json) => SavingsModel(title: json['title'], targetAmount: json['targetAmount'], currentAmount: json['currentAmount'], isCompleted: json['isCompleted']);
-}
-
-class GoalModel {
-  String title;
-  double targetAmount;
-  double currentAmount;
-  GoalModel({required this.title, required this.targetAmount, required this.currentAmount});
-
-  Map<String, dynamic> toJson() => {'title': title, 'targetAmount': targetAmount, 'currentAmount': currentAmount};
-  factory GoalModel.fromJson(Map<String, dynamic> json) => GoalModel(title: json['title'], targetAmount: json['targetAmount'], currentAmount: json['currentAmount']);
 }
 
 class AccountModel {
@@ -168,7 +153,7 @@ class ReminderModel {
   factory ReminderModel.fromJson(Map<String, dynamic> json) => ReminderModel(title: json['title'], amount: json['amount'], dueDate: json['dueDate']);
 }
 
-// ----------------- State Management -----------------
+// ----------------- State Management with Persistent Storage -----------------
 class AppSettingsNotifier extends ChangeNotifier {
   late SharedPreferences _prefs;
 
@@ -253,15 +238,9 @@ class AppSettingsNotifier extends ChangeNotifier {
       personName: 'Rofiqul Islam',
       amount: 2000.0,
       type: 'Given',
-      account: 'Cash in Hand',
       date: DateTime.now(),
       isPaid: false,
     ),
-  ];
-
-  List<GoalModel> goalsList = [
-    GoalModel(title: 'Motorcycle', targetAmount: 150000, currentAmount: 30000),
-    GoalModel(title: 'Smartphone', targetAmount: 30000, currentAmount: 10000),
   ];
 
   List<ShoppingItem> shoppingList = [
@@ -275,7 +254,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   ];
 
   List<SavingsModel> savingsList = [
-    SavingsModel(title: 'Daughter Savings', targetAmount: 500000, currentAmount: 25000)
+    SavingsModel(title: 'Arufa Savings', targetAmount: 500000, currentAmount: 25000)
   ];
 
   List<RepeatedTransactionModel> repeatedTransactions = [
@@ -320,13 +299,6 @@ class AppSettingsNotifier extends ChangeNotifier {
   ThemeMode get themeMode => _themeMode;
   String get language => _language;
 
-  Locale? getLocale() {
-    if (_language == 'Bangla') return const Locale('bn', 'BD');
-    if (_language == 'Arabic') return const Locale('ar', 'AE');
-    if (_language == 'English') return const Locale('en', 'US');
-    return null; 
-  }
-
   String localizeNumber(dynamic number) {
     String str = number.toString();
     if (_language != 'Bangla') return str;
@@ -364,10 +336,8 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Accounts': return 'অ্যাকাউন্ট সমূহ';
         case 'Theme': return 'থিম';
         case 'Language': return 'ভাষা';
-        case 'System Default': return 'সিস্টেম ডিফল্ট';
         case 'About App': return 'অ্যাপ সম্পর্কে';
         case 'Current Balance': return 'বর্তমান ব্যালেন্স';
-        case 'Goals': return 'লক্ষ্য';
         case 'Month': return 'মাস';
         case 'Year': return 'বছর';
         case 'Income': return 'আয়';
@@ -399,6 +369,7 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Cash': return 'নগদ';
         case 'Bank': return 'ব্যাংক';
         case 'Settings': return 'সেটিংস';
+        case 'Goals': return 'লক্ষ্য';
         case 'Calculators': return 'ক্যালকুলেটর হাব';
         case 'Enter Your PIN': return 'আপনার পিন লিখুন';
         case 'Unlock': return 'আনলক করুন';
@@ -474,7 +445,7 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Mobile Number': return 'মোবাইল নম্বর';
         case 'Name': return 'নাম';
         case 'Email': return 'ইমেল';
-        case 'Net Balance': return 'বর্তমান ব্যালেন্স';
+        case 'Net Balance': return 'নিট ব্যালেন্স';
         case 'Spent': return 'ব্যয় হয়েছে';
         case 'Budget:': return 'বাজেট:';
         case 'Spent:': return 'ব্যয়:';
@@ -506,10 +477,8 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Accounts': return 'الحسابات';
         case 'Theme': return 'المظهر';
         case 'Language': return 'اللغة';
-        case 'System Default': return 'النظام الافتراضي';
         case 'About App': return 'حول التطبيق';
         case 'Current Balance': return 'الرصيد الحالي';
-        case 'Goals': return 'الأهداف';
         case 'Month': return 'شهر';
         case 'Year': return 'سنة';
         case 'Income': return 'إيرادات';
@@ -541,6 +510,7 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Cash': return 'نقدي';
         case 'Bank': return 'بنك';
         case 'Settings': return 'الإعدادات';
+        case 'Goals': return 'الأهداف';
         case 'Calculators': return 'الحاسبات';
         case 'Enter Your PIN': return 'أدخل رقم التعريف الشخصي';
         case 'Unlock': return 'فتح القفل';
@@ -550,7 +520,7 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Custom Years': return 'سنوات مخصصة';
         case 'Custom Range': return 'نطاق مخصص';
         case 'Financial Overview Summary': return 'ملخص النظرة العامة المالية';
-        case 'Total Balance': return 'الرصيد الحالي';
+        case 'Total Balance': return 'الإجمالي الكلي';
         case 'Total Income': return 'إجمالي الدخل';
         case 'Total Expense': return 'إجمالي المصروفات';
         case 'Loan & Debt Overview': return 'نظرة عامة على القروض والديون';
@@ -616,7 +586,7 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Mobile Number': return 'رقم الهاتف المحمول';
         case 'Name': return 'الاسم';
         case 'Email': return 'البريد الإلكتروني';
-        case 'Net Balance': return 'الرصيد الحالي';
+        case 'Net Balance': return 'الرصيد الصافي';
         case 'Spent': return 'المصروف';
         case 'Budget:': return 'الميزانية:';
         case 'Spent:': return 'المصروف:';
@@ -629,6 +599,15 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Account Name': return 'اسم الحساب';
         case 'Type': return 'النوع';
         case 'Details / Account Number': return 'التفاصيل / رقم الحساب';
+        case 'Add New Transaction': return 'إضافة معاملة جديدة';
+        case 'Edit Transaction': return 'تعديل المعاملة';
+        case 'Cash In': return 'إيداع';
+        case 'Cash Out': return 'سحب';
+        case 'Description': return 'الوصف';
+        case 'Amount': return 'المبلغ';
+        case 'Person Name': return 'اسم الشخص';
+        case 'Add New Loan / Debt': return 'إضافة قرض / دين جديد';
+        case 'Edit Loan / Debt': return 'تعديل القرض / الدين';
         default: return key;
       }
     }
@@ -741,11 +720,10 @@ class AppSettingsNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateLoan(int index, String personName, double amount, String type, String account) {
+  void updateLoan(int index, String personName, double amount, String type) {
     loans[index].personName = personName;
     loans[index].amount = amount;
     loans[index].type = type;
-    loans[index].account = account;
     notifyListeners();
   }
 
@@ -789,7 +767,7 @@ class AppSettingsNotifier extends ChangeNotifier {
     } else if (criteria.contains('A-Z')) {
       transactions.sort((a, b) => a.category.compareTo(b.category));
     } else if (criteria.contains('Z-A')) {
-      transactions.sort((a, b) => a.category.compareTo(b.category));
+      transactions.sort((a, b) => b.category.compareTo(a.category));
     } else if (criteria.contains('Number Large-Small')) {
       transactions.sort((a, b) => b.amount.compareTo(a.amount));
     } else if (criteria.contains('Number Small-Large')) {
@@ -924,24 +902,6 @@ class AppSettingsNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addGoal(String title, double target) {
-    goalsList.add(GoalModel(title: title, targetAmount: target, currentAmount: 0));
-    goalsList.sort((a, b) => a.title.compareTo(b.title));
-    notifyListeners();
-  }
-
-  void updateGoal(int index, String title, double targetAmount) {
-    goalsList[index].title = title;
-    goalsList[index].targetAmount = targetAmount;
-    goalsList.sort((a, b) => a.title.compareTo(b.title));
-    notifyListeners();
-  }
-
-  void removeGoal(int index) {
-    goalsList.removeAt(index);
-    notifyListeners();
-  }
-
   void addSavings(String title, double target) {
     savingsList.add(SavingsModel(title: title, targetAmount: target, currentAmount: 0));
     savingsList.sort((a, b) => a.title.compareTo(b.title));
@@ -1063,49 +1023,6 @@ class AppSettingsNotifier extends ChangeNotifier {
 
 final appSettings = AppSettingsNotifier();
 
-// ----------------- Helper for Language-Adaptive DatePicker -----------------
-Future<DateTime?> showLocalizedDatePicker({
-  required BuildContext context,
-  required DateTime initialDate,
-  required DateTime firstDate,
-  required DateTime lastDate,
-}) async {
-  Locale? currentLocale = appSettings.getLocale();
-  bool isDark = Theme.of(context).brightness == Brightness.dark;
-  return await showDatePicker(
-    context: context,
-    initialDate: initialDate,
-    firstDate: firstDate,
-    lastDate: lastDate,
-    locale: currentLocale ?? const Locale('en', 'US'),
-    builder: (context, child) {
-      return Localizations.override(
-        context: context,
-        locale: currentLocale ?? const Locale('en', 'US'),
-        child: Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: isDark
-                ? const ColorScheme.dark(
-                    primary: Color(0xFF10B981),
-                    onPrimary: Colors.white,
-                    surface: Color(0xFF1E293B),
-                    onSurface: Colors.white,
-                  )
-                : const ColorScheme.light(
-                    primary: Color(0xFF10B981),
-                    onPrimary: Colors.white,
-                    surface: Colors.white,
-                    onSurface: Colors.black,
-                  ),
-            dialogBackgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-          ),
-          child: child ?? const SizedBox(),
-        ),
-      );
-    },
-  );
-}
-
 // ----------------- App Entry Point -----------------
 class AccountBookApp extends StatelessWidget {
   const AccountBookApp({super.key});
@@ -1119,17 +1036,6 @@ class AccountBookApp extends StatelessWidget {
           title: appSettings.getAppTitle(),
           debugShowCheckedModeBanner: false,
           themeMode: appSettings.themeMode,
-          locale: appSettings.getLocale(),
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [
-            Locale('en', 'US'),
-            Locale('bn', 'BD'),
-            Locale('ar', 'AE'),
-          ],
           theme: ThemeData(
             brightness: Brightness.light,
             scaffoldBackgroundColor: const Color(0xFFF3F4F6),
@@ -1161,7 +1067,7 @@ class AccountBookApp extends StatelessWidget {
   }
 }
 
-// ----------------- Menus & Helpers -----------------
+// ----------------- Standard Menus & Helpers -----------------
 void showStandardDownloadMenu(BuildContext context, Offset offset) {
   String lang = appSettings.language;
   String previewText = lang == 'Bangla' ? 'প্রিভিউ' : (lang == 'Arabic' ? 'معاينة' : 'Preview');
@@ -1294,7 +1200,7 @@ class _PinLockScreenState extends State<PinLockScreen> {
   final TextEditingController _pinController = TextEditingController();
 
   void _verifyPin(BuildContext context) {
-    if (appSettings.useNoneLock || _pinController.text == appSettings.appPin) {
+    if (_pinController.text == appSettings.appPin || appSettings.useNoneLock) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const MainHomeScreen()),
@@ -1348,19 +1254,6 @@ class _PinLockScreenState extends State<PinLockScreen> {
                   RadioListTile<String>(
                     title: const Text('English'),
                     value: 'English',
-                    groupValue: appSettings.language,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) {
-                      if (val != null) {
-                        appSettings.setLanguage(val);
-                        setStateDialog(() {});
-                        setState(() {});
-                      }
-                    },
-                  ),
-                  RadioListTile<String>(
-                    title: const Text('System Default'),
-                    value: 'System Default',
                     groupValue: appSettings.language,
                     activeColor: const Color(0xFF10B981),
                     onChanged: (val) {
@@ -1473,16 +1366,6 @@ class _PinLockScreenState extends State<PinLockScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // যদি কোনো সিকিউরিটি লক সেট করা না থাকে (বা None সিলেক্টেড থাকে), তবে স্বয়ংক্রিয়ভাবে মেইন স্ক্রিনে চলে যাবে
-    if (appSettings.useNoneLock) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MainHomeScreen()),
-        );
-      });
-    }
-
     return AnimatedBuilder(
       animation: appSettings,
       builder: (context, _) => Scaffold(
@@ -1509,76 +1392,56 @@ class _PinLockScreenState extends State<PinLockScreen> {
                     style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 0.5),
                   ),
                   const SizedBox(height: 24),
-                  if (appSettings.useFaceLock || appSettings.useFingerprint || appSettings.usePatternLock) ...[
-                    const Icon(Icons.security, size: 48, color: Color(0xFF38BDF8)),
-                    const SizedBox(height: 12),
-                    Text(
-                      appSettings.useFaceLock 
-                          ? 'Face Authentication Required' 
-                          : (appSettings.useFingerprint ? 'Fingerprint Authentication Required' : 'Pattern Authentication Required'),
-                      style: const TextStyle(color: Colors.white, fontSize: 16),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.lock_open),
-                      onPressed: () => _verifyPin(context),
-                      label: const Text('Authenticate & Unlock'),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                  if (appSettings.usePinLock) ...[
-                    Text(appSettings.translate('Enter Your PIN'), style: TextStyle(fontSize: 16, color: Colors.grey.shade400)),
-                    const SizedBox(height: 24),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(4, (index) {
-                            return Container(
-                              width: 55,
-                              height: 55,
-                              margin: const EdgeInsets.symmetric(horizontal: 6),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF1E293B),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: const Color(0xFF10B981), width: 1.5),
-                              ),
-                              child: Center(
-                                child: Text(_pinController.text.length > index ? '•' : '', style: const TextStyle(color: Colors.white, fontSize: 28)),
-                              ),
-                            );
-                          }),
-                        ),
-                        SizedBox(
-                          width: 250,
-                          height: 60,
-                          child: TextField(
-                            controller: _pinController,
-                            keyboardType: TextInputType.number,
-                            maxLength: 4,
-                            style: const TextStyle(color: Colors.transparent),
-                            cursorColor: Colors.transparent,
-                            decoration: const InputDecoration(counterText: '', border: InputBorder.none),
-                            onChanged: (value) {
-                              setState(() {});
-                              if (value.length == 4) _verifyPin(context);
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 30),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28))),
-                        onPressed: () => _verifyPin(context),
-                        child: Text(appSettings.translate('Unlock'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text(appSettings.translate('Enter Your PIN'), style: TextStyle(fontSize: 16, color: Colors.grey.shade400)),
+                  const SizedBox(height: 24),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(4, (index) {
+                          return Container(
+                            width: 55,
+                            height: 55,
+                            margin: const EdgeInsets.symmetric(horizontal: 6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF1E293B),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: const Color(0xFF10B981), width: 1.5),
+                            ),
+                            child: Center(
+                              child: Text(_pinController.text.length > index ? '•' : '', style: const TextStyle(color: Colors.white, fontSize: 28)),
+                            ),
+                          );
+                        }),
                       ),
+                      SizedBox(
+                        width: 250,
+                        height: 60,
+                        child: TextField(
+                          controller: _pinController,
+                          keyboardType: TextInputType.number,
+                          maxLength: 4,
+                          style: const TextStyle(color: Colors.transparent),
+                          cursorColor: Colors.transparent,
+                          decoration: const InputDecoration(counterText: '', border: InputBorder.none),
+                          onChanged: (value) {
+                            setState(() {});
+                            if (value.length == 4) _verifyPin(context);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28))),
+                      onPressed: () => _verifyPin(context),
+                      child: Text(appSettings.translate('Unlock'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
-                  ],
+                  ),
                   const SizedBox(height: 20),
                   TextButton(
                     onPressed: () => _showForgotPinDialog(context),
@@ -1640,8 +1503,6 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
     double totalTaken = appSettings.getTotalTaken();
 
     List<int> years = List.generate(110, (index) => 1990 + index);
-    bool isBalHidden = appSettings.isHidden('dashboard_current_balance');
-    String displayBal = isBalHidden ? '********' : '${appSettings.localizeNumber(balance)} $curr';
 
     return AnimatedBuilder(
       animation: appSettings,
@@ -1738,11 +1599,12 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
-                          DateTime? picked = await showLocalizedDatePicker(
+                          DateTime? picked = await showDatePicker(
                             context: context,
                             initialDate: appSettings.customStartDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
                             lastDate: DateTime(2100),
+                            locale: const Locale('en', 'US'),
                           );
                           if (picked != null) {
                             appSettings.setCustomDateRange(picked, appSettings.customEndDate ?? picked);
@@ -1750,9 +1612,16 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                           }
                         },
                         child: AbsorbPointer(
-                          child: TextField(
-                            controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
-                            decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                          child: Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: Theme.of(context).brightness == Brightness.dark
+                                  ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
+                                  : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
+                            ),
+                            child: TextField(
+                              controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
+                              decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                            ),
                           ),
                         ),
                       ),
@@ -1761,11 +1630,12 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
-                          DateTime? picked = await showLocalizedDatePicker(
+                          DateTime? picked = await showDatePicker(
                             context: context,
                             initialDate: appSettings.customEndDate ?? DateTime.now(),
                             firstDate: DateTime(1990),
                             lastDate: DateTime(2100),
+                            locale: const Locale('en', 'US'),
                           );
                           if (picked != null) {
                             appSettings.setCustomDateRange(appSettings.customStartDate ?? picked, picked);
@@ -1773,9 +1643,16 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                           }
                         },
                         child: AbsorbPointer(
-                          child: TextField(
-                            controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
-                            decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                          child: Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: Theme.of(context).brightness == Brightness.dark
+                                  ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
+                                  : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
+                            ),
+                            child: TextField(
+                              controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
+                              decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                            ),
                           ),
                         ),
                       ),
@@ -1793,26 +1670,23 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(appSettings.translate('Current Balance'), style: const TextStyle(color: Colors.grey)),
                         Row(
                           children: [
-                            Text(
-                              displayBal, 
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: balance >= 0 ? const Color(0xFF10B981) : Colors.redAccent)
-                            ),
+                            Text(appSettings.translate('Total Balance'), style: const TextStyle(color: Colors.grey)),
                             const SizedBox(width: 8),
                             InkWell(
-                              onTap: () {
-                                appSettings.toggleHide('dashboard_current_balance');
-                                setState(() {});
-                              },
+                              onTap: () => appSettings.toggleHide('dash_total_bal'),
                               child: Icon(
-                                isBalHidden ? Icons.visibility_off : Icons.visibility,
+                                appSettings.isHidden('dash_total_bal') ? Icons.visibility_off : Icons.visibility,
                                 size: 18,
                                 color: const Color(0xFF10B981),
                               ),
                             ),
                           ],
+                        ),
+                        Text(
+                          appSettings.isHidden('dash_total_bal') ? '********' : '${appSettings.localizeNumber(balance)} $curr', 
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: balance >= 0 ? const Color(0xFF10B981) : Colors.redAccent)
                         ),
                       ],
                     ),
@@ -1820,9 +1694,22 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(appSettings.translate('Total Income'), style: const TextStyle(color: Colors.grey)),
+                        Row(
+                          children: [
+                            Text(appSettings.translate('Total Income'), style: const TextStyle(color: Colors.grey)),
+                            const SizedBox(width: 8),
+                            InkWell(
+                              onTap: () => appSettings.toggleHide('dash_total_inc'),
+                              child: Icon(
+                                appSettings.isHidden('dash_total_inc') ? Icons.visibility_off : Icons.visibility,
+                                size: 18,
+                                color: const Color(0xFF10B981),
+                              ),
+                            ),
+                          ],
+                        ),
                         Text(
-                          '${appSettings.localizeNumber(income)} $curr', 
+                          appSettings.isHidden('dash_total_inc') ? '********' : '${appSettings.localizeNumber(income)} $curr', 
                           style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)
                         ),
                       ],
@@ -1831,9 +1718,22 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(appSettings.translate('Total Expense'), style: const TextStyle(color: Colors.grey)),
+                        Row(
+                          children: [
+                            Text(appSettings.translate('Total Expense'), style: const TextStyle(color: Colors.grey)),
+                            const SizedBox(width: 8),
+                            InkWell(
+                              onTap: () => appSettings.toggleHide('dash_total_exp'),
+                              child: Icon(
+                                appSettings.isHidden('dash_total_exp') ? Icons.visibility_off : Icons.visibility,
+                                size: 18,
+                                color: const Color(0xFF10B981),
+                              ),
+                            ),
+                          ],
+                        ),
                         Text(
-                          '${appSettings.localizeNumber(expense)} $curr', 
+                          appSettings.isHidden('dash_total_exp') ? '********' : '${appSettings.localizeNumber(expense)} $curr', 
                           style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)
                         ),
                       ],
@@ -1852,9 +1752,22 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(appSettings.translate('Total Loan Given'), style: const TextStyle(color: Colors.grey)),
+                        Row(
+                          children: [
+                            Text(appSettings.translate('Total Loan Given'), style: const TextStyle(color: Colors.grey)),
+                            const SizedBox(width: 8),
+                            InkWell(
+                              onTap: () => appSettings.toggleHide('dash_loan_given'),
+                              child: Icon(
+                                appSettings.isHidden('dash_loan_given') ? Icons.visibility_off : Icons.visibility,
+                                size: 18,
+                                color: const Color(0xFF10B981),
+                              ),
+                            ),
+                          ],
+                        ),
                         Text(
-                          '${appSettings.localizeNumber(totalGiven)} $curr', 
+                          appSettings.isHidden('dash_loan_given') ? '********' : '${appSettings.localizeNumber(totalGiven)} $curr', 
                           style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)
                         ),
                       ],
@@ -1863,9 +1776,22 @@ class _DashboardAnalyticsScreenState extends State<DashboardAnalyticsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(appSettings.translate('Total Loan Taken'), style: const TextStyle(color: Colors.grey)),
+                        Row(
+                          children: [
+                            Text(appSettings.translate('Total Loan Taken'), style: const TextStyle(color: Colors.grey)),
+                            const SizedBox(width: 8),
+                            InkWell(
+                              onTap: () => appSettings.toggleHide('dash_loan_taken'),
+                              child: Icon(
+                                appSettings.isHidden('dash_loan_taken') ? Icons.visibility_off : Icons.visibility,
+                                size: 18,
+                                color: const Color(0xFF10B981),
+                              ),
+                            ),
+                          ],
+                        ),
                         Text(
-                          '${appSettings.localizeNumber(totalTaken)} $curr', 
+                          appSettings.isHidden('dash_loan_taken') ? '********' : '${appSettings.localizeNumber(totalTaken)} $curr', 
                           style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)
                         ),
                       ],
@@ -2045,111 +1971,7 @@ class _CalculatorsHubScreenState extends State<CalculatorsHubScreen> {
   }
 }
 
-// ----------------- Goals / লক্ষ্য Screen -----------------
-class GoalsScreen extends StatefulWidget {
-  const GoalsScreen({super.key});
-
-  @override
-  State<GoalsScreen> createState() => _GoalsScreenState();
-}
-
-class _GoalsScreenState extends State<GoalsScreen> {
-  void _showAddEditGoalDialog({int? index, GoalModel? goal}) {
-    final titleC = TextEditingController(text: goal?.title ?? '');
-    final targetC = TextEditingController(text: goal != null ? goal.targetAmount.toString() : '');
-
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(index == null ? 'Add Goal ( লক্ষ্য )' : 'Edit Goal'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(controller: titleC, decoration: const InputDecoration(labelText: 'Goal Title (e.g., Motorcycle, Phone)', border: OutlineInputBorder())),
-            const SizedBox(height: 12),
-            TextField(controller: targetC, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Target Amount', border: OutlineInputBorder())),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () {
-              if (titleC.text.isNotEmpty && targetC.text.isNotEmpty) {
-                double target = double.tryParse(targetC.text) ?? 0.0;
-                if (index == null) {
-                  appSettings.addGoal(titleC.text, target);
-                } else {
-                  appSettings.updateGoal(index, titleC.text, target);
-                }
-                Navigator.pop(ctx);
-                setState(() {});
-              }
-            },
-            child: const Text('Save'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    String curr = appSettings.currency;
-    return AnimatedBuilder(
-      animation: appSettings,
-      builder: (context, _) => Scaffold(
-        appBar: AppBar(title: Text(appSettings.translate('Goals'))),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: appSettings.goalsList.isEmpty
-              ? const Center(child: Text('No goals added yet', style: TextStyle(color: Colors.grey)))
-              : ListView.builder(
-                  itemCount: appSettings.goalsList.length,
-                  itemBuilder: (context, index) {
-                    final goal = appSettings.goalsList[index];
-                    return Card(
-                      color: Theme.of(context).cardColor,
-                      margin: const EdgeInsets.only(bottom: 10),
-                      child: ListTile(
-                        leading: const Icon(Icons.flag, color: Color(0xFF10B981)),
-                        title: Text(goal.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text('Target: ${appSettings.localizeNumber(goal.targetAmount)} $curr'),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddEditGoalDialog(index: index, goal: goal)),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.redAccent, size: 20),
-                              onPressed: () {
-                                showLocalizedDeleteDialog(
-                                  context: context,
-                                  isImportant: false,
-                                  itemName: goal.title,
-                                  onDeleteConfirmed: () {
-                                    appSettings.removeGoal(index);
-                                    setState(() {});
-                                  },
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: const Color(0xFF10B981),
-          onPressed: () => _showAddEditGoalDialog(),
-          child: const Icon(Icons.add, color: Colors.white),
-        ),
-      ),
-    );
-  }
-}
-
-// ----------------- App Drawer -----------------
+// ----------------- App Drawer Widget -----------------
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
@@ -2259,18 +2081,6 @@ class AppDrawer extends StatelessWidget {
                       }
                     },
                   ),
-                  RadioListTile<String>(
-                    title: const Text('System Default'),
-                    value: 'System Default',
-                    groupValue: appSettings.language,
-                    activeColor: const Color(0xFF10B981),
-                    onChanged: (val) {
-                      if (val != null) {
-                        appSettings.setLanguage(val);
-                        setStateDialog(() {});
-                      }
-                    },
-                  ),
                 ],
               ),
               actions: [
@@ -2310,11 +2120,11 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.flag),
+              leading: const Icon(Icons.track_changes),
               title: Text(appSettings.translate('Goals')),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const GoalsScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const SavingsScreen()));
               },
             ),
             ListTile(
@@ -2380,7 +2190,7 @@ class AppDrawer extends StatelessWidget {
   }
 }
 
-// ----------------- Quick Access Screens -----------------
+// ----------------- Quick Access Interactive Screens -----------------
 
 // 1. Accounts Screen
 class AccountsScreen extends StatefulWidget {
@@ -2431,25 +2241,12 @@ class _AccountsScreenState extends State<AccountsScreen> {
   @override
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
-    bool isAllAccountsHidden = appSettings.isHidden('common_accounts_visibility');
-
     return AnimatedBuilder(
       animation: appSettings,
       builder: (context, _) => Scaffold(
         appBar: AppBar(
           title: Text(appSettings.translate('Accounts')),
           actions: [
-            IconButton(
-              icon: Icon(
-                isAllAccountsHidden ? Icons.visibility_off : Icons.visibility,
-                color: const Color(0xFF10B981),
-              ),
-              tooltip: 'Toggle Balances Visibility',
-              onPressed: () {
-                appSettings.toggleHide('common_accounts_visibility');
-                setState(() {});
-              },
-            ),
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
           ],
@@ -2461,6 +2258,8 @@ class _AccountsScreenState extends State<AccountsScreen> {
             itemBuilder: (context, index) {
               final acc = appSettings.accounts[index];
               double accBal = appSettings.getAccountBalance(acc.name);
+              String hideKey = 'account_${acc.name}';
+              bool hidden = appSettings.isHidden(hideKey);
 
               return Card(
                 color: Theme.of(context).cardColor,
@@ -2486,9 +2285,22 @@ class _AccountsScreenState extends State<AccountsScreen> {
                       const SizedBox(height: 2),
                       Text(appSettings.localizeNumber(acc.details), style: const TextStyle(color: Colors.grey)),
                       const SizedBox(height: 4),
-                      Text(
-                        isAllAccountsHidden ? 'Balance: ********' : 'Balance: ${appSettings.localizeNumber(accBal)} $curr',
-                        style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981)),
+                      Row(
+                        children: [
+                          Text(
+                            hidden ? 'Balance: ********' : 'Balance: ${appSettings.localizeNumber(accBal)} $curr',
+                            style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981)),
+                          ),
+                          const SizedBox(width: 8),
+                          InkWell(
+                            onTap: () => appSettings.toggleHide(hideKey),
+                            child: Icon(
+                              hidden ? Icons.visibility_off : Icons.visibility,
+                              size: 16,
+                              color: const Color(0xFF10B981),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -2611,6 +2423,9 @@ class _BudgetScreenState extends State<BudgetScreen> {
                   itemCount: appSettings.budgets.length,
                   itemBuilder: (context, index) {
                     final b = appSettings.budgets[index];
+                    String hideKey = 'budget_${b.category}_$index';
+                    bool hidden = appSettings.isHidden(hideKey);
+
                     return Card(
                       color: Theme.of(context).cardColor,
                       margin: const EdgeInsets.only(bottom: 8),
@@ -2620,7 +2435,16 @@ class _BudgetScreenState extends State<BudgetScreen> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text('$curr ${appSettings.localizeNumber(b.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
+                            Row(
+                              children: [
+                                Text(hidden ? '********' : '$curr ${appSettings.localizeNumber(b.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
+                                const SizedBox(width: 8),
+                                InkWell(
+                                  onTap: () => appSettings.toggleHide(hideKey),
+                                  child: Icon(hidden ? Icons.visibility_off : Icons.visibility, size: 16, color: const Color(0xFF10B981)),
+                                ),
+                              ],
+                            ),
                             const SizedBox(width: 8),
                             IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddEditBudgetDialog(index: index, budget: b)),
                             IconButton(
@@ -2809,7 +2633,7 @@ class _FundShoppingScreenState extends State<FundShoppingScreen> {
           title: Text(appSettings.translate('Shopping')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
           ],
         ),
         body: Padding(
@@ -2820,6 +2644,9 @@ class _FundShoppingScreenState extends State<FundShoppingScreen> {
                   itemCount: appSettings.shoppingList.length,
                   itemBuilder: (context, index) {
                     final item = appSettings.shoppingList[index];
+                    String hideKey = 'shopping_${item.name}_$index';
+                    bool hidden = appSettings.isHidden(hideKey);
+
                     return Card(
                       color: Theme.of(context).cardColor,
                       margin: const EdgeInsets.only(bottom: 8),
@@ -2836,7 +2663,16 @@ class _FundShoppingScreenState extends State<FundShoppingScreen> {
                           appSettings.translate(item.name),
                           style: TextStyle(decoration: item.isChecked ? TextDecoration.lineThrough : null),
                         ),
-                        subtitle: Text('$curr ${appSettings.localizeNumber(item.amount)}'),
+                        subtitle: Row(
+                          children: [
+                            Text(hidden ? '********' : '$curr ${appSettings.localizeNumber(item.amount)}'),
+                            const SizedBox(width: 8),
+                            InkWell(
+                              onTap: () => appSettings.toggleHide(hideKey),
+                              child: Icon(hidden ? Icons.visibility_off : Icons.visibility, size: 16, color: const Color(0xFF10B981)),
+                            ),
+                          ],
+                        ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -2942,7 +2778,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
           title: Text(appSettings.translate('Reminder')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
           ],
         ),
         body: Padding(
@@ -2953,6 +2789,9 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   itemCount: appSettings.reminders.length,
                   itemBuilder: (context, index) {
                     final rem = appSettings.reminders[index];
+                    String hideKey = 'reminder_${rem.title}_$index';
+                    bool hidden = appSettings.isHidden(hideKey);
+
                     return Card(
                       color: Theme.of(context).cardColor,
                       margin: const EdgeInsets.only(bottom: 8),
@@ -2963,7 +2802,16 @@ class _RemindersScreenState extends State<RemindersScreen> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text('$curr ${appSettings.localizeNumber(rem.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
+                            Row(
+                              children: [
+                                Text(hidden ? '********' : '$curr ${appSettings.localizeNumber(rem.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
+                                const SizedBox(width: 8),
+                                InkWell(
+                                  onTap: () => appSettings.toggleHide(hideKey),
+                                  child: Icon(hidden ? Icons.visibility_off : Icons.visibility, size: 16, color: const Color(0xFF10B981)),
+                                ),
+                              ],
+                            ),
                             const SizedBox(width: 8),
                             IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddReminderDialog(index: index, reminder: rem)),
                             IconButton(
@@ -3064,7 +2912,7 @@ class _RepeatedTransactionsScreenState extends State<RepeatedTransactionsScreen>
           title: Text(appSettings.translate('Repeat')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
           ],
         ),
         body: Padding(
@@ -3073,6 +2921,9 @@ class _RepeatedTransactionsScreenState extends State<RepeatedTransactionsScreen>
             itemCount: appSettings.repeatedTransactions.length,
             itemBuilder: (context, index) {
               final rep = appSettings.repeatedTransactions[index];
+              String hideKey = 'repeated_${rep.title}_$index';
+              bool hidden = appSettings.isHidden(hideKey);
+
               return Card(
                 color: Theme.of(context).cardColor,
                 margin: const EdgeInsets.only(bottom: 8),
@@ -3083,7 +2934,16 @@ class _RepeatedTransactionsScreenState extends State<RepeatedTransactionsScreen>
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('$curr ${appSettings.localizeNumber(rep.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
+                      Row(
+                        children: [
+                          Text(hidden ? '********' : '$curr ${appSettings.localizeNumber(rep.amount)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981))),
+                          const SizedBox(width: 8),
+                          InkWell(
+                            onTap: () => appSettings.toggleHide(hideKey),
+                            child: Icon(hidden ? Icons.visibility_off : Icons.visibility, size: 16, color: const Color(0xFF10B981)),
+                          ),
+                        ],
+                      ),
                       const SizedBox(width: 8),
                       IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddRepeatedDialog(index: index, repeated: rep)),
                       IconButton(
@@ -3171,7 +3031,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
           title: Text(appSettings.translate('Savings')),
           actions: [
             Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.download), onPressed: () => showStandardDownloadMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero)))),
-            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {})))),
+            Builder(builder: (ctx) => IconButton(icon: const Icon(Icons.sort), onPressed: () => showStandardSortMenu(context, (ctx.findRenderObject() as RenderBox).localToGlobal(Offset.zero), (val) {}))),
           ],
         ),
         body: Padding(
@@ -3180,17 +3040,29 @@ class _SavingsScreenState extends State<SavingsScreen> {
             itemCount: appSettings.savingsList.length,
             itemBuilder: (context, index) {
               final sav = appSettings.savingsList[index];
+              String hideKey = 'savings_${sav.title}_$index';
+              bool hidden = appSettings.isHidden(hideKey);
+
               return Card(
                 color: Theme.of(context).cardColor,
                 margin: const EdgeInsets.only(bottom: 8),
                 child: ListTile(
                   leading: const Icon(Icons.savings, color: Color(0xFF10B981)),
                   title: Text(appSettings.translate(sav.title), style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text('Saved: ${appSettings.localizeNumber(sav.currentAmount)} $curr'),
+                  subtitle: Row(
+                    children: [
+                      Text(hidden ? 'Saved: ********' : 'Saved: ${appSettings.localizeNumber(sav.currentAmount)} $curr'),
+                      const SizedBox(width: 8),
+                      InkWell(
+                        onTap: () => appSettings.toggleHide(hideKey),
+                        child: Icon(hidden ? Icons.visibility_off : Icons.visibility, size: 16, color: const Color(0xFF10B981)),
+                      ),
+                    ],
+                  ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('Target: ${appSettings.localizeNumber(sav.targetAmount)} $curr', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                      Text(hidden ? 'Target: ********' : 'Target: ${appSettings.localizeNumber(sav.targetAmount)} $curr', style: const TextStyle(color: Colors.grey, fontSize: 12)),
                       const SizedBox(width: 8),
                       IconButton(icon: const Icon(Icons.edit, color: Colors.blueAccent, size: 20), onPressed: () => _showAddSavingsDialog(index: index, savings: sav)),
                       IconButton(
@@ -3254,8 +3126,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
     List<int> years = List.generate(110, (index) => 1990 + index);
-    bool isBalHidden = appSettings.isHidden('home_current_balance');
-    String displayBal = isBalHidden ? '********' : '${appSettings.localizeNumber(appSettings.getTotalBalance())} $curr';
 
     return AnimatedBuilder(
       animation: appSettings,
@@ -3295,7 +3165,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           InkWell(
                             onTap: () => appSettings.toggleHide('home_current_balance'),
                             child: Icon(
-                              isBalHidden ? Icons.visibility_off : Icons.visibility,
+                              appSettings.isHidden('home_current_balance') ? Icons.visibility_off : Icons.visibility,
                               size: 20,
                               color: const Color(0xFF10B981),
                             ),
@@ -3304,7 +3174,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        displayBal, 
+                        appSettings.isHidden('home_current_balance') ? '********' : '${appSettings.localizeNumber(appSettings.getTotalBalance())} $curr', 
                         style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)
                       ),
                     ],
@@ -3397,11 +3267,12 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () async {
-                            DateTime? picked = await showLocalizedDatePicker(
+                            DateTime? picked = await showDatePicker(
                               context: context,
                               initialDate: appSettings.customStartDate ?? DateTime.now(),
                               firstDate: DateTime(1990),
                               lastDate: DateTime(2100),
+                              locale: const Locale('en', 'US'),
                             );
                             if (picked != null) {
                               appSettings.setCustomDateRange(picked, appSettings.customEndDate ?? picked);
@@ -3409,9 +3280,16 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                             }
                           },
                           child: AbsorbPointer(
-                            child: TextField(
-                              controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
-                              decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                            child: Theme(
+                              data: Theme.of(context).copyWith(
+                                colorScheme: Theme.of(context).brightness == Brightness.dark
+                                    ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
+                                    : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
+                              ),
+                              child: TextField(
+                                controller: TextEditingController(text: appSettings.customStartDate != null ? appSettings.localizeNumber(appSettings.customStartDate.toString().substring(0, 10)) : appSettings.translate('Start Date')),
+                                decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('Start Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                              ),
                             ),
                           ),
                         ),
@@ -3420,11 +3298,12 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () async {
-                            DateTime? picked = await showLocalizedDatePicker(
+                            DateTime? picked = await showDatePicker(
                               context: context,
                               initialDate: appSettings.customEndDate ?? DateTime.now(),
                               firstDate: DateTime(1990),
                               lastDate: DateTime(2100),
+                              locale: const Locale('en', 'US'),
                             );
                             if (picked != null) {
                               appSettings.setCustomDateRange(appSettings.customStartDate ?? picked, picked);
@@ -3432,9 +3311,16 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                             }
                           },
                           child: AbsorbPointer(
-                            child: TextField(
-                              controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
-                              decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                            child: Theme(
+                              data: Theme.of(context).copyWith(
+                                colorScheme: Theme.of(context).brightness == Brightness.dark
+                                    ? const ColorScheme.dark(primary: Color(0xFF10B981), surface: Color(0xFF1E293B))
+                                    : const ColorScheme.light(primary: Color(0xFF10B981), surface: Colors.white),
+                              ),
+                              child: TextField(
+                                controller: TextEditingController(text: appSettings.customEndDate != null ? appSettings.localizeNumber(appSettings.customEndDate.toString().substring(0, 10)) : appSettings.translate('End Date')),
+                                decoration: InputDecoration(border: const OutlineInputBorder(), labelText: appSettings.translate('End Date'), suffixIcon: const Icon(Icons.calendar_today, size: 18)),
+                              ),
                             ),
                           ),
                         ),
@@ -3451,10 +3337,19 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(appSettings.translate('Income'), style: const TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(appSettings.translate('Income'), style: const TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
+                                InkWell(
+                                  onTap: () => appSettings.toggleHide('home_income'),
+                                  child: Icon(appSettings.isHidden('home_income') ? Icons.visibility_off : Icons.visibility, size: 14, color: Colors.green),
+                                ),
+                              ],
+                            ),
                             const SizedBox(height: 4),
                             Text(
-                              '${appSettings.localizeNumber(appSettings.getTotalIncome())} $curr', 
+                              appSettings.isHidden('home_income') ? '********' : '${appSettings.localizeNumber(appSettings.getTotalIncome())} $curr', 
                               style: const TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.bold)
                             ),
                           ],
@@ -3469,10 +3364,19 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(appSettings.translate('Expense'), style: const TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.w600)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(appSettings.translate('Expense'), style: const TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.w600)),
+                                InkWell(
+                                  onTap: () => appSettings.toggleHide('home_expense'),
+                                  child: Icon(appSettings.isHidden('home_expense') ? Icons.visibility_off : Icons.visibility, size: 14, color: Colors.redAccent),
+                                ),
+                              ],
+                            ),
                             const SizedBox(height: 4),
                             Text(
-                              '${appSettings.localizeNumber(appSettings.getTotalExpense())} $curr', 
+                              appSettings.isHidden('home_expense') ? '********' : '${appSettings.localizeNumber(appSettings.getTotalExpense())} $curr', 
                               style: const TextStyle(color: Colors.redAccent, fontSize: 16, fontWeight: FontWeight.bold)
                             ),
                           ],
@@ -3508,6 +3412,8 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                         itemBuilder: (context, index) {
                           final txn = appSettings.transactions[index];
                           bool isIncome = txn.type == 'Income';
+                          String hideKey = 'txn_${txn.id}';
+                          bool hidden = appSettings.isHidden(hideKey);
 
                           return Container(
                             margin: const EdgeInsets.only(bottom: 10),
@@ -3520,9 +3426,19 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               title: Text('${appSettings.translate(txn.category)} (${appSettings.translate(txn.account)})'),
                               subtitle: Text('${appSettings.translate(txn.description)}\n${appSettings.localizeNumber(txn.date.toString().substring(0, 16))}'),
                               isThreeLine: true,
-                              trailing: Text(
-                                '${isIncome ? '+' : '-'} $curr ${appSettings.localizeNumber(txn.amount)}',
-                                style: TextStyle(color: isIncome ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 15),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    hidden ? '********' : '${isIncome ? '+' : '-'} $curr ${appSettings.localizeNumber(txn.amount)}',
+                                    style: TextStyle(color: isIncome ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 15),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  InkWell(
+                                    onTap: () => appSettings.toggleHide(hideKey),
+                                    child: Icon(hidden ? Icons.visibility_off : Icons.visibility, size: 16, color: const Color(0xFF10B981)),
+                                  ),
+                                ],
                               ),
                             ),
                           );
@@ -3550,7 +3466,6 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
 
   void _showAddEditLoanDialog(BuildContext context, {int? index, LoanItem? loan}) {
     String loanType = loan?.type ?? 'Given';
-    String selectedAccount = loan?.account ?? appSettings.accounts.firstWhere((acc) => acc.isDefault, orElse: () => appSettings.accounts[0]).name;
     final TextEditingController nameController = TextEditingController(text: loan?.personName ?? '');
     final TextEditingController amountController = TextEditingController(text: loan != null ? loan.amount.toString() : '');
 
@@ -3559,76 +3474,35 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
       builder: (ctx) {
         return StatefulBuilder(
           builder: (ctx, setStateModal) {
-            bool isAllAccHidden = appSettings.isHidden('popup_loan_accounts_visibility');
             return AlertDialog(
               title: Text(appSettings.translate(index == null ? 'Add New Loan / Debt' : 'Edit Loan / Debt')),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: loanType == 'Given' ? Colors.green : Theme.of(context).cardColor),
-                            onPressed: () => setStateModal(() => loanType = 'Given'),
-                            child: Text(appSettings.translate('Given'), style: const TextStyle(fontSize: 11)),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: loanType == 'Taken' ? Colors.red : Theme.of(context).cardColor),
-                            onPressed: () => setStateModal(() => loanType = 'Taken'),
-                            child: Text(appSettings.translate('Taken'), style: const TextStyle(fontSize: 11)),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    // অ্যাকাউন্ট ড্রপডাউন উইথ গ্লোবাল আইকন
-                    DropdownButtonFormField<String>(
-                      value: selectedAccount,
-                      dropdownColor: Theme.of(context).cardColor,
-                      decoration: InputDecoration(
-                        labelText: appSettings.translate('Account'), 
-                        border: const OutlineInputBorder(),
-                        suffixIcon: IconButton(
-                          icon: Icon(isAllAccHidden ? Icons.visibility_off : Icons.visibility, color: const Color(0xFF10B981)),
-                          onPressed: () {
-                            appSettings.toggleHide('popup_loan_accounts_visibility');
-                            setStateModal(() {});
-                          },
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(backgroundColor: loanType == 'Given' ? Colors.green : Theme.of(context).cardColor),
+                          onPressed: () => setStateModal(() => loanType = 'Given'),
+                          child: Text(appSettings.translate('Given'), style: const TextStyle(fontSize: 11)),
                         ),
                       ),
-                      selectedItemBuilder: (BuildContext context) {
-                        return appSettings.accounts.map<Widget>((acc) {
-                          return Text(appSettings.translate(acc.name));
-                        }).toList();
-                      },
-                      items: appSettings.accounts.map((acc) {
-                        double accBal = appSettings.getAccountBalance(acc.name);
-                        String displayBal = isAllAccHidden ? '৳ *****' : '৳ ${appSettings.localizeNumber(accBal)}';
-
-                        return DropdownMenuItem(
-                          value: acc.name, 
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(appSettings.translate(acc.name), style: const TextStyle(fontWeight: FontWeight.w500)),
-                              Text(displayBal, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (val) { if (val != null) setStateModal(() => selectedAccount = val); },
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(controller: nameController, decoration: InputDecoration(labelText: appSettings.translate('Person Name'), border: const OutlineInputBorder())),
-                    const SizedBox(height: 12),
-                    TextField(controller: amountController, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: appSettings.translate('Amount'), border: const OutlineInputBorder())),
-                  ],
-                ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(backgroundColor: loanType == 'Taken' ? Colors.red : Theme.of(context).cardColor),
+                          onPressed: () => setStateModal(() => loanType = 'Taken'),
+                          child: Text(appSettings.translate('Taken'), style: const TextStyle(fontSize: 11)),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(controller: nameController, decoration: InputDecoration(labelText: appSettings.translate('Person Name'), border: const OutlineInputBorder())),
+                  const SizedBox(height: 12),
+                  TextField(controller: amountController, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: appSettings.translate('Amount'), border: const OutlineInputBorder())),
+                ],
               ),
               actions: [
                 TextButton(onPressed: () => Navigator.pop(ctx), child: Text(appSettings.translate('Cancel'))),
@@ -3642,11 +3516,10 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                           personName: nameController.text,
                           amount: amt,
                           type: loanType,
-                          account: selectedAccount,
                           date: DateTime.now(),
                         ));
                       } else {
-                        appSettings.updateLoan(index, nameController.text, amt, loanType, selectedAccount);
+                        appSettings.updateLoan(index, nameController.text, amt, loanType);
                       }
                       Navigator.pop(ctx);
                       setState(() {});
@@ -3665,8 +3538,6 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
   @override
   Widget build(BuildContext context) {
     String curr = appSettings.currency;
-    bool isNetBalHidden = appSettings.isHidden('loan_net_balance');
-    String displayNetBal = isNetBalHidden ? '********' : '${appSettings.localizeNumber(appSettings.getNetBalance())} $curr';
 
     var filteredLoans = appSettings.loans.where((loan) {
       if (selectedFilter == 'Given') return loan.type == 'Given' && !loan.isPaid;
@@ -3723,25 +3594,19 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                 child: Column(
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(appSettings.translate('Current Balance'), style: const TextStyle(color: Colors.grey, fontSize: 14)),
+                        Text(appSettings.translate('Net Balance'), style: const TextStyle(color: Colors.grey, fontSize: 14)),
+                        const SizedBox(width: 8),
                         InkWell(
-                          onTap: () {
-                            appSettings.toggleHide('loan_net_balance');
-                            setState(() {});
-                          },
-                          child: Icon(
-                            isNetBalHidden ? Icons.visibility_off : Icons.visibility,
-                            size: 18,
-                            color: const Color(0xFF10B981),
-                          ),
+                          onTap: () => appSettings.toggleHide('loan_net_bal'),
+                          child: Icon(appSettings.isHidden('loan_net_bal') ? Icons.visibility_off : Icons.visibility, size: 18, color: const Color(0xFF10B981)),
                         ),
                       ],
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      displayNetBal, 
+                      appSettings.isHidden('loan_net_bal') ? '********' : '${appSettings.localizeNumber(appSettings.getNetBalance())} $curr', 
                       style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)
                     ),
                     const Padding(padding: EdgeInsets.symmetric(vertical: 12), child: Divider(color: Colors.grey)),
@@ -3752,7 +3617,16 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                           children: [
                             Row(children: [const Icon(Icons.arrow_downward, size: 14, color: Colors.green), const SizedBox(width: 4), Text(appSettings.translate('Given'), style: const TextStyle(color: Colors.green, fontWeight: FontWeight.w600))]),
                             const SizedBox(height: 4),
-                            Text('${appSettings.localizeNumber(appSettings.getTotalGiven())} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
+                            Row(
+                              children: [
+                                Text(appSettings.isHidden('loan_given') ? '********' : '${appSettings.localizeNumber(appSettings.getTotalGiven())} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green)),
+                                const SizedBox(width: 4),
+                                InkWell(
+                                  onTap: () => appSettings.toggleHide('loan_given'),
+                                  child: Icon(appSettings.isHidden('loan_given') ? Icons.visibility_off : Icons.visibility, size: 14, color: Colors.green),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                         Container(height: 30, width: 1, color: Colors.grey),
@@ -3760,7 +3634,16 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                           children: [
                             Row(children: [const Icon(Icons.arrow_upward, size: 14, color: Colors.redAccent), const SizedBox(width: 4), Text(appSettings.translate('Taken'), style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w600))]),
                             const SizedBox(height: 4),
-                            Text('${appSettings.localizeNumber(appSettings.getTotalTaken())} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.redAccent)),
+                            Row(
+                              children: [
+                                Text(appSettings.isHidden('loan_taken') ? '********' : '${appSettings.localizeNumber(appSettings.getTotalTaken())} $curr', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.redAccent)),
+                                const SizedBox(width: 4),
+                                InkWell(
+                                  onTap: () => appSettings.toggleHide('loan_taken'),
+                                  child: Icon(appSettings.isHidden('loan_taken') ? Icons.visibility_off : Icons.visibility, size: 14, color: Colors.redAccent),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ],
@@ -3799,6 +3682,8 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                         itemBuilder: (context, index) {
                           final loan = filteredLoans[index];
                           bool isGiven = loan.type == 'Given';
+                          String hideKey = 'loan_item_${loan.id}';
+                          bool hidden = appSettings.isHidden(hideKey);
 
                           return Card(
                             color: Theme.of(context).cardColor,
@@ -3809,11 +3694,20 @@ class _LoanDebtScreenState extends State<LoanDebtScreen> {
                                 child: Icon(isGiven ? Icons.arrow_upward : Icons.arrow_downward, color: isGiven ? Colors.green : Colors.red),
                               ),
                               title: Text(loan.personName, style: TextStyle(fontWeight: FontWeight.bold, decoration: loan.isPaid ? TextDecoration.lineThrough : null)),
-                              subtitle: Text('${appSettings.translate(loan.type)} (${appSettings.translate(loan.account)}) - ${appSettings.localizeNumber(loan.date.toString().substring(0, 10))}'),
+                              subtitle: Text('${appSettings.translate(loan.type)} - ${appSettings.localizeNumber(loan.date.toString().substring(0, 10))}'),
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text('$curr ${appSettings.localizeNumber(loan.amount)}', style: TextStyle(color: isGiven ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold)),
+                                  Row(
+                                    children: [
+                                      Text(hidden ? '********' : '$curr ${appSettings.localizeNumber(loan.amount)}', style: TextStyle(color: isGiven ? Colors.green : Colors.redAccent, fontWeight: FontWeight.bold)),
+                                      const SizedBox(width: 4),
+                                      InkWell(
+                                        onTap: () => appSettings.toggleHide(hideKey),
+                                        child: Icon(hidden ? Icons.visibility_off : Icons.visibility, size: 14, color: const Color(0xFF10B981)),
+                                      ),
+                                    ],
+                                  ),
                                   Checkbox(
                                     value: loan.isPaid,
                                     activeColor: const Color(0xFF10B981),
@@ -3887,7 +3781,6 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
       builder: (ctx) {
         return StatefulBuilder(
           builder: (ctx, setStateModal) {
-            bool isAllAccHidden = appSettings.isHidden('popup_transaction_accounts_visibility');
             return Padding(
               padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
               child: SingleChildScrollView(
@@ -3917,37 +3810,42 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
-
                     DropdownButtonFormField<String>(
                       value: selectedAccount,
                       dropdownColor: Theme.of(context).cardColor,
-                      decoration: InputDecoration(
-                        labelText: appSettings.translate('Account'), 
-                        border: const OutlineInputBorder(),
-                        suffixIcon: IconButton(
-                          icon: Icon(isAllAccHidden ? Icons.visibility_off : Icons.visibility, color: const Color(0xFF10B981)),
-                          onPressed: () {
-                            appSettings.toggleHide('popup_transaction_accounts_visibility');
-                            setStateModal(() {});
-                          },
-                        ),
-                      ),
-                      selectedItemBuilder: (BuildContext context) {
-                        return appSettings.accounts.map<Widget>((acc) {
-                          return Text(appSettings.translate(acc.name));
-                        }).toList();
-                      },
+                      decoration: InputDecoration(labelText: appSettings.translate('Account'), border: const OutlineInputBorder()),
                       items: appSettings.accounts.map((acc) {
                         double accBal = appSettings.getAccountBalance(acc.name);
-                        String displayBal = isAllAccHidden ? '৳ *****' : '৳ ${appSettings.localizeNumber(accBal)}';
+                        String popupHideKey = 'popup_acc_${acc.name}';
+                        bool isHidden = appSettings.isHidden(popupHideKey);
+                        String displayBal = isHidden ? '৳ *****' : '৳ ${appSettings.localizeNumber(accBal)}';
 
                         return DropdownMenuItem(
                           value: acc.name, 
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(appSettings.translate(acc.name), style: const TextStyle(fontWeight: FontWeight.w500)),
-                              Text(displayBal, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                              Text(appSettings.translate(acc.name)),
+                              Row(
+                                children: [
+                                  Text(displayBal, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                  const SizedBox(width: 8),
+                                  InkWell(
+                                    onTap: () {
+                                      appSettings.toggleHide(popupHideKey);
+                                      setStateModal(() {});
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Icon(
+                                        isHidden ? Icons.visibility_off : Icons.visibility,
+                                        size: 16,
+                                        color: const Color(0xFF10B981),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         );
@@ -3967,54 +3865,40 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
                     const SizedBox(height: 12),
                     TextField(controller: descController, decoration: InputDecoration(labelText: appSettings.translate('Description'), border: const OutlineInputBorder())),
                     const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              side: const BorderSide(color: Colors.grey),
-                            ),
-                            onPressed: () => Navigator.pop(ctx),
-                            child: Text(appSettings.translate('Cancel'), style: const TextStyle(fontSize: 16, color: Colors.grey)),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
-                            onPressed: () {
-                              if (amountController.text.isNotEmpty) {
-                                double amount = double.tryParse(amountController.text) ?? 0.0;
-                                if (index == null) {
-                                  appSettings.addTransaction(TransactionItem(
-                                    id: DateTime.now().toString(),
-                                    type: transactionType,
-                                    account: selectedAccount,
-                                    category: selectedCategory,
-                                    amount: amount,
-                                    description: descController.text,
-                                    date: DateTime.now(),
-                                  ));
-                                } else {
-                                  appSettings.updateTransaction(index, TransactionItem(
-                                    id: txn!.id,
-                                    type: transactionType,
-                                    account: selectedAccount,
-                                    category: selectedCategory,
-                                    amount: amount,
-                                    description: descController.text,
-                                    date: txn.date,
-                                  ));
-                                }
-                                Navigator.pop(ctx);
-                                setState(() {});
-                              }
-                            },
-                            child: Text(appSettings.translate('Save'), style: const TextStyle(fontSize: 16)),
-                          ),
-                        ),
-                      ],
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+                        onPressed: () {
+                          if (amountController.text.isNotEmpty) {
+                            double amount = double.tryParse(amountController.text) ?? 0.0;
+                            if (index == null) {
+                              appSettings.addTransaction(TransactionItem(
+                                id: DateTime.now().toString(),
+                                type: transactionType,
+                                account: selectedAccount,
+                                category: selectedCategory,
+                                amount: amount,
+                                description: descController.text,
+                                date: DateTime.now(),
+                              ));
+                            } else {
+                              appSettings.updateTransaction(index, TransactionItem(
+                                id: txn!.id,
+                                type: transactionType,
+                                account: selectedAccount,
+                                category: selectedCategory,
+                                amount: amount,
+                                description: descController.text,
+                                date: txn.date,
+                              ));
+                            }
+                            Navigator.pop(ctx);
+                            setState(() {});
+                          }
+                        },
+                        child: Text(appSettings.translate('Save'), style: const TextStyle(fontSize: 16)),
+                      ),
                     ),
                   ],
                 ),
@@ -4027,4 +3911,121 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
   }
 
   void _showFilterDialog(BuildContext context) {
-    show
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Filter Transactions'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: ['All', 'Income', 'Expense'].map((type) {
+            return ListTile(
+              title: Text(type),
+              onTap: () {
+                setState(() => filterType = type);
+                Navigator.pop(ctx);
+              },
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String curr = appSettings.currency;
+
+    var list = appSettings.transactions.where((txn) {
+      bool matchesSearch = txn.category.toLowerCase().contains(searchQuery.toLowerCase()) ||
+          txn.description.toLowerCase().contains(searchQuery.toLowerCase()) ||
+          txn.account.toLowerCase().contains(searchQuery.toLowerCase());
+      if (filterType == 'Income') return matchesSearch && txn.type == 'Income';
+      if (filterType == 'Expense') return matchesSearch && txn.type == 'Expense';
+      return matchesSearch;
+    }).toList();
+
+    return AnimatedBuilder(
+      animation: appSettings,
+      builder: (context, _) => Scaffold(
+        appBar: AppBar(
+          title: Text(appSettings.translate('All Transactions')),
+          actions: [
+            Builder(
+              builder: (ctx) => IconButton(
+                icon: const Icon(Icons.download),
+                tooltip: 'Download',
+                onPressed: () {
+                  final RenderBox box = ctx.findRenderObject() as RenderBox;
+                  final offset = box.localToGlobal(Offset.zero);
+                  showStandardDownloadMenu(context, offset);
+                },
+              ),
+            ),
+            Builder(
+              builder: (ctx) => IconButton(
+                icon: const Icon(Icons.sort),
+                tooltip: 'Sort Transactions',
+                onPressed: () {
+                  final RenderBox box = ctx.findRenderObject() as RenderBox;
+                  final offset = box.localToGlobal(Offset.zero);
+                  showStandardSortMenu(context, offset, (val) {
+                    appSettings.sortTransactions(val);
+                    setState(() {});
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+        drawer: const AppDrawer(),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      onChanged: (val) => setState(() => searchQuery = val),
+                      decoration: InputDecoration(
+                        hintText: appSettings.translate('Search (note, category)...'),
+                        prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                        filled: true,
+                        fillColor: Theme.of(context).cardColor,
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  InkWell(
+                    onTap: () => _showFilterDialog(context),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(12)),
+                      child: const Icon(Icons.filter_list, color: Color(0xFF10B981)),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: list.isEmpty
+                    ? const Center(child: Text('No transactions found', style: TextStyle(color: Colors.grey)))
+                    : ListView.builder(
+                        itemCount: list.length,
+                        itemBuilder: (context, index) {
+                          final txn = list[index];
+                          bool isIncome = txn.type == 'Income';
+                          String hideKey = 'all_txn_${txn.id}';
+                          bool hidden = appSettings.isHidden(hideKey);
+
+                          return Card(
+                            color: Theme.of(context).cardColor,
+                            margin: const EdgeInsets.only(bottom: 8),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: (isIncome ? Colors.green : Colors.red).withOpacity(0.2),
+                                child: Icon(isIncome ? Icons.add : Icons.remove, color: isIncome ? Colors.green : Colors.red),
+                              ),
+                              title: Text('${appSettings.translate(txn.category)} (${appSettings.translate(txn.account)})', style: const TextStyle(fontWeight: FontWeight.bold)),
+                              subtitle: Text('${appSettings.
