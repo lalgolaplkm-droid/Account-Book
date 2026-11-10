@@ -23,8 +23,13 @@ jobs:
           channel: 'stable'
 
       - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Generate Missing Android Platform Files
         run: |
-          flutter pub get
+          if [ ! -d "android" ]; then
+            flutter create . --platforms=android --project-name=account_book
+          fi
 
       - name: Configure Gradle JVM Max Heap and Properties
         run: |
@@ -33,7 +38,7 @@ jobs:
           echo "android.useAndroidX=true" >> android/gradle.properties
           echo "android.enableJetifier=true" >> android/gradle.properties
 
-      - name: Build Release APK Without Extra Fluff
+      - name: Build Release APK
         run: flutter build apk --release
         env:
           JAVA_OPTS: "-Xmx4g"
