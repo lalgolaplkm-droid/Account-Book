@@ -22,15 +22,9 @@ jobs:
           flutter-version: '3.19.6'
           channel: 'stable'
 
-      - name: Clean Flutter & Get Packages
+      - name: Install Dependencies
         run: |
-          flutter clean
           flutter pub get
-
-      - name: Recreate Android Platform Files Cleanly
-        run: |
-          rm -rf android
-          flutter create . --platforms=android --project-name=account_book
 
       - name: Configure Gradle JVM Max Heap and Properties
         run: |
@@ -39,8 +33,8 @@ jobs:
           echo "android.useAndroidX=true" >> android/gradle.properties
           echo "android.enableJetifier=true" >> android/gradle.properties
 
-      - name: Build Release APK
-        run: flutter build apk --release --verbose
+      - name: Build Release APK Without Extra Fluff
+        run: flutter build apk --release
         env:
           JAVA_OPTS: "-Xmx4g"
 
