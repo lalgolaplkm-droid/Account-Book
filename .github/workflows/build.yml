@@ -22,19 +22,22 @@ jobs:
           flutter-version: '3.19.6'
           channel: 'stable'
 
-      - name: Install Dependencies
+      - name: Clean Flutter & Get Packages
         run: |
           flutter clean
           flutter pub get
 
-      - name: Generate Android Platform Files
-        run: flutter create . --platforms=android --project-name=account_book
+      - name: Recreate Android Platform Files Cleanly
+        run: |
+          rm -rf android
+          flutter create . --platforms=android --project-name=account_book
 
-      - name: Configure Gradle Properties Safely
+      - name: Configure Gradle JVM Max Heap and Properties
         run: |
           mkdir -p android
-          touch android/gradle.properties
           echo "org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=512m -Dfile.encoding=UTF-8" >> android/gradle.properties
+          echo "android.useAndroidX=true" >> android/gradle.properties
+          echo "android.enableJetifier=true" >> android/gradle.properties
 
       - name: Build Release APK
         run: flutter build apk --release --verbose
