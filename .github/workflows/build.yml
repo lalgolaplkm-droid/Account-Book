@@ -23,7 +23,9 @@ jobs:
           channel: 'stable'
 
       - name: Install Dependencies
-        run: flutter pub get
+        run: |
+          flutter clean
+          flutter pub get
 
       - name: Generate Android Platform Files
         run: flutter create . --platforms=android --project-name=account_book
