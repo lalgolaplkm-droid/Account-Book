@@ -260,6 +260,9 @@ class AppSettingsNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Getter added to fix GitHub Actions build error
+  ThemeMode get themeMode => _themeMode;
+
   String localizeNumber(dynamic number) {
     String str = number.toString();
     if (_language != 'Bangla') return str;
