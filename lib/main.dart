@@ -55,7 +55,7 @@ class LoanItem {
   String personName;
   double amount;
   String type;
-  String account; // কোন অ্যাকাউন্ট থেকে দেওয়া বা এসে যুক্ত হলো
+  String account;
   DateTime date;
   bool isPaid;
 
@@ -88,6 +88,19 @@ class LoanItem {
     date: DateTime.parse(json['date']),
     isPaid: json['isPaid'],
   );
+}
+
+class ShoppingItem {
+  String name;
+  double amount;
+  bool isChecked;
+  ShoppingItem({required this.name, this.amount = 0.0, this.isChecked = false});
+}
+
+class BudgetModel {
+  String category;
+  double amount;
+  BudgetModel({required this.category, required this.amount});
 }
 
 class SavingsModel {
@@ -137,7 +150,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   String profileMobile = '018xxxxxxxx';
   String profileImagePath = '';
 
-  // গ্লোবাল হাইড/আনহাইড স্টেট (একটি মাত্র কমন আই-আইকন দিয়ে পুরো অ্যাপের ব্যালেন্স কন্ট্রোল হবে)
+  // গ্লোবাল হাইড/আনহাইড স্টেট (একমাত্র কমন আই-আইকন কন্ট্রোল)
   bool _isGlobalHidden = false;
   bool get isGlobalHidden => _isGlobalHidden;
 
@@ -172,15 +185,6 @@ class AppSettingsNotifier extends ChangeNotifier {
       description: 'Monthly Salary',
       date: DateTime.now(),
     ),
-    TransactionItem(
-      id: '2',
-      type: 'Expense',
-      account: 'Cash in Hand',
-      category: 'Tea & Snacks',
-      amount: 350.0,
-      description: 'Evening snacks',
-      date: DateTime.now(),
-    ),
   ];
 
   List<LoanItem> loans = [
@@ -193,6 +197,14 @@ class AppSettingsNotifier extends ChangeNotifier {
       date: DateTime.now(),
       isPaid: false,
     ),
+  ];
+
+  List<ShoppingItem> shoppingList = [
+    ShoppingItem(name: 'Cooking Oil', amount: 150.0, isChecked: true),
+  ];
+
+  List<BudgetModel> budgets = [
+    BudgetModel(category: 'Food & Hotel', amount: 5000.0),
   ];
 
   List<SavingsModel> savingsList = [
@@ -274,14 +286,6 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Enter Your PIN': return 'আপনার পিন লিখুন';
         case 'Unlock': return 'আনলক করুন';
         case 'Forgot PIN?': return 'পিন ভুলে গেছেন?';
-        case 'This Month': return 'চলতি মাস';
-        case 'Custom Months': return 'কাস্টম মাস';
-        case 'Custom Years': return 'কাস্টম বছর';
-        case 'Custom Range': return 'কাস্টম রেঞ্জ';
-        case 'Financial Overview Summary': return 'আর্থিক সারসংক্ষেপ';
-        case 'Loan & Debt Overview': return 'ঋণ ও দেনার বিবরণী';
-        case 'Total Loan Given': return 'মোট প্রদত্ত লোন';
-        case 'Total Loan Taken': return 'মোট গৃহীত লোন';
         case 'Cancel': return 'বাতিল';
         case 'Save': return 'সংরক্ষণ';
         case 'Add Account': return 'অ্যাকাউন্ট যোগ করুন';
@@ -290,8 +294,6 @@ class AppSettingsNotifier extends ChangeNotifier {
         case 'Type': return 'ধরন';
         case 'Details / Account Number': return 'বিবরণ / অ্যাকাউন্ট নম্বর';
         case 'Add New Transaction': return 'নতুন লেনদেন যোগ করুন';
-        case 'Cash In': return 'আয় (Cash In)';
-        case 'Cash Out': return 'ব্যয় (Cash Out)';
         case 'Description': return 'বিবরণ';
         case 'Amount': return 'পরিমাণ';
         case 'Person Name': return 'ব্যক্তির নাম';
@@ -311,23 +313,6 @@ class AppSettingsNotifier extends ChangeNotifier {
   void setLanguage(String lang) {
     _language = lang;
     _saveToPrefs();
-    notifyListeners();
-  }
-
-  void setTimeFilter(String filter) {
-    timeFilter = filter;
-    notifyListeners();
-  }
-
-  void setMonthYear(int month, int year) {
-    selectedMonthIndex = month;
-    selectedYear = year;
-    notifyListeners();
-  }
-
-  void setCustomDateRange(DateTime? start, DateTime? end) {
-    customStartDate = start;
-    customEndDate = end;
     notifyListeners();
   }
 
@@ -389,44 +374,9 @@ class AppSettingsNotifier extends ChangeNotifier {
     return total;
   }
 
-  double getTotalGiven() {
-    double total = 0;
-    for (var loan in loans) {
-      if (loan.type == 'Given' && !loan.isPaid) total += loan.amount;
-    }
-    return total;
-  }
-
-  double getTotalTaken() {
-    double total = 0;
-    for (var loan in loans) {
-      if (loan.type == 'Taken' && !loan.isPaid) total += loan.amount;
-    }
-    return total;
-  }
-
   void addAccount(String name, String type, String details) {
     if (name.isNotEmpty) {
-      accounts.add(AccountModel(
-        name: name,
-        type: type,
-        details: details.isEmpty ? 'N/A' : details,
-        isDefault: accounts.isEmpty,
-      ));
-      notifyListeners();
-    }
-  }
-
-  void updateAccount(int index, String name, String type, String details) {
-    accounts[index].name = name;
-    accounts[index].type = type;
-    accounts[index].details = details;
-    notifyListeners();
-  }
-
-  void removeAccount(int index) {
-    if (accounts.length > 1) {
-      accounts.removeAt(index);
+      accounts.add(AccountModel(name: name, type: type, details: details.isEmpty ? 'N/A' : details, isDefault: accounts.isEmpty));
       notifyListeners();
     }
   }
@@ -443,8 +393,8 @@ class AppSettingsNotifier extends ChangeNotifier {
 }
 
 final appSettings = AppSettingsNotifier();
+// ----------------- App Entry Point & UI Screens (Part 2) -----------------
 
-// ----------------- App Entry Point -----------------
 class AccountBookApp extends StatelessWidget {
   const AccountBookApp({super.key});
 
@@ -558,7 +508,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
       appBar: AppBar(
         title: Text(appSettings.getAppTitle(), style: const TextStyle(fontWeight: FontWeight.bold)),
         actions: [
-          // গ্লোবাল কমন আই-আইকন (পুরো অ্যাপের ব্যালেন্স এক ক্লিকে হাইড/আনহাইড করবে)
+          // গ্লোবাল কমন Eye আইকন (এক ক্লিকে সব ব্যালেন্স হাইড/আনহাইড হবে)
           IconButton(
             icon: Icon(appSettings.isGlobalHidden ? Icons.visibility_off : Icons.visibility, color: const Color(0xFF10B981)),
             onPressed: () => appSettings.toggleGlobalHide(),
@@ -570,7 +520,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Current Balance কার্ড
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(18),
@@ -616,7 +565,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
     );
   }
 
-  // ট্রানজেকশন অ্যাড করার পপআপ (ক্লিন অ্যাকাউন্ট ড্রপডাউন সহ)
   void _showAddTransactionModal(BuildContext context) {
     final amountC = TextEditingController();
     final descC = TextEditingController();
@@ -637,16 +585,11 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
               children: [
                 Text(appSettings.translate('Add New Transaction'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
-                // অ্যাকাউন্ট ড্রপডাউন (সিলেক্টেড অবস্থায় শুধু নাম দেখাবে, কোনো আইকন বা অ্যামাউন্ট থাকবে না)
+                // ড্রপডাউনে শুধু অ্যাকাউন্ট নাম (ক্লিন ইউআই)
                 DropdownButtonFormField<String>(
                   value: selectedAccount,
                   decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Account'),
-                  items: appSettings.accounts.map((acc) {
-                    return DropdownMenuItem(
-                      value: acc.name,
-                      child: Text(acc.name), // শুধু নাম থাকবে
-                    );
-                  }).toList(),
+                  items: appSettings.accounts.map((acc) => DropdownMenuItem(value: acc.name, child: Text(acc.name))).toList(),
                   onChanged: (val) => setStateModal(() => selectedAccount = val!),
                 ),
                 const SizedBox(height: 12),
@@ -704,7 +647,6 @@ class _AccountsScreenState extends State<AccountsScreen> {
       appBar: AppBar(
         title: Text(appSettings.translate('Accounts')),
         actions: [
-          // পেজের জন্য কমন আই-আইকন
           IconButton(
             icon: Icon(appSettings.isGlobalHidden ? Icons.visibility_off : Icons.visibility, color: const Color(0xFF10B981)),
             onPressed: () => appSettings.toggleGlobalHide(),
@@ -736,7 +678,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
   }
 }
 
-// ----------------- Loan Screen (অ্যাকাউন্ট কানেক্টিভিটি সহ) -----------------
+// ----------------- Loan Screen -----------------
 class LoanScreen extends StatefulWidget {
   const LoanScreen({super.key});
   @override
@@ -762,7 +704,7 @@ class _LoanScreenState extends State<LoanScreen> {
               const SizedBox(height: 10),
               TextField(controller: amountC, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: appSettings.translate('Amount'), border: const OutlineInputBorder())),
               const SizedBox(height: 10),
-              // কোন অ্যাকাউন্ট থেকে টাকা যাচ্ছে বা আসছে তার অপশন
+              // লোন ও অ্যাকাউন্ট কানেক্টিভিটি ড্রপডাউন
               DropdownButtonFormField<String>(
                 value: selectedAccount,
                 decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Account'),
