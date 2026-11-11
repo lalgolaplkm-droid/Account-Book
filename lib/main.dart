@@ -150,7 +150,7 @@ class AppSettingsNotifier extends ChangeNotifier {
   String profileMobile = '018xxxxxxxx';
   String profileImagePath = '';
 
-  // গ্লোবাল হাইড/আনহাইড স্টেট (একমাত্র কমন আই-আইকন কন্ট্রোল)
+  // গ্লোবাল হাইড/আনহাইড স্টেট
   bool _isGlobalHidden = false;
   bool get isGlobalHidden => _isGlobalHidden;
 
@@ -393,8 +393,8 @@ class AppSettingsNotifier extends ChangeNotifier {
 }
 
 final appSettings = AppSettingsNotifier();
-// ----------------- App Entry Point & UI Screens (Part 2) -----------------
 
+// ----------------- App Entry Point -----------------
 class AccountBookApp extends StatelessWidget {
   const AccountBookApp({super.key});
 
@@ -508,7 +508,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
       appBar: AppBar(
         title: Text(appSettings.getAppTitle(), style: const TextStyle(fontWeight: FontWeight.bold)),
         actions: [
-          // গ্লোবাল কমন Eye আইকন (এক ক্লিকে সব ব্যালেন্স হাইড/আনহাইড হবে)
           IconButton(
             icon: Icon(appSettings.isGlobalHidden ? Icons.visibility_off : Icons.visibility, color: const Color(0xFF10B981)),
             onPressed: () => appSettings.toggleGlobalHide(),
@@ -527,7 +526,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(appSettings.translate('Current Balance'), style: const TextStyle(color: Colors.grey, fontSize: 13)), // স্ট্যান্ডার্ড লেবেল
+                  Text(appSettings.translate('Current Balance'), style: const TextStyle(color: Colors.grey, fontSize: 13)),
                   const SizedBox(height: 8),
                   Text(
                     appSettings.isGlobalHidden ? '********' : '${appSettings.localizeNumber(currentBal)} $curr', 
@@ -585,7 +584,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
               children: [
                 Text(appSettings.translate('Add New Transaction'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 12),
-                // ড্রপডাউনে শুধু অ্যাকাউন্ট নাম (ক্লিন ইউআই)
                 DropdownButtonFormField<String>(
                   value: selectedAccount,
                   decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Account'),
@@ -666,7 +664,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
               child: ListTile(
                 title: Text(acc.name, style: const TextStyle(fontWeight: FontWeight.bold)),
                 subtitle: Text(
-                  appSettings.isGlobalHidden ? 'Current Balance: ********' : 'Current Balance: ${appSettings.localizeNumber(accBal)} $curr', // স্ট্যান্ডার্ড লেবেল
+                  appSettings.isGlobalHidden ? 'Current Balance: ********' : 'Current Balance: ${appSettings.localizeNumber(accBal)} $curr',
                   style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981)),
                 ),
               ),
@@ -704,7 +702,6 @@ class _LoanScreenState extends State<LoanScreen> {
               const SizedBox(height: 10),
               TextField(controller: amountC, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: appSettings.translate('Amount'), border: const OutlineInputBorder())),
               const SizedBox(height: 10),
-              // লোন ও অ্যাকাউন্ট কানেক্টিভিটি ড্রপডাউন
               DropdownButtonFormField<String>(
                 value: selectedAccount,
                 decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Account'),
